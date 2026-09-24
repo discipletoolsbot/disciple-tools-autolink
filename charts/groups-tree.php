@@ -57,7 +57,7 @@ class Disciple_Tools_Autolink_Groups_Tree {
 	 * Add a meta to the group to indicate that it was created by autolink
 	 * so we know to handle it differently during tree nesting
 	 *
-	 * @param $group
+	 * @param array $group
 	 */
 	public function dt_autolink_group_created( $group ) {
 		add_post_meta( $group['ID'], self::UNNESTED_META_KEY, true );
@@ -214,12 +214,9 @@ class Disciple_Tools_Autolink_Groups_Tree {
 	/**
 	 * Parse the tree
 	 *
-	 * @param $tree
-	 * @param $title_list
-	 * @param $has_parent_list
-	 * @param $assigned_list
-	 * @param $root
-	 * @param $allowed_group_ids
+	 * @param array $tree
+	 * @param array $meta
+	 * @param string $root
 	 *
 	 * @return array|null
 	 */

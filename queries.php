@@ -21,7 +21,7 @@ class Disciple_Tools_Autolink_Queries {
 	/**
 	 * Group tree queries
 	 *
-	 * @param $query_name
+	 * @param string $query_name
 	 * @param array $args
 	 *
 	 * @return mixed

@@ -223,7 +223,7 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 	 * - description:       Magic link type description.
 	 * - settings_display:  Boolean flag which determines if magic link type is to be listed within frontend user profile settings.
 	 *
-	 * @param $apps_list
+	 * @param array $apps_list
 	 *
 	 * @return mixed
 	 */

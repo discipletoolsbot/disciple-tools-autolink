@@ -278,14 +278,16 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$allow_parent_group_selection = $allow_parent_group_selection === '1' || $allow_parent_group_selection === true;
 
 
-		$parent_group_options = array_filter( array_map( function ( $group ) {
+		$parent_group_options = array_map( function ( $group ) {
 			return [
 				'id'    => (string) $group['ID'],
 				'label' => $group['post_title'],
 			];
-		}, $groups ), function ( $group ) use ( $id ) {
+		}, $groups );
+
+		$parent_group_options = array_filter( $parent_group_options, function ( $group ) use ( $id ) {
 			return ! $id || (string) $group['id'] !== (string) $id;
-		} );
+		});
 
 		if ( ! count( $parent_group_options ) ) {
 			return false;

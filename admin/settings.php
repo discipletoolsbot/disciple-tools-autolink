@@ -78,7 +78,7 @@ class Disciple_Tools_Autolink_Settings {
 	}
 
 	/**
-	 * @param $locale
+	 * @param string $locale
 	 *
 	 * @return array|array[]
 	 */
@@ -143,7 +143,7 @@ class Disciple_Tools_Autolink_Settings {
 	/**
 	 * Get an option and fall back to the default if it doesn't exist
 	 *
-	 * @param $name
+	 * @param string $name
 	 *
 	 * @return false|mixed
 	 */

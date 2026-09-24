@@ -6,7 +6,7 @@ class Disciple_Tools_Autolink_Admin_General_Controller extends Disciple_Tools_Au
 	/**
 	 * Show the admin tab
 	 *
-	 * @param $params
+	 * @param array $params
 	 *
 	 * @return void
 	 */
@@ -85,7 +85,7 @@ class Disciple_Tools_Autolink_Admin_General_Controller extends Disciple_Tools_Au
 	/**
 	 * Save the admin  settings
 	 *
-	 * @param $params
+	 * @param array $params
 	 *
 	 * @throws Exception
 	 *
