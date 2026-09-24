@@ -67,6 +67,7 @@ class Disciple_Tools_Autolink_Magic_Functions {
 				'nonce'         => wp_create_nonce( 'wp_rest' ),
 				'show_training' => $this->training_enabled(),
 				'show_survey'   => $this->survey_enabled(),
+				'languages'     => $this->available_languages(),
 				'urls'         => [
 					'root'           => esc_url_raw( trailingslashit( site_url() ) ),
 					'home'           => esc_url_raw( trailingslashit( home_url() ) ),
@@ -86,6 +87,7 @@ class Disciple_Tools_Autolink_Magic_Functions {
 					'logout_nav_label'   => __( 'Log Out', 'disciple-tools-autolink' ),
 					'training_nav_label' => __( 'Training', 'disciple-tools-autolink' ),
 					'toggle_menu'        => __( 'Toggle Menu', 'disciple-tools-autolink' ),
+					'language_nav_label' => __( 'Language', 'disciple-tools-autolink' ),
 					'user_greeting,'     => __( 'Hello,', 'disciple-tools-autolink' ),
 					'coached_by'         => __( 'Coached by', 'disciple-tools-autolink' ),
 					'my_link'            => __( 'My Link', 'disciple-tools-autolink' ),
@@ -129,6 +131,42 @@ class Disciple_Tools_Autolink_Magic_Functions {
 		$settings = new Disciple_Tools_Autolink_Settings();
 
 		return $settings->training_enabled();
+	}
+
+	/**
+	 * The languages the app can be switched to, flagged with the user's current one.
+	 *
+	 * Mirrors the theme's own profile language picker (`dt_language_select()`),
+	 * so the list is whatever translations the theme ships.
+	 *
+	 * @param int|null $user_id
+	 *
+	 * @return array
+	 */
+	public function available_languages( $user_id = null ) {
+		if ( $user_id === null ) {
+			$user_id = get_current_user_id();
+		}
+
+		$user_locale = get_user_locale( $user_id );
+		$languages   = [];
+
+		foreach ( dt_get_available_languages() as $language ) {
+			$code  = $language['language'] ?? '';
+			$label = $language['native_name'] ?? ( $language['english_name'] ?? $code );
+
+			if ( ! $code ) {
+				continue;
+			}
+
+			$languages[] = [
+				'code'     => $code,
+				'label'    => trim( ( $language['flag'] ?? '' ) . ' ' . $label ),
+				'selected' => $user_locale === $code,
+			];
+		}
+
+		return $languages;
 	}
 
 	/**
@@ -289,7 +327,7 @@ class Disciple_Tools_Autolink_Magic_Functions {
 		$data['coached_by_label']     = __( 'Coached by', 'disciple-tools-autolink' );
 		$data['link_heading']         = __( 'My Link', 'disciple-tools-autolink' );
 		$data['share_link_help_text'] = __( 'Copy this link and share it with people you are coaching.', 'disciple-tools-autolink' );
-		$data['churches_heading']     = __( "My ", 'disciple-tools-autolink' ) . $group_labels->name;
+		$data['churches_heading']     = __( "My Groups", 'disciple-tools-autolink' );
 		$data['share_link']           = $this->get_share_link();
 		$data['group_fields']         = DT_Posts::get_post_field_settings( 'groups' );
 		$data['create_church_link']   = $this->get_app_link() . '?action=create-group';

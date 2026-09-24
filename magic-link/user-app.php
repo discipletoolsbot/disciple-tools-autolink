@@ -24,6 +24,7 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 	public $login_controller;
 	public $field_controller;
 	public $training_controller;
+	public $language_controller;
 	public $meta = [];
 	private $meta_key = 'autolink-app'; // Allows for instance specific data.
 
@@ -66,6 +67,7 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 		$this->login_controller    = new Disciple_Tools_Autolink_Login_Controller();
 		$this->field_controller    = new Disciple_Tools_Autolink_Field_Controller();
 		$this->training_controller = new Disciple_Tools_Autolink_Training_Controller();
+		$this->language_controller = new Disciple_Tools_Autolink_Language_Controller();
 		//Genmapper isn't loaded on every request
 		$this->functions->init_genmapper();
 
@@ -302,6 +304,8 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 				return $this->tree_controller->process( $request, $params, $user_id );
 			case 'update_field':
 				return $this->field_controller->update( $request, $params, $user_id );
+			case 'switch_language':
+				return $this->language_controller->update( $request, $params, $user_id );
 			default:
 				return new WP_Error( __METHOD__, "Invalid action", [ 'status' => 400 ] );
 		}

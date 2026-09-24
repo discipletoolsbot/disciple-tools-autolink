@@ -25,7 +25,7 @@ abstract class Disciple_Tools_Autolink_Controller {
 		$data['coached_by_label']     = __( 'Coached by', 'disciple-tools-autolink' );
 		$data['link_heading']         = __( 'My Link', 'disciple-tools-autolink' );
 		$data['share_link_help_text'] = __( 'Copy this link and share it with people you are coaching.', 'disciple-tools-autolink' );
-		$data['churches_heading']     = __( "My ", 'disciple-tools-autolink' ) . $group_labels->name;
+		$data['churches_heading']     = __( "My Groups", 'disciple-tools-autolink' );
 		$data['share_link']           = $this->functions->get_share_link();
 		$data['group_fields']         = DT_Posts::get_post_field_settings( 'groups' );
 		$data['create_group_link']    = $this->functions->get_create_group_url();
