@@ -38,6 +38,24 @@ dt-multi-select {
     --container-width: 100%;
 }
 
+/* dt-copy-text overlays its copy icon on top of the input instead of reserving
+   room for it, so without extra inline-end padding the link text runs underneath
+   the icon. The vertical offset is not fixable from here - see the note in
+   AGENTS.md. */
 dt-copy-text {
     --dt-form-padding: 0.53rem 2rem 0.53rem 0.53rem;
+}
+
+/* Space the group form's fields. The web components are block level but carry no
+   outer margin of their own. */
+form.create-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* ajax-field renders an empty slot when the server has no parent group field to
+   return, which would otherwise leave a double gap between the fields around it. */
+form.create-group > ajax-field:not(:has(:not(slot))) {
+    display: none;
 }

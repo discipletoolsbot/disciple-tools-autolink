@@ -70,10 +70,15 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 		$this->functions->init_genmapper();
 
 		$action = sanitize_key( wp_unslash( $_GET['action'] ?? '' ) );
-		if ( dt_is_rest() || $action === 'genmap'
-		                     && class_exists( 'DT_Genmapper_Metrics' ) ) {
+		// Genmapper is an optional dependency. `&&` binds tighter than `||`, so the
+		// class_exists() check used to apply only to the genmap screen and every REST
+		// request loaded the chart - which fatals on a site without the plugin.
+		if ( ( dt_is_rest() || $action === 'genmap' ) && class_exists( 'DT_Genmapper_Metrics' ) ) {
 			require_once __DIR__ . "/../charts/groups-genmap.php";
-			new Disciple_Tools_Autolink_Genmap();
+
+			if ( class_exists( 'Disciple_Tools_Autolink_Genmap' ) ) {
+				new Disciple_Tools_Autolink_Genmap();
+			}
 		}
 
 		/**

@@ -89,6 +89,7 @@ class Disciple_Tools_Autolink_Magic_Functions {
 					'coached_by'         => __( 'Coached by', 'disciple-tools-autolink' ),
 					'my_link'            => __( 'My Link', 'disciple-tools-autolink' ),
 					'my_churches'        => __( 'My Churches', 'disciple-tools-autolink' ),
+					'close'              => __( 'Close', 'disciple-tools-autolink' ),
 				]
 			]
 		);

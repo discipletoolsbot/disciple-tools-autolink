@@ -15,7 +15,7 @@
  * @var $leaders array
  * @var $leaders_label string
  * @var $leader_options array
- * @var $leader_ids array
+ * @var $leader_values array
  * @var $start_date_label string
  * @var $start_date string
  * @var $location_label string
@@ -65,14 +65,14 @@
                             placeholder="<?php echo esc_attr( $name_placeholder ); ?>"
                     ></dt-text>
 
-                    <dt-tags
+                    <dt-connection
                             allowAdd
                             class="create-group__input"
                             label="<?php echo esc_html( $leaders_label ); ?>"
                             name="leaders"
-                            value="<?php echo esc_attr( json_encode( $leader_ids ) ) ?>"
-                            options='<?php echo esc_attr( json_encode( $leader_options ) ) ?>'
-                    ></dt-tags>
+                            value='<?php echo esc_attr( wp_json_encode( $leader_values ) ) ?>'
+                            options='<?php echo esc_attr( wp_json_encode( $leader_options ) ) ?>'
+                    ></dt-connection>
 
                     <ajax-field
                             callback="<?php echo esc_attr( $parent_group_field_callback ); ?>"
@@ -92,14 +92,11 @@
 					<?php if ( $show_location_field ): ?>
                         <div class="location-field">
 							<?php
+							// <dt-location-map>: a form associated element that submits
+							// its own value, so no proxy input is needed.
 							render_field_for_display( 'location_grid_meta', $group_fields, $group );
 							?>
-                            <input type="hidden"
-                                   name="location">
                         </div>
-					<?php else : ?>
-                        <input type="hidden"
-                               name="location">
 					<?php endif; ?>
 
 

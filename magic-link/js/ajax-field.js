@@ -69,13 +69,30 @@ export class AjaxField extends DtBase {
      * @returns {NodeListOf<Element>}
      * @returns {*}
      */
+    /**
+     * Tags of the fields worth watching. Keep <dt-connection> in here: the group
+     * form's leaders field is one, and without it the parent group field stops
+     * refreshing when the leaders change.
+     */
+    static get FIELD_TAGS() {
+        return ["input", "select", "textarea", "dt-text", "dt-select", "dt-textarea", "dt-tags", "dt-connection"];
+    }
+
+    /**
+     * @param {string} name
+     * @returns {string}
+     */
+    static selectorFor(name) {
+        return AjaxField.FIELD_TAGS.map(tag => `${tag}[name="${name}"]`).join(", ");
+    }
+
     get watched() {
         if (this.watch === "*") {
-            return [this.form.querySelectorAll("input, select, textarea dt-text dt-select dt-textarea dt-tags")];
+            return this.form.querySelectorAll(AjaxField.FIELD_TAGS.join(", "));
         } else if (Array.isArray(this.watch)) {
-            return this.form.querySelectorAll(this.watch.map(field => `input[name="${field}"], select[name="${field}"], textarea[name="${field}"] dt-text[name="${field}"], dt-select[name="${field}"], dt-textarea[name="${field}"], dt-tags[name="${field}"]`).join(", "));
+            return this.form.querySelectorAll(this.watch.map(AjaxField.selectorFor).join(", "));
         } else if (typeof this.watch === "string") {
-            return this.form.querySelectorAll(`input[name="${this.watch}"], select[name="${this.watch}"], textarea[name="${this.watch}"], dt-text[name="${this.watch}"], dt-select[name="${this.watch}"], dt-textarea[name="${this.watch}"], dt-tags[name="${this.watch}"]`);
+            return this.form.querySelectorAll(AjaxField.selectorFor(this.watch));
         } else {
             return [this.form];
         }

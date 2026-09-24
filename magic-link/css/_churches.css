@@ -51,26 +51,19 @@ dt-button.churches__add dt-icon {
 .church__counts {
     display: flex;
     justify-content: center;
+    gap: 1rem;
     margin: 0;
 }
 
 .church__count {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-}
-
-/* dt-modal has no openButton slot as of web components 1.0, so the trigger is
-   ours. Keep the modal itself out of the flex row; it renders a fixed dialog. */
-.church__count dt-modal {
-    display: contents;
 }
 
 .count__button {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 0.35rem;
     background: none;
     border: 0;
     padding: 0;
@@ -86,13 +79,37 @@ dt-button.churches__add dt-icon {
 }
 
 .count__value {
-    transform: translateY(-7px);
     background-color: var(--alert-color);
     border-radius: 50%;
     aspect-ratio: 1/1;
     display: block;
     width: 1.5rem;
+    line-height: 1.5rem;
+    font-size: 0.8125rem;
     color: white;
+}
+
+/* The count editor. A plain dialog rather than dt-modal - see church-counts.js. */
+.count__dialog {
+    border: 0;
+    border-radius: 6px;
+    padding: 1.25rem;
+    max-inline-size: min(90vw, 20rem);
+    background: var(--surface-1, #fff);
+    color: var(--text-color, #000);
+    box-shadow: var(--shadow-4, 0 4px 16px rgb(0 0 0 / 25%));
+    text-align: start;
+}
+
+.count__dialog::backdrop {
+    background: rgb(0 0 0 / 25%);
+}
+
+dt-button.count__dialog-close {
+    display: block;
+    margin-block-start: 1rem;
+    margin-inline-start: auto;
+    width: fit-content;
 }
 
 .churches__loading,

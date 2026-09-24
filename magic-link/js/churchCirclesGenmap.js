@@ -33,49 +33,6 @@
         window.genmapper = new window.genMapperClass();
         get_groups();
 
-        /**
-         * Groups
-         */
-        let group_search_input = $(".js-typeahead-groups");
-        $.typeahead({
-            input: ".js-typeahead-groups",
-            minLength: 0,
-            accent: true,
-            searchOnFocus: true,
-            maxItem: 20,
-            template: function (query, item) {
-                return `<span>${window.lodash.escape(item.name)}</span>`;
-            },
-            source: TYPEAHEADS.typeaheadSource(
-                "groups",
-                "dt-posts/v2/groups/compact/"
-            ),
-            display: "name",
-            templateValue: "{{name}}",
-            dynamic: true,
-            callback: {
-                onClick: function (node, a, item, event) {
-                    //genmapper.rebaseOnNodeID( item.ID ) //disabled because of possibility of multiple parents
-                    get_groups(item.ID);
-                },
-                onResult: function (node, query, result, resultCount) {
-                    let text = TYPEAHEADS.typeaheadHelpText(resultCount, query, result);
-                    $("#groups-result-container").html(text);
-                },
-                onHideLayout: function () {
-                    $("#groups-result-container").html("");
-                },
-                onCancel(node, item, event) {
-                    get_groups();
-                    event.preventDefault();
-                },
-            },
-        });
-
-        $("#reset_tree").on("click", function () {
-            group_search_input.val("");
-            get_groups();
-        });
     }
 
     function get_groups(group = null) {

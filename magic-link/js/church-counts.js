@@ -9,9 +9,11 @@ import { DtBase } from "@disciple.tools/web-components";
  * document level `change` listener; holding the edited values here instead lets Lit
  * repaint the badge as part of a normal render.
  *
- * The modal trigger is ours rather than the library's: `dt-modal` dropped its
- * `openButton` slot in web components 1.0, so we render the icon and badge
- * ourselves and open the modal by dispatching `open` at it.
+ * The editor is a plain `<dialog>` rather than `dt-modal`. dt-modal is built for
+ * form tiles - it always renders a titled header and a bordered footer, which is a
+ * lot of chrome around a single number input, and none of it is reachable from
+ * outside its shadow root. A native dialog gives us the backdrop, Escape handling
+ * and focus trapping for free and leaves the styling to `_churches.css`.
  */
 export class AppChurchCounts extends DtBase {
   static get properties() {
@@ -32,6 +34,10 @@ export class AppChurchCounts extends DtBase {
 
   createRenderRoot() {
     return this; // light DOM, so magic-link.css applies
+  }
+
+  get closeLabel() {
+    return window.app?.translations?.close || "Close";
   }
 
   /**
@@ -65,13 +71,25 @@ export class AppChurchCounts extends DtBase {
     this.setCount(e.target.name, e.detail?.newValue ?? e.target.value);
   }
 
-  handleCountClick(e) {
-    const modal = e.currentTarget
-      .closest(".church__count")
-      ?.querySelector("dt-modal");
+  dialogFor(el) {
+    return el.closest(".church__count")?.querySelector("dialog");
+  }
 
-    if (modal) {
-      modal.dispatchEvent(new CustomEvent("open"));
+  handleCountClick(e) {
+    this.dialogFor(e.currentTarget)?.showModal();
+  }
+
+  handleCloseClick(e) {
+    this.dialogFor(e.currentTarget)?.close();
+  }
+
+  /**
+   * A click that lands on the dialog element itself rather than its contents is
+   * a click on the backdrop, which should dismiss it.
+   */
+  handleDialogClick(e) {
+    if (e.target === e.currentTarget) {
+      e.currentTarget.close();
     }
   }
 
@@ -111,31 +129,37 @@ export class AppChurchCounts extends DtBase {
           <img
             class="count__icon"
             src="${field.icon}"
-            alt="${field.name}"
+            alt=""
             width="25"
             height="25"
           />
           <span class="count__value">${value}</span>
         </button>
 
-        <dt-modal context="default" title="${group.post_title}" closeButton hideButton>
-          <div slot="content">
-            <app-church-health-field
-              id="groups_${group.ID}_${key}"
-              name="${key}"
-              icon="${field.icon}"
-              label="${field.name}"
-              value="${value}"
-              postType="groups"
-              postId="${group.ID}"
-              min="0"
-              placeholder="0"
-              nonce="${window.app.nonce}"
-              @input="${this.handleFieldInput}"
-              @change="${this.handleFieldChange}"
-            ></app-church-health-field>
-          </div>
-        </dt-modal>
+        <dialog class="count__dialog" @click="${this.handleDialogClick}">
+          <app-church-health-field
+            id="groups_${group.ID}_${key}"
+            name="${key}"
+            icon="${field.icon}"
+            label="${field.name}"
+            value="${value}"
+            postType="groups"
+            postId="${group.ID}"
+            min="0"
+            placeholder="0"
+            nonce="${window.app.nonce}"
+            @input="${this.handleFieldInput}"
+            @change="${this.handleFieldChange}"
+          ></app-church-health-field>
+
+          <dt-button
+            class="count__dialog-close"
+            context="primary"
+            @click="${this.handleCloseClick}"
+          >
+            ${this.closeLabel}
+          </dt-button>
+        </dialog>
       </div>
     `;
   }

@@ -16,7 +16,7 @@
                 <dt-button class="churches__add"
                            context="success"
                            href="<?php echo esc_url( $links['create_group'] ); ?>"
-                           rounded>
+                           round>
                     <dt-icon icon="ic:baseline-plus"></dt-icon>
                 </dt-button>
             </div>

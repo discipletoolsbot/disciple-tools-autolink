@@ -4,6 +4,8 @@ class Disciple_Tools_Autolink_Genmap_Controller extends Disciple_Tools_Autolink_
 	public function show( $params = [] ) {
 		if ( ! class_exists( 'DT_Genmapper_Groups_chart' ) ) {
 			wp_redirect( $this->functions->get_app_link() );
+
+			return;
 		}
 
 		$data = $this->global_data();

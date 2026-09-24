@@ -19,11 +19,13 @@ import "@shoelace-style/shoelace/dist/components/tab/tab.js";
 import "@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js";
 
 
-import locationField from "./js/locationField";
+import buttonLinks from "./js/button-links";
+import componentService from "./js/component-service";
 
 loaded(() => {
     document.body.classList.add("dom-loaded");
 
-    document.querySelectorAll(".location-field").forEach(locationField);
+    buttonLinks();
+    componentService();
 
 });

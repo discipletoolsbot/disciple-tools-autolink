@@ -97,13 +97,93 @@ JS components are Lit elements extending `DtBase` (or a concrete component such 
 **`@disciple.tools/web-components` is not bundled.** `webpack.mix.js` marks it `external` as the global `DtWebComponents`, which is the copy the theme enqueues (handle `web-components`, `dt-assets/build/components/index.js`). The plugin therefore always runs against whatever version the installed theme ships, and `lit` must stay on the major the theme's library uses (3.x). Two consequences to remember:
 
 - `web-components` and `web-components-css` must stay on the magic-link allow lists in `magic-link/functions.php`, and `web-components` is a declared dependency of `magic_link_scripts` so it loads first.
-- Library APIs are not ours to pin. `dt-modal` lost its `openButton` slot in 1.0, which is why `app-church-counts` renders its own trigger button and opens the modal by dispatching an `open` event at it.
+- Library APIs are not ours to pin, and 1.0 removed several the plugin depended on:
+  - **`dt-button` no longer supports `href` or `confirm`**, and its click handler calls
+    `preventDefault()` unconditionally. `magic-link/js/button-links.js` restores link
+    behaviour with one delegated `document` click listener. Wrapping a `dt-button` in an
+    `<a>` does **not** work — the component's `preventDefault()` cancels the anchor too.
+    `rounded` was also renamed to `round`.
+  - **`dt-modal` lost its `openButton` slot**, and its header/footer chrome is not
+    reachable from outside its shadow root (no `part` attributes). `app-church-counts`
+    therefore uses a plain `<dialog>` styled from `css/_churches.css`.
+  - `dt-copy-text` used to offset its copy icon `-0.3125em` vertically while its flex
+    container already centred it, leaving the icon ~4px high. **Fixed upstream** in
+    `@disciple.tools/web-components`; needs a release past 1.0.2. The `--dt-form-padding`
+    override in `css/_fields.css` is a separate concern — it reserves horizontal room so
+    the link text doesn't run under the icon, which the library still doesn't do.
 
-Known noise, not a plugin bug: `dt-modal` dispatches events named `open` and `close`, which collide with Foundation's trigger names. The theme's Foundation handler sees them on `document` and logs `'close' is not an available method for this element`. Harmless.
+  - **`dt-button` does not submit forms.** Its click handler dispatches a `submit`
+    *event* at the form, which notifies listeners but submits nothing. `submit-button`
+    (`magic-link/js/submit-button.js`) overrides `handleClick()` to call
+    `form.requestSubmit()`. Any new submit button must use `<submit-button>`, not
+    `<dt-button type="submit">`.
+
+Known noise, not a plugin bug: the theme's Foundation bundle (`site-js`) listens for
+`close` and `open` on `document`, and those are also the names a native `<dialog>` and
+`dt-modal` dispatch, so every open/close logs `'close' is not an available method for this
+element`. Its listeners are registered before anything the plugin can hook, so it cannot be
+intercepted; the only fix would be not loading `site-js` at all, which was tried and
+rejected — Foundation is wanted everywhere or nowhere, and nothing actually breaks.
+
+### The location field
+
+The group form renders `location_grid_meta` through the theme's
+`render_field_for_display()`, which emits a **`<dt-location-map>` web component**. It is a
+form associated custom element, so it submits its own value under its field name as a JSON
+array — no proxy input, and none of the theme's legacy jQuery mapbox search widget
+(`DT_Mapbox_API::load_mapbox_search_widget()`), which is deliberately not enqueued.
+
+`Group_Controller::process()` decodes `$_POST['location_grid_meta']`. An untouched
+component posts `null` and one the user has emptied posts `[]`, so **only an array is
+treated as an instruction to write the field** — otherwise a save would silently wipe
+existing locations. `clean_location_values()` then keeps only the keys DT stores, because
+the component passes the geocoder's response straight through (Google predictions arrive
+with a nested `raw` blob).
+
+The component does **not** geocode by itself — see ComponentService below.
 
 PHP → JS data flows two ways: `wp_localize_script('magic_link_scripts', 'app'|'magic', ...)` for URLs, nonces, and translations; and JSON-in-attributes on components, e.g. `posts='<?php echo esc_attr( wp_json_encode( $churches['posts'] ) ); ?>'`.
 
 `magic-link/magic-link.css` sets the whole DT web-component CSS custom-property theme at `html` scope, then imports `css/__index.css`, which pulls in the `_*.css` partials. Restyling components means overriding `--dt-*` variables there, not reaching into shadow DOM.
+
+### The leaders field
+
+`leaders` on the group form is a **`dt-connection`** with **static** options: the user's own
+contact plus everyone in their coaching tree (`Group_Controller::form()`). `dt-connection`
+filters a non-empty `options` list locally by label and never calls the API, so it does not
+need a `dt:get-data` handler — and the picker stays scoped to the coaching tree rather than
+every contact the user can see.
+
+Two shape rules that are easy to get wrong:
+
+- **Ids must be integers, not numeric strings.** `_remove()` parses the clicked id with
+  `Number.parseInt` and compares with `===`, so a string id never matches and the chip's
+  "x" silently does nothing. Ids typed by the user (`allowAdd`) stay strings, which is fine
+  — they never parse to a number.
+- The value is `[ { id, label } ]`, and removals come back **flagged** `delete: true`
+  rather than dropped, so `process()` filters them out before building the connection
+  values. A non-numeric id is a new contact to create (see `allowAdd`).
+
+### ComponentService
+
+Several library components do not talk to the API themselves. They dispatch an event and
+wait for the page to answer: `dt-location-map` fires `dt:geocode` for its address search,
+and `dt-connection` / `dt-tags` / `dt-location` fire `dt:get-data` to load options. With
+nothing listening they simply come up empty — which is why the location search returned no
+results until this was wired.
+
+`magic-link/js/component-service.js` runs the library's own handler, the same way the theme
+does on its screens (`dt-assets/js/new-record.js`):
+
+```js
+const service = new ComponentService( 'groups', '', window.app.nonce, window.app.rest_base );
+service.initialize();
+```
+
+**The empty post id is deliberate.** `initialize()` only calls `enableAutoSave()` when it
+has one, and auto-save would make every field POST straight to `dt-posts/v2/…` on change —
+wrong for Autolink twice over: the group form posts on submit, and magic link users are low
+privilege, so writes go through the whitelisted `update_field` endpoint instead.
 
 ### Admin and settings
 
