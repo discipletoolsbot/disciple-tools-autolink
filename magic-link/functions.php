@@ -66,6 +66,7 @@ class Disciple_Tools_Autolink_Magic_Functions {
 				'rest_base'     => esc_url( rest_url() ),
 				'nonce'         => wp_create_nonce( 'wp_rest' ),
 				'show_training' => $this->training_enabled(),
+				'show_survey'   => $this->survey_enabled(),
 				'urls'         => [
 					'root'           => esc_url_raw( trailingslashit( site_url() ) ),
 					'home'           => esc_url_raw( trailingslashit( home_url() ) ),
@@ -128,6 +129,17 @@ class Disciple_Tools_Autolink_Magic_Functions {
 		$settings = new Disciple_Tools_Autolink_Settings();
 
 		return $settings->training_enabled();
+	}
+
+	/**
+	 * Whether the survey section is available.
+	 *
+	 * @return bool
+	 */
+	public function survey_enabled() {
+		$settings = new Disciple_Tools_Autolink_Settings();
+
+		return $settings->survey_enabled();
 	}
 
 	/**

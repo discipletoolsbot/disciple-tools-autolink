@@ -5,6 +5,12 @@ class Disciple_Tools_Autolink_Survey_Controller extends Disciple_Tools_Autolink_
      * Show the survey template
      */
     public function show( $params = [] ) {
+        if ( ! $this->settings->survey_enabled() ) {
+			$this->functions->redirect_to_app();
+
+			return;
+		}
+
         $survey   = $this->functions->survey();
         $page     = sanitize_key( wp_unslash( $_GET['paged'] ?? 0 ) );
         $question = $survey[ $page ] ?? null;

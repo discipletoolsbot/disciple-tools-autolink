@@ -174,7 +174,7 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 					$this->group_controller->show();
 					break;
 				default:
-					if ( ! $this->functions->survey_completed() ) {
+					if ( ! $this->functions->survey_completed() && $this->functions->survey_enabled() ) {
 						return wp_redirect( $this->functions->get_app_link() . '?action=survey' );
 					}
 					$this->app_controller->show();

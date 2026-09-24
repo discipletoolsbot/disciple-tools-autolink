@@ -41,6 +41,7 @@ abstract class Disciple_Tools_Autolink_Controller {
 		$data['training-label']       = __( 'Training', 'disciple-tools-autolink' );
 		$data['training-link']        = $this->functions->get_training_url();
 		$data['show_training']        = $this->settings->training_enabled();
+		$data['show_survey']          = $this->settings->survey_enabled();
 		$data['church_label']         = $group_labels->singular_name;
 		$data['churches_label']       = $group_labels->name;
 

@@ -58,6 +58,17 @@
                         </tr>
                         <tr>
                             <td style="white-space: nowrap;">
+								<?php esc_html_e( 'Show survey?', 'disciple-tools-autolink' ) ?>
+                            </td>
+                            <td style="text-align: left;">
+                                <input type="checkbox"
+                                       name="disciple_tools_autolink_show_survey"
+                                       value="1"
+								       <?php if ( $old['disciple_tools_autolink_show_survey'] === '1' ): ?>checked<?php endif; ?> />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
 								<?php echo esc_attr( $training_videos_translations['label'] ) ?>
                             </td>
                             <td style="text-align: left;">

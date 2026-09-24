@@ -25,9 +25,27 @@ class Disciple_Tools_Autolink_Settings {
 		return [
 			'disciple_tools_autolink_allow_parent_group_selection' => true,
 			'disciple_tools_autolink_show_in_menu'                 => true,
+			'disciple_tools_autolink_show_survey'                  => true,
 			'disciple_tools_autolink_show_training'                => true,
 			'disciple_tools_autolink_training_videos'              => json_encode( $this->localized_training_videos() )
 		];
+	}
+
+	/**
+	 * Whether the survey section should be reachable at all.
+	 *
+	 * Disabled explicitly by the admin.
+	 *
+	 * @return bool
+	 */
+	public function survey_enabled(): bool {
+		$show_survey = $this->get_option( 'disciple_tools_autolink_show_survey' );
+
+		if ( $show_survey !== '1' && $show_survey !== true ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
