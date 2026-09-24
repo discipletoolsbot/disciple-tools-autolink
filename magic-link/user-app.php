@@ -162,6 +162,7 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 					$this->login_controller->logout();
 					break;
 				case 'training':
+					// The controller redirects back to the app when training is disabled.
 					$this->training_controller->show();
 					break;
 				case 'group':

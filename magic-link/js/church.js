@@ -1,6 +1,4 @@
-import { DtBase } from "@disciple.tools/web-components";
 import { css, html, nothing } from "lit";
-import { classMap } from "lit/directives/class-map.js";
 import { AppCollapse } from "./collapse";
 
 export class AppChurch extends AppCollapse {
@@ -67,7 +65,17 @@ export class AppChurch extends AppCollapse {
     return nothing;
   }
 
-  async handleSave(group_id, { health_metrics }) {
+  /**
+   * Persist a health_metrics change through the Autolink magic link endpoint.
+   *
+   * The endpoint is whitelist gated (see the `autolink_updatable_group_fields`
+   * filter), which is what keeps low privilege leaders from writing arbitrary
+   * fields, so we save through it rather than straight to the DT posts API.
+   *
+   * @param {string[]} health_metrics Values from the component. Removals are
+   *                                  prefixed with `-`, as dt-multi-select emits them.
+   */
+  async handleSave(group_id, health_metrics) {
     const params = {
       method: "POST",
       headers: {
@@ -97,13 +105,42 @@ export class AppChurch extends AppCollapse {
     return body;
   }
 
+  async handleHealthChange(e) {
+    const newValue = e.detail?.newValue || [];
+
+    try {
+      const body = await this.handleSave(this.group.ID, newValue);
+
+      // Keep our copy of the group in step with what was saved, so a
+      // re-render doesn't flip the icons back to their previous state.
+      const saved = body?.data?.health_metrics;
+      this.group = {
+        ...this.group,
+        health_metrics: Array.isArray(saved)
+          ? saved
+          : newValue.filter((metric) => !metric.startsWith("-")),
+      };
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   renderChurchHealth() {
+    const options = this.fields?.health_metrics;
+
+    // dt-church-health-circle throws while rendering if it has no options,
+    // so don't mount it until the field settings have arrived.
+    if (!options || !Object.keys(options).length) {
+      return nothing;
+    }
+
     return html`
       <div class="church_health">
         <dt-church-health-circle
-          .group=${this.group}
-          .settings=${this.fields.health_metrics}
-          .handleSave=${this.handleSave.bind(this)}
+          name="health_metrics"
+          .options=${options}
+          .value=${this.group.health_metrics || []}
+          @change=${this.handleHealthChange}
         ></dt-church-health-circle>
       </div>
     `;

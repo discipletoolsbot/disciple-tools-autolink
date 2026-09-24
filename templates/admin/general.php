@@ -47,6 +47,17 @@
                         </tr>
                         <tr>
                             <td style="white-space: nowrap;">
+								<?php esc_html_e( 'Show training menu item?', 'disciple-tools-autolink' ) ?>
+                            </td>
+                            <td style="text-align: left;">
+                                <input type="checkbox"
+                                       name="disciple_tools_autolink_show_training"
+                                       value="1"
+								       <?php if ( $old['disciple_tools_autolink_show_training'] === '1' ): ?>checked<?php endif; ?> />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;">
 								<?php echo esc_attr( $training_videos_translations['label'] ) ?>
                             </td>
                             <td style="text-align: left;">
@@ -133,7 +144,10 @@
                         <td>
 
                             <p>
-								<?php esc_html_e( 'Training vidoes are available from within the AutoLink main menu.', 'disciple-tools-autolink' ) ?>
+								<?php esc_html_e( 'Training videos are available from within the AutoLink main menu.', 'disciple-tools-autolink' ) ?>
+                            </p>
+                            <p>
+								<?php esc_html_e( 'Unchecking "Show training menu item?" hides Training from the AutoLink menu. Removing every video hides it as well.', 'disciple-tools-autolink' ) ?>
                             </p>
                             <p>
                                 <a class="button" href="<?php echo esc_attr( $training_videos_url ) ?>">

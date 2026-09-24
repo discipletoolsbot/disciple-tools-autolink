@@ -5,6 +5,9 @@ class Disciple_Tools_Autolink_Magic_Functions {
 	private static $_instance = null;
 
 	public function dt_magic_url_base_allowed_js( $allowed_js ) {
+		// The theme's web component library. Autolink's components extend it,
+		// so it has to survive the magic link script allow list.
+		$allowed_js[] = 'web-components';
 		$allowed_js[] = 'magic_link_scripts';
 		$allowed_js[] = 'gen-template';
 		$allowed_js[] = 'genApiTemplate';
@@ -29,6 +32,7 @@ class Disciple_Tools_Autolink_Magic_Functions {
 	}
 
 	public function dt_magic_url_base_allowed_css( $allowed_css ) {
+		$allowed_css[] = 'web-components-css';
 		$allowed_css[] = 'magic_link_css';
 		$allowed_css[] = "hint";
 		$allowed_css[] = 'group-styles';
@@ -44,9 +48,12 @@ class Disciple_Tools_Autolink_Magic_Functions {
 		$plugin_url  = plugins_url() . '/disciple-tools-autolink';
 		$plugin_path = WP_PLUGIN_DIR . '/disciple-tools-autolink';
 
+		// `web-components` is a dependency so the theme's library is defined
+		// before our components try to extend it.
 		wp_enqueue_script( 'magic_link_scripts', $plugin_url . '/dist/magic-link.js', [
 			'jquery',
 			'lodash',
+			'web-components',
 		], filemtime( plugin_dir_path( __FILE__ ) . 'magic-link.js' ), true );
 
 		wp_enqueue_script( 'lodash' );
@@ -55,9 +62,10 @@ class Disciple_Tools_Autolink_Magic_Functions {
 			'magic_link_scripts',
 			'app',
 			[
-				'map_key'      => DT_Mapbox_API::get_key(),
-				'rest_base'    => esc_url( rest_url() ),
-				'nonce'        => wp_create_nonce( 'wp_rest' ),
+				'map_key'       => DT_Mapbox_API::get_key(),
+				'rest_base'     => esc_url( rest_url() ),
+				'nonce'         => wp_create_nonce( 'wp_rest' ),
+				'show_training' => $this->training_enabled(),
 				'urls'         => [
 					'root'           => esc_url_raw( trailingslashit( site_url() ) ),
 					'home'           => esc_url_raw( trailingslashit( home_url() ) ),
@@ -108,6 +116,17 @@ class Disciple_Tools_Autolink_Magic_Functions {
 
 	public function get_training_url() {
 		return $this->get_app_link() . '?action=training';
+	}
+
+	/**
+	 * Whether the training section is available.
+	 *
+	 * @return bool
+	 */
+	public function training_enabled() {
+		$settings = new Disciple_Tools_Autolink_Settings();
+
+		return $settings->training_enabled();
 	}
 
 	/**

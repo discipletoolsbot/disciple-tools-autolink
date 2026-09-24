@@ -1,95 +1,69 @@
 import {html, css, LitElement} from "lit";
 import {classMap} from "lit/directives/class-map.js";
 import Sortable from 'sortablejs';
-import {customElement, property, query, queryAll} from "lit/decorators.js";
 
 /**
  * A component that renders a sortable tree of groups.
  */
-@customElement('app-groups-tree')
 export class ChurchTile extends LitElement {
-    sortableInstances = []
-    @queryAll('.groups--sortable')
-    sortables
-    @queryAll('.groups')
-    groupLists
-    @queryAll('#tree .group__generation')
-    groupGenerationIcons
-    @query('#unassigned')
-    unassignedSection
-    @property({
-        type: String,
-    })
-    title = 'Church Tree'
-    @property({
-        type: String,
-    })
-    unassignedTitle = 'Unassigned Churches'
-    @property({
-        type: String,
-    })
-    unassignedTip = 'Move these churches to the Church Tree to assign them to a group.'
-    @property({
-        type: String,
-    })
-    keyTitle = 'Key'
-    @property({
-        type: String,
-    })
-    assignedLabel = 'Churches you are assigned to'
-    @property({
-        type: String,
-    })
-    coachedLabel = 'Churches you coach'
-    @property({
-        type: String,
-    })
-    leadingLabel = 'Churches you lead'
-    @property({
-        type: String,
-    })
-    generationLabel = 'Generation Number'
-    @property({
-        type: Object,
-        reflect: true
-    })
-    tree = []
-    @property({
-        type: Object,
-        reflect: true
-    })
-    unassignedTree = []
-    @property({
-        type: Object,
-        reflect: true
-    })
-    parents = {}
-    @property({
-        type: Object,
-        reflect: true
-    })
-    titles = {}
-    @property({
-        type: Boolean,
-        reflect: true
-    })
-    loading = true
-    @property({
-        type: String,
-    })
-    endpoint = ''
-    @property({
-        type: String,
+    static get properties() {
+        return {
+            title: {type: String},
+            unassignedTitle: {type: String},
+            unassignedTip: {type: String},
+            keyTitle: {type: String},
+            assignedLabel: {type: String},
+            coachedLabel: {type: String},
+            leadingLabel: {type: String},
+            generationLabel: {type: String},
+            tree: {type: Object, reflect: true},
+            unassignedTree: {type: Object, reflect: true},
+            parents: {type: Object, reflect: true},
+            titles: {type: Object, reflect: true},
+            loading: {type: Boolean, reflect: true},
+            endpoint: {type: String},
+            error: {type: String},
+            noGroupsMessage: {type: String},
+        };
+    }
 
-    })
-    error = ''
-    @property({
-        type: String,
-    })
-    noGroupsMessage = 'No churches found.'
+    sortableInstances = []
+
+    /* Replacements for the @queryAll / @query decorators */
+    get sortables() {
+        return this.renderRoot.querySelectorAll('.groups--sortable');
+    }
+
+    get groupLists() {
+        return this.renderRoot.querySelectorAll('.groups');
+    }
+
+    get groupGenerationIcons() {
+        return this.renderRoot.querySelectorAll('#tree .group__generation');
+    }
+
+    get unassignedSection() {
+        return this.renderRoot.querySelector('#unassigned');
+    }
 
     constructor() {
         super();
+        this.title = 'Church Tree';
+        this.unassignedTitle = 'Unassigned Churches';
+        this.unassignedTip = 'Move these churches to the Church Tree to assign them to a group.';
+        this.keyTitle = 'Key';
+        this.assignedLabel = 'Churches you are assigned to';
+        this.coachedLabel = 'Churches you coach';
+        this.leadingLabel = 'Churches you lead';
+        this.generationLabel = 'Generation Number';
+        this.tree = [];
+        this.unassignedTree = [];
+        this.parents = {};
+        this.titles = {};
+        this.loading = true;
+        this.endpoint = '';
+        this.error = '';
+        this.noGroupsMessage = 'No churches found.';
     }
 
     static get styles() {
@@ -746,3 +720,5 @@ export class ChurchTile extends LitElement {
         }
     }
 }
+
+window.customElements.define("app-groups-tree", ChurchTile);

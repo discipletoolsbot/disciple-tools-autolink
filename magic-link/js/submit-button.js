@@ -1,6 +1,4 @@
-import {DtBase, DtButton} from "@disciple.tools/web-components";
-import {property} from "lit/decorators.js";
-import {html} from "lit";
+import {DtButton} from "@disciple.tools/web-components";
 
 /**
  * @class Churches

@@ -24,9 +24,39 @@ class Disciple_Tools_Autolink_Settings {
 	public function defaults(): array {
 		return [
 			'disciple_tools_autolink_allow_parent_group_selection' => true,
-      'disciple_tools_autolink_show_in_menu'                 => true,
+			'disciple_tools_autolink_show_in_menu'                 => true,
+			'disciple_tools_autolink_show_training'                => true,
 			'disciple_tools_autolink_training_videos'              => json_encode( $this->localized_training_videos() )
 		];
+	}
+
+	/**
+	 * Whether the training section should be reachable at all.
+	 *
+	 * Disabled explicitly by the admin, or implicitly when every video has
+	 * been removed - an empty list is a valid configuration.
+	 *
+	 * @return bool
+	 */
+	public function training_enabled(): bool {
+		$show_training = $this->get_option( 'disciple_tools_autolink_show_training' );
+
+		if ( $show_training !== '1' && $show_training !== true ) {
+			return false;
+		}
+
+		return count( $this->training_videos_list() ) > 0;
+	}
+
+	/**
+	 * The configured training videos, decoded. Always an array.
+	 *
+	 * @return array
+	 */
+	public function training_videos_list(): array {
+		$videos = json_decode( (string) $this->get_option( 'disciple_tools_autolink_training_videos' ), true );
+
+		return is_array( $videos ) ? $videos : [];
 	}
 
 	/**

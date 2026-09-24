@@ -153,13 +153,18 @@ export class AppMenu extends DtBase {
                         >${app.translations.survey_nav_label}</a
                         >
                     </li>
-                    <li class="menu__item">
-                        <a
-                                href="${app.urls.training}"
-                                class="menu__link"
-                                title="${app.translations.training_nav_label}"
-                        >${app.translations.training_nav_label}</a
-                        >
+                    ${app.show_training
+                            ? html`
+                                <li class="menu__item">
+                                    <a
+                                            href="${app.urls.training}"
+                                            class="menu__link"
+                                            title="${app.translations.training_nav_label}"
+                                    >${app.translations.training_nav_label}</a
+                                    >
+                                </li>
+                            `
+                            : nothing}
                     <li class="menu__item">
                         <a
                                 href="${app.urls.logout}"

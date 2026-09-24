@@ -20,14 +20,12 @@
   },
   "homepage": "https://github.com/thecodezone/disciple-tools-autolink#readme",
   "dependencies": {
-    "@babel/plugin-proposal-decorators": "^7.22.15",
-    "@disciple.tools/web-components": "^0.5.2",
     "@lit/localize": "^0.11.4",
     "@shoelace-style/shoelace": "^2.0.0",
     "element-internals-polyfill": "^1.1.15",
     "http-build-query": "^0.7.0",
     "iconify-icon": "^1.0.1",
-    "lit": "^2.3.0",
+    "lit": "^3.1.4",
     "sortablejs": "^1.15.0"
   },
   "devDependencies": {

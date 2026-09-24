@@ -92,7 +92,14 @@ Controllers extend `Disciple_Tools_Autolink_Controller`, which supplies `$this->
 
 Laravel Mix (`webpack.mix.js`) builds three entries into `dist/`: `magic-link/magic-link.js`, `admin/admin.js`, `magic-link/magic-link.css`.
 
-JS components are Lit elements extending `DtBase` from `@disciple.tools/web-components`, registered with `window.customElements.define`, and most override `createRenderRoot()` to return `this` (light DOM) so page CSS applies. TypeScript-style `@property` decorators are enabled via the `2018-09` decorators plugin in `babel.config.json`.
+JS components are Lit elements extending `DtBase` (or a concrete component such as `DtNumberField`) from `@disciple.tools/web-components`, registered with `window.customElements.define`, and most override `createRenderRoot()` to return `this` (light DOM) so page CSS applies. Declare reactive properties with `static get properties()` — decorators are **not** available; the `@babel/plugin-proposal-decorators` plugin was removed when the plugin moved to lit 3.
+
+**`@disciple.tools/web-components` is not bundled.** `webpack.mix.js` marks it `external` as the global `DtWebComponents`, which is the copy the theme enqueues (handle `web-components`, `dt-assets/build/components/index.js`). The plugin therefore always runs against whatever version the installed theme ships, and `lit` must stay on the major the theme's library uses (3.x). Two consequences to remember:
+
+- `web-components` and `web-components-css` must stay on the magic-link allow lists in `magic-link/functions.php`, and `web-components` is a declared dependency of `magic_link_scripts` so it loads first.
+- Library APIs are not ours to pin. `dt-modal` lost its `openButton` slot in 1.0, which is why `app-church-counts` renders its own trigger button and opens the modal by dispatching an `open` event at it.
+
+Known noise, not a plugin bug: `dt-modal` dispatches events named `open` and `close`, which collide with Foundation's trigger names. The theme's Foundation handler sees them on `document` and logs `'close' is not an available method for this element`. Harmless.
 
 PHP → JS data flows two ways: `wp_localize_script('magic_link_scripts', 'app'|'magic', ...)` for URLs, nonces, and translations; and JSON-in-attributes on components, e.g. `posts='<?php echo esc_attr( wp_json_encode( $churches['posts'] ) ); ?>'`.
 

@@ -1,41 +1,48 @@
 import {css, html, LitElement} from "lit";
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {DtBase} from "@disciple.tools/web-components";
-import {queryAll, property} from "lit/decorators.js";
+
+const FIELD_SELECTOR =
+    "input, select, textarea, dt-text dt-select dt-textarea [value] [name]";
 
 /**
  * @class AjaxField
  */
 export class AjaxField extends DtBase {
-    @queryAll("input, select, textarea, dt-text dt-select dt-textarea [value] [name]")
-    fields;
+    static get properties() {
+        return {
+            ...super.properties,
+            callback: {type: String},
+            method: {type: String},
+            nonce: {type: String},
+            watch: {type: String},
+            onSuccess: {type: Function},
+            content: {type: String},
+            events: {type: Array},
+            prefetch: {type: Boolean},
+            loading: {type: Boolean},
+        };
+    }
 
-    @property({type: String})
-    callback = "";
+    constructor() {
+        super();
+        this.callback = "";
+        this.method = "GET";
+        this.nonce = "";
+        this.watch = "*";
+        this.onSuccess = null;
+        this.content = "";
+        this.events = ['input', 'change'];
+        this.prefetch = true;
+        this.loading = false;
+    }
 
-    @property({type: String})
-    method = "GET";
-
-    @property({type: String})
-    nonce = "";
-
-    @property({type: String | Array})
-    watch = "*";
-
-    @property({type: Function})
-    onSuccess = null;
-
-    @property({type: String})
-    content = "";
-
-    @property({type: Array})
-    events = ['input', 'change'];
-
-    @property({type: Boolean})
-    prefetch = true;
-
-    @property({type: Boolean})
-    loading = false;
+    /**
+     * Replaces the @queryAll decorator.
+     */
+    get fields() {
+        return (this.renderRoot ?? this).querySelectorAll(FIELD_SELECTOR);
+    }
 
     /**
      * @returns {string}

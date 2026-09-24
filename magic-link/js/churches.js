@@ -1,7 +1,6 @@
 import {css, html, LitElement,} from "lit";
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {DtBase} from "@disciple.tools/web-components";
-import {property, query} from "lit/decorators.js";
 import {ref, createRef} from 'lit/directives/ref.js';
 import httpBuildQuery from 'http-build-query'
 import {keyed} from 'lit/directives/keyed.js';
@@ -10,39 +9,39 @@ import {keyed} from 'lit/directives/keyed.js';
  * @class Churches
  */
 export class Churches extends DtBase {
+    static get properties() {
+        return {
+            ...super.properties,
+            translations: {type: Object},
+            links: {type: Object},
+            content: {type: String},
+            loading: {type: Boolean},
+            posts: {type: Array},
+            total: {type: Number},
+            limit: {type: Number},
+            fields: {type: Object},
+            countFields: {type: Object},
+            error: {type: String},
+        };
+    }
+
     loadTriggerRef = createRef();
 
-    @property({type: Object})
-    translations = {};
-
-    @property({type: Object})
-    links = {};
-
-    @property({type: String})
-    content = "";
-
-    @property({type: Boolean})
-    loading = false;
-
-    @property({type: Array})
-    posts = [];
-
-    @property({type: Number})
-    total = 0;
-
-    @property({type: Number})
-    limit = 10;
-
-    @property({type: Object})
-    fields = {}
-
-    @property({type: Object})
-    countFields = {}
-
-    @property({type: String})
-    error = "";
-
     loadTriggerObserver = null;
+
+    constructor() {
+        super();
+        this.translations = {};
+        this.links = {};
+        this.content = "";
+        this.loading = false;
+        this.posts = [];
+        this.total = 0;
+        this.limit = 10;
+        this.fields = {};
+        this.countFields = {};
+        this.error = "";
+    }
 
     get hasMorePages() {
         return this.posts.length < this.total
@@ -204,54 +203,12 @@ export class Churches extends DtBase {
     }
 
     renderCounts(group) {
-        const {translations, countFields} = this;
-
-        if (!Object.values(countFields).length) {
-            return null
-        }
+        const {countFields} = this;
 
         return html`
-            <div class="church__counts">
-                ${Object.entries(countFields).map(([key, field]) => this.renderCount(group, key, field, group[key] ?? 0))}
-            </div>
+            <app-church-counts .group="${group}"
+                               .countFields="${countFields}"></app-church-counts>
         `
-    }
-
-    renderCount(group, key, field, value) {
-        return html`
-            <div class="church__count"
-                 data-churchId="${group.ID}"
-                 data-field="${key}"
-                 key="church-${group.ID}-${key}"
-            >
-                <dt-modal context="default"
-                          hideHeader>
-                    <div slot="openButton">
-                        <img class="count__icon"
-                             src="${field.icon}"
-                             alt="${field.name}"
-                             width="25"
-                             height="25">
-                        <span class="count__value">${value}</span>
-                    </div>
-
-                    <div slot="content">
-                        <app-church-health-field
-                                id="groups_${group.ID}_${key}"
-                                name="${key}"
-                                icon="${field.icon}"
-                                label="${field.name}"
-                                onChange=""
-                                value="${value}"
-                                postType="groups"
-                                postId="${group.ID}"
-                                apiRoot="${window.app.apiRoot}"
-                                min="0"
-                                placeholder="0"
-                                nonce="${window.app.nonce}"/>
-                    </div>
-                </dt-modal>
-            </div>`
     }
 
     renderLoading() {
