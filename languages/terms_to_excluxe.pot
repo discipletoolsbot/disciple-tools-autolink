@@ -11,5 +11,5 @@ msgid "https://www.eastwest.org"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://github.com/thecodezone/disciple-tools-autolink"
+msgid "https://github.com/DiscipleTools/disciple-tools-autolink"
 msgstr ""

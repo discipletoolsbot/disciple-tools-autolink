@@ -2,13 +2,13 @@
 
 /**
  * Plugin Name: Disciple.Tools - Autolink
- * Plugin URI: https://github.com/thecodezone/disciple-tools-autolink
+ * Plugin URI: https://github.com/DiscipleTools/disciple-tools-autolink
  * Description: Provides a simplified interface for managing and visualizing your Disciple.Tools network. Share access with your downstream leaders to easily build your group tree.
  * Text Domain: disciple-tools-autolink
  * Domain Path: /languages
  * Version:  1.0.11
  * Author URI: https://www.eastwest.org/
- * GitHub Plugin URI: https://github.com/thecodezone/disciple-tools-autolink
+ * GitHub Plugin URI: https://github.com/DiscipleTools/disciple-tools-autolink
  * Requires at least 4.7.0
  * (Requires 4.7+ because of the integration of the REST API at 4.7 and the security requirements of this milestone version.)
  * Tested up to: 5.6
@@ -298,7 +298,7 @@ add_action( 'plugins_loaded', function () {
 		}
 		if ( class_exists( 'Puc_v4_Factory' ) ) {
 			Puc_v4_Factory::buildUpdateChecker(
-				'https://raw.githubusercontent.com/thecodezone/disciple-tools-autolink/master/version-control.json',
+				'https://raw.githubusercontent.com/DiscipleTools/disciple-tools-autolink/master/version-control.json',
 				__FILE__,
 				'disciple-tools-autolink'
 			);

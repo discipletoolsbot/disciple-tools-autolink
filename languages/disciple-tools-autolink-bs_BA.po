@@ -26,8 +26,8 @@ msgstr "Disciple.Tools - autolink"
 
 #. Plugin URI of the plugin
 #: disciple-tools-autolink.php
-msgid "https://github.com/thecodezone/disciple-tools-autolink"
-msgstr "https://github.com/thecodezone/disciple-tools-autolink"
+msgid "https://github.com/DiscipleTools/disciple-tools-autolink"
+msgstr "https://github.com/DiscipleTools/disciple-tools-autolink"
 
 #. Description of the plugin
 #: disciple-tools-autolink.php

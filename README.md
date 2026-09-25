@@ -1,4 +1,4 @@
-![Plugin Banner](https://raw.githubusercontent.com/thecodezone/disciple-tools-autolink/master/documentation/banner.png)
+![Plugin Banner](https://raw.githubusercontent.com/DiscipleTools/disciple-tools-autolink/master/documentation/banner.png)
 
 # Disciple.Tools - Autolink
 
@@ -26,14 +26,14 @@ from one simple link.
 ## Contribution
 
 Contributions welcome. You can report issues and bugs in the
-[Issues](https://github.com/thecodezone/disciple-tools-autolink/issues) section of the repo. You can present ideas
-in the [Discussions](https://github.com/thecodezone/disciple-tools-autolink/discussions) section of the repo. And
-code contributions are welcome using the [Pull Request](https://github.com/thecodezone/disciple-tools-autolink/pulls)
+[Issues](https://github.com/DiscipleTools/disciple-tools-autolink/issues) section of the repo. You can present ideas
+in the [Discussions](https://github.com/DiscipleTools/disciple-tools-autolink/discussions) section of the repo. And
+code contributions are welcome using the [Pull Request](https://github.com/DiscipleTools/disciple-tools-autolink/pulls)
 system for git. For a more details on contribution see the
-[contribution guidelines](https://github.com/thecodezone/disciple-tools-autolink/blob/master/CONTRIBUTING.md).
+[contribution guidelines](https://github.com/DiscipleTools/disciple-tools-autolink/blob/master/CONTRIBUTING.md).
 
 ## Screenshots
 
-![screenshot](https://raw.githubusercontent.com/thecodezone/disciple-tools-autolink/master/documentation/screenshot_1.png)
-![screenshot](https://raw.githubusercontent.com/thecodezone/disciple-tools-autolink/master/documentation/screenshot_2.png)
-![screenshot](https://raw.githubusercontent.com/thecodezone/disciple-tools-autolink/master/documentation/screenshot_3.png)
+![screenshot](https://raw.githubusercontent.com/DiscipleTools/disciple-tools-autolink/master/documentation/screenshot_1.png)
+![screenshot](https://raw.githubusercontent.com/DiscipleTools/disciple-tools-autolink/master/documentation/screenshot_2.png)
+![screenshot](https://raw.githubusercontent.com/DiscipleTools/disciple-tools-autolink/master/documentation/screenshot_3.png)
