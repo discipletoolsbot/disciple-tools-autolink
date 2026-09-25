@@ -148,7 +148,7 @@ msgstr ""
 #, fuzzy, php-format
 #| msgid "Delete"
 msgid "Delete %s"
-msgstr "తొలగించు"
+msgstr "తొలగించు %s"
 
 #. translators: %s: lowercased singular name of the group post type, e.g. "church".
 #: controllers/app.php:42

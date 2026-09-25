@@ -146,7 +146,7 @@ msgstr "अवैध समूह नेस्टिङ."
 #: magic-link/functions.php:97 magic-link/functions.php:335
 #, php-format
 msgid "My %s"
-msgstr ""
+msgstr "मेरा %s"
 
 #: controllers/app.php:36
 msgid "Church Start Date"
@@ -155,17 +155,16 @@ msgstr "चर्च को रूख"
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:38 controllers/controller.php:38
 #: magic-link/functions.php:343
-#, fuzzy, php-format
-#| msgid "View"
+#, php-format
 msgid "View %s"
-msgstr "दृश्य"
+msgstr "दृश्य %s"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:40
 #, fuzzy, php-format
 #| msgid "Delete"
 msgid "Delete %s"
-msgstr "मेट्नुहोस्"
+msgstr "मेट्नुहोस् %s"
 
 #. translators: %s: lowercased singular name of the group post type, e.g. "church".
 #: controllers/app.php:42
@@ -176,10 +175,9 @@ msgstr "तपाईँ यसलाई मेट्न निश्चित �
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:44 controllers/group.php:50
-#, fuzzy, php-format
-#| msgid "Edit"
+#, php-format
 msgid "Edit %s"
-msgstr "सम्पादन गर्नुहोस्"
+msgstr "सम्पादन गर्नुहोस् %s"
 
 #: controllers/app.php:45
 msgid "More"
@@ -208,10 +206,9 @@ msgstr ""
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/controller.php:41 magic-link/functions.php:346
-#, fuzzy, php-format
-#| msgid "Health"
+#, php-format
 msgid "%s Health"
-msgstr "स्वास्थ्य"
+msgstr "%s स्वास्थ्य"
 
 #: controllers/controller.php:42 magic-link/functions.php:347
 msgid "Tree"
@@ -227,10 +224,9 @@ msgstr ""
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/group.php:53
-#, fuzzy, php-format
-#| msgid "Create"
+#, php-format
 msgid "Create %s"
-msgstr "सिर्जना गर्नुहोस्"
+msgstr "सिर्जना गर्नुहोस् %s"
 
 #: controllers/group.php:63
 msgid "Save"
@@ -244,10 +240,9 @@ msgstr ""
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/group.php:311
-#, fuzzy, php-format
-#| msgid "Parent"
+#, php-format
 msgid "Parent %s"
-msgstr "आमाबाबु"
+msgstr "आमाबाबु %s"
 
 #: controllers/group.php:345
 msgid "Unauthorized action. Please refresh the page and try again."
@@ -279,10 +274,9 @@ msgstr "एउटा अनपेक्षित त्रुटि उत्प
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/tree.php:24
-#, fuzzy, php-format
-#| msgid "Tree"
+#, php-format
 msgid "%s Tree"
-msgstr "रूख"
+msgstr "%s रूख"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:26
@@ -316,7 +310,7 @@ msgstr ""
 #: controllers/tree.php:35
 #, fuzzy, php-format
 msgid "%s you lead"
-msgstr "के तपाईं नेतृत्व गर्दै हुनुहुन्छ?"
+msgstr "%s के तपाईं नेतृत्व गर्दै हुनुहुन्छ?"
 
 #: controllers/tree.php:36
 #, fuzzy
@@ -372,10 +366,9 @@ msgstr "तपाईं कति जना नेतालाई प्रश�
 
 #. translators: %s: lowercased plural name of the group post type, e.g. "churches".
 #: magic-link/functions.php:311
-#, fuzzy, php-format
-#| msgid "How many leaders are you coaching?"
+#, php-format
 msgid "How many %s are you leading?"
-msgstr "तपाईं कति जना नेतालाई प्रशिक्षण दिइरहनुभएको छ?"
+msgstr "कति धेरै %s के तपाईं नेतृत्व गर्दै हुनुहुन्छ?"
 
 #: magic-link/login-app.php:144
 msgid "Error: Invalid username/password combination."

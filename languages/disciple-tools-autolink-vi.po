@@ -134,7 +134,7 @@ msgstr "Video đào tạo không tồn tại."
 #: magic-link/functions.php:97 magic-link/functions.php:335
 #, php-format
 msgid "My %s"
-msgstr ""
+msgstr "%s của tôi"
 
 #: controllers/app.php:36
 msgid "Church Start Date"
@@ -143,17 +143,16 @@ msgstr "Ngày thành lập Hội thánh"
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:38 controllers/controller.php:38
 #: magic-link/functions.php:343
-#, fuzzy, php-format
-#| msgid "View"
+#, php-format
 msgid "View %s"
-msgstr "Xem"
+msgstr "Xem %s"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:40
 #, fuzzy, php-format
 #| msgid "Delete"
 msgid "Delete %s"
-msgstr "Xoá"
+msgstr "Xoá %s"
 
 #. translators: %s: lowercased singular name of the group post type, e.g. "church".
 #: controllers/app.php:42
@@ -164,10 +163,9 @@ msgstr "Bạn có chắc chắn muốn xoá . "
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:44 controllers/group.php:50
-#, fuzzy, php-format
-#| msgid "Edit"
+#, php-format
 msgid "Edit %s"
-msgstr "Chỉnh sửa"
+msgstr "Chỉnh sửa %s"
 
 #: controllers/app.php:45
 msgid "More"
@@ -195,10 +193,9 @@ msgstr ""
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/controller.php:41 magic-link/functions.php:346
-#, fuzzy, php-format
-#| msgid "Health"
+#, php-format
 msgid "%s Health"
-msgstr "Sức khoẻ"
+msgstr "%s Sức khoẻ"
 
 #: controllers/controller.php:42 magic-link/functions.php:347
 msgid "Tree"
@@ -214,10 +211,9 @@ msgstr "Đào tạo"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/group.php:53
-#, fuzzy, php-format
-#| msgid "Create"
+#, php-format
 msgid "Create %s"
-msgstr "Tạo"
+msgstr "Tạo %s"
 
 #: controllers/group.php:63
 msgid "Save"
@@ -225,17 +221,15 @@ msgstr "Lưu"
 
 #. translators: %s: lowercased singular name of the group post type, e.g. "church".
 #: controllers/group.php:301
-#, fuzzy, php-format
-#| msgid "Select a"
+#, php-format
 msgid "Select a %s..."
-msgstr "Chọn một"
+msgstr "Chọn một %s..."
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/group.php:311
-#, fuzzy, php-format
-#| msgid "Parent"
+#, php-format
 msgid "Parent %s"
-msgstr "Phụ huynh"
+msgstr "Phụ huynh %s"
 
 #: controllers/group.php:345
 msgid "Unauthorized action. Please refresh the page and try again."
@@ -267,23 +261,21 @@ msgstr "Có lỗi bất ngờ xảy ra."
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/tree.php:24
-#, fuzzy, php-format
-#| msgid "Tree"
+#, php-format
 msgid "%s Tree"
-msgstr "Cây"
+msgstr "%s Cây"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:26
-#, fuzzy, php-format
-#| msgid "Unassigned"
+#, php-format
 msgid "Unassigned %s"
-msgstr "Chưa được phân công"
+msgstr "Chưa được phân công %s"
 
 #. translators: 1: singular name of the group post type, e.g. "Church". 2: the translated word "Tree".
 #: controllers/tree.php:28
 #, php-format
 msgid "Move these to the %1$s %2$s to assign them to a %1$s."
-msgstr ""
+msgstr "Chuyển những cái này tới %1$s %2$s để phân công cho một %1$s."
 
 #: controllers/tree.php:29
 msgid "Key"
@@ -291,24 +283,21 @@ msgstr "Chìa khoá"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:31
-#, fuzzy, php-format
-#| msgid "you are assigned"
+#, php-format
 msgid "%s you are assigned"
-msgstr "bạn được phân công"
+msgstr "%s bạn được phân công"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:33
-#, fuzzy, php-format
-#| msgid "assigned to those you coach"
+#, php-format
 msgid "%s assigned to those you coach"
-msgstr "được phân công cho những người bạn huấn luyện"
+msgstr "%s được phân công cho những người bạn huấn luyện"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:35
-#, fuzzy, php-format
-#| msgid "you lead"
+#, php-format
 msgid "%s you lead"
-msgstr "bạn lãnh đạo"
+msgstr "%s bạn lãnh đạo"
 
 #: controllers/tree.php:36
 msgid "Generation Number"
@@ -318,7 +307,7 @@ msgstr "Số thế hệ"
 #: controllers/tree.php:38
 #, php-format
 msgid "No %s found."
-msgstr ""
+msgstr "Không. %s found."
 
 #: disciple-tools-autolink.php:179
 msgid "Autolink"
@@ -362,10 +351,9 @@ msgstr "Bạn đang huấn luyện bao nhiêu lãnh đạo?"
 
 #. translators: %s: lowercased plural name of the group post type, e.g. "churches".
 #: magic-link/functions.php:311
-#, fuzzy, php-format
-#| msgid "How many leaders are you coaching?"
+#, php-format
 msgid "How many %s are you leading?"
-msgstr "Bạn đang huấn luyện bao nhiêu lãnh đạo?"
+msgstr "Bao nhiêu %s bạn đang lãnh đạo?"
 
 #: magic-link/login-app.php:144
 msgid "Error: Invalid username/password combination."

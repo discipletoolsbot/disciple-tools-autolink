@@ -137,7 +137,7 @@ msgstr "Vídeos de entrenamiento no válidos."
 #: magic-link/functions.php:97 magic-link/functions.php:335
 #, php-format
 msgid "My %s"
-msgstr ""
+msgstr "Mis %s"
 
 #: controllers/app.php:36
 msgid "Church Start Date"
@@ -146,31 +146,29 @@ msgstr "Fecha de inicio de la iglesia"
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:38 controllers/controller.php:38
 #: magic-link/functions.php:343
-#, fuzzy, php-format
-#| msgid "View"
+#, php-format
 msgid "View %s"
-msgstr "Ver"
+msgstr "Ver %s"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:40
 #, fuzzy, php-format
 #| msgid "Delete"
 msgid "Delete %s"
-msgstr "Borrar"
+msgstr "Borrar %s"
 
 #. translators: %s: lowercased singular name of the group post type, e.g. "church".
 #: controllers/app.php:42
 #, fuzzy, php-format
 #| msgid "Are you sure you want to delete this "
 msgid "Are you sure you want to delete this %s?"
-msgstr "¿Está seguro de que desea eliminar esto? "
+msgstr "¿Está seguro de que desea eliminar este %s?"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:44 controllers/group.php:50
-#, fuzzy, php-format
-#| msgid "Edit"
+#, php-format
 msgid "Edit %s"
-msgstr "Editar"
+msgstr "Editar %s"
 
 #: controllers/app.php:45
 msgid "More"
@@ -198,10 +196,9 @@ msgstr ""
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/controller.php:41 magic-link/functions.php:346
-#, fuzzy, php-format
-#| msgid "Health"
+#, php-format
 msgid "%s Health"
-msgstr "Estado"
+msgstr "Estado de %s"
 
 #: controllers/controller.php:42 magic-link/functions.php:347
 msgid "Tree"
@@ -217,10 +214,9 @@ msgstr "Formación"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/group.php:53
-#, fuzzy, php-format
-#| msgid "Create"
+#, php-format
 msgid "Create %s"
-msgstr "Crear"
+msgstr "Crear %s"
 
 #: controllers/group.php:63
 msgid "Save"
@@ -228,17 +224,15 @@ msgstr "Guardar"
 
 #. translators: %s: lowercased singular name of the group post type, e.g. "church".
 #: controllers/group.php:301
-#, fuzzy, php-format
-#| msgid "Select a"
+#, php-format
 msgid "Select a %s..."
-msgstr "Seleccione un"
+msgstr "Seleccione un %s..."
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/group.php:311
-#, fuzzy, php-format
-#| msgid "Parent"
+#, php-format
 msgid "Parent %s"
-msgstr "Padre"
+msgstr "%s padre"
 
 #: controllers/group.php:345
 msgid "Unauthorized action. Please refresh the page and try again."
@@ -270,23 +264,21 @@ msgstr "Ha ocurrido un error inesperado."
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/tree.php:24
-#, fuzzy, php-format
-#| msgid "Tree"
+#, php-format
 msgid "%s Tree"
-msgstr "Árbol"
+msgstr "Árbol de %s"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:26
-#, fuzzy, php-format
-#| msgid "Unassigned"
+#, php-format
 msgid "Unassigned %s"
-msgstr "No asignado"
+msgstr "%s sin asignar"
 
 #. translators: 1: singular name of the group post type, e.g. "Church". 2: the translated word "Tree".
 #: controllers/tree.php:28
 #, php-format
 msgid "Move these to the %1$s %2$s to assign them to a %1$s."
-msgstr ""
+msgstr "Muévalos al %2$s de %1$s para asignarlos a un %1$s."
 
 #: controllers/tree.php:29
 msgid "Key"
@@ -294,24 +286,21 @@ msgstr "Clabe"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:31
-#, fuzzy, php-format
-#| msgid "you are assigned"
+#, php-format
 msgid "%s you are assigned"
-msgstr "estas asignado"
+msgstr "%s que se te han asignado"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:33
-#, fuzzy, php-format
-#| msgid "assigned to those you coach"
+#, php-format
 msgid "%s assigned to those you coach"
-msgstr "asignado a aquellos a quienes entrenas"
+msgstr "%s que se han asignado a aquellos a quienes entrenas"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:35
-#, fuzzy, php-format
-#| msgid "you lead"
+#, php-format
 msgid "%s you lead"
-msgstr "tu lideras"
+msgstr "%s que lideras"
 
 #: controllers/tree.php:36
 msgid "Generation Number"
@@ -321,7 +310,7 @@ msgstr "Número de generación"
 #: controllers/tree.php:38
 #, php-format
 msgid "No %s found."
-msgstr ""
+msgstr "No se encontraron %s."
 
 #: disciple-tools-autolink.php:179
 msgid "Autolink"
@@ -365,10 +354,9 @@ msgstr "¿Cuántos líderes estás entrenando?"
 
 #. translators: %s: lowercased plural name of the group post type, e.g. "churches".
 #: magic-link/functions.php:311
-#, fuzzy, php-format
-#| msgid "How many leaders are you coaching?"
+#, php-format
 msgid "How many %s are you leading?"
-msgstr "¿Cuántos líderes estás entrenando?"
+msgstr "¿Cuántos %s estás liderando?"
 
 #: magic-link/login-app.php:144
 msgid "Error: Invalid username/password combination."
