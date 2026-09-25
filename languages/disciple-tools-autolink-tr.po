@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Disciple.Tools - Autolink 1.0.11\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/disciple-tools-"
 "autolink\n"
-"POT-Creation-Date: 2025-02-25T16:40:06+00:00\n"
+"POT-Creation-Date: 2026-09-25T08:01:05+00:00\n"
 "PO-Revision-Date: 2024-11-07 15:00+0000\n"
 "Last-Translator: Cody Adams <izmirdeyabanci@gmail.com>\n"
 "Language-Team: Turkish <https://translate.disciple.tools/projects/disciple-"
@@ -41,267 +41,287 @@ msgstr ""
 msgid "https://www.eastwest.org/"
 msgstr ""
 
-#: charts/groups-genmap.php:95 controllers/group.php:207
+#: charts/groups-genmap.php:104 controllers/group.php:307
 msgid "Parent"
 msgstr ""
 
-#: charts/groups-genmap.php:96
+#: charts/groups-genmap.php:105
 msgid "Save Changes"
 msgstr ""
 
-#: charts/groups-genmap.php:97 controllers/group.php:82
+#: charts/groups-genmap.php:106 controllers/group.php:60
 msgid "Cancel"
 msgstr "İptal"
 
-#: charts/groups-genmap.php:98 charts/groups-genmap.php:105
+#: charts/groups-genmap.php:107 charts/groups-genmap.php:114
 msgid "Open Record"
 msgstr ""
 
-#: charts/groups-genmap.php:99
+#: charts/groups-genmap.php:108
 msgid "Center on this Node"
 msgstr ""
 
-#: charts/groups-genmap.php:100
+#: charts/groups-genmap.php:109
 msgid "OK"
 msgstr ""
 
-#: charts/groups-genmap.php:101
+#: charts/groups-genmap.php:110
 msgid "Edit Record"
 msgstr ""
 
-#: charts/groups-genmap.php:102 controllers/admin-general.php:32
+#: charts/groups-genmap.php:111 controllers/admin-general.php:34
 msgid "Reset"
 msgstr ""
 
-#: charts/groups-genmap.php:103
+#: charts/groups-genmap.php:112
 msgid "Zoom In"
 msgstr ""
 
-#: charts/groups-genmap.php:104
+#: charts/groups-genmap.php:113
 msgid "Zoom Out"
 msgstr ""
 
-#: controllers/admin-general.php:25
+#: controllers/admin-general.php:27
 msgid "Training videos could not be loaded. Resetting to default content."
 msgstr ""
 
-#: controllers/admin-general.php:29
+#: controllers/admin-general.php:31
 msgid "Training Videos"
 msgstr ""
 
-#: controllers/admin-general.php:30
+#: controllers/admin-general.php:32
 msgid "Title"
 msgstr ""
 
-#: controllers/admin-general.php:31
+#: controllers/admin-general.php:33
 msgid "Embed"
 msgstr ""
 
-#: controllers/admin-general.php:33
+#: controllers/admin-general.php:35
 msgid "Add"
 msgstr ""
 
-#: controllers/admin-general.php:34
+#: controllers/admin-general.php:36
 msgid "Remove"
 msgstr ""
 
-#: controllers/admin-general.php:35
+#: controllers/admin-general.php:37
 msgid "Are you sure you want to reset the training videos to default content?"
 msgstr ""
 
-#: controllers/admin-general.php:36
+#: controllers/admin-general.php:38
 msgid "Are you sure you want to remove this video?"
 msgstr ""
 
-#: controllers/admin-general.php:37
+#: controllers/admin-general.php:39
 msgid "Up"
 msgstr ""
 
-#: controllers/admin-general.php:38
+#: controllers/admin-general.php:40
 msgid "Down"
 msgstr ""
 
-#: controllers/admin-general.php:108
+#: controllers/admin-general.php:109
 msgid "Invalid training videos."
 msgstr ""
 
-#: controllers/app.php:34
-msgid "My"
+#: controllers/app.php:34 controllers/controller.php:28
+#: magic-link/functions.php:330
+msgid "My Groups"
 msgstr ""
 
 #: controllers/app.php:35
 msgid "Church Start Date"
 msgstr ""
 
-#: controllers/app.php:36 controllers/controller.php:36
-#: magic-link/functions.php:267
-msgid "View"
+#: controllers/app.php:36
+msgid "View Group"
 msgstr ""
 
 #: controllers/app.php:37
-msgid "Delete"
+msgid "Delete Group"
 msgstr ""
 
 #: controllers/app.php:38
-msgid "Are you sure you want to delete this "
+msgid "Are you sure you want to delete this group?"
 msgstr ""
 
-#: controllers/app.php:39 controllers/group.php:71
-msgid "Edit"
+#: controllers/app.php:39
+msgid "Edit Group"
 msgstr ""
 
 #: controllers/app.php:40
 msgid "More"
 msgstr ""
 
-#: controllers/controller.php:22 magic-link/functions.php:80
-#: magic-link/functions.php:254
+#: controllers/controller.php:22 magic-link/functions.php:91
+#: magic-link/functions.php:324
 msgid "Hello,"
 msgstr ""
 
-#: controllers/controller.php:25 magic-link/functions.php:81
-#: magic-link/functions.php:257
+#: controllers/controller.php:25 magic-link/functions.php:92
+#: magic-link/functions.php:327
 msgid "Coached by"
 msgstr ""
 
-#: controllers/controller.php:26 magic-link/functions.php:82
-#: magic-link/functions.php:258
+#: controllers/controller.php:26 magic-link/functions.php:93
+#: magic-link/functions.php:328
 msgid "My Link"
 msgstr ""
 
-#: controllers/controller.php:27 magic-link/functions.php:259
+#: controllers/controller.php:27 magic-link/functions.php:329
 msgid "Copy this link and share it with people you are coaching."
 msgstr ""
 
-#: controllers/controller.php:28 magic-link/functions.php:260
-msgid "My "
+#: controllers/controller.php:36 magic-link/functions.php:337
+msgid "View"
 msgstr ""
 
-#: controllers/controller.php:38 magic-link/functions.php:269
+#: controllers/controller.php:38 magic-link/functions.php:339
 msgid "Health"
 msgstr ""
 
-#: controllers/controller.php:39 magic-link/functions.php:270
+#: controllers/controller.php:39 magic-link/functions.php:340
 msgid "Tree"
 msgstr ""
 
-#: controllers/controller.php:40 magic-link/functions.php:271
+#: controllers/controller.php:40 magic-link/functions.php:341
 msgid "GenMap"
 msgstr ""
 
-#: controllers/controller.php:41 magic-link/functions.php:78
+#: controllers/controller.php:41 magic-link/functions.php:88
 msgid "Training"
 msgstr ""
 
-#: controllers/group.php:73
+#: controllers/group.php:49
+msgid "Edit"
+msgstr ""
+
+#: controllers/group.php:51
 msgid "Create"
 msgstr ""
 
-#: controllers/group.php:83
+#: controllers/group.php:61
 msgid "Save"
 msgstr ""
 
-#: controllers/group.php:198
+#: controllers/group.php:298
 msgid "Select a"
 msgstr ""
 
-#: controllers/group.php:241
+#: controllers/group.php:341
 msgid "Unauthorized action. Please refresh the page and try again."
 msgstr ""
 
-#: controllers/group.php:263
+#: controllers/group.php:363
 msgid "Back to AutoLink"
 msgstr ""
 
-#: controllers/group.php:457
+#: controllers/group.php:573
 msgid "Unauthorized"
 msgstr ""
 
-#: controllers/group.php:472
+#: controllers/group.php:588
 msgid "Could not fetch groups"
+msgstr ""
+
+#: controllers/language.php:20
+msgid "No language was given."
+msgstr ""
+
+#: controllers/language.php:26
+msgid "That language is not available."
 msgstr ""
 
 #: controllers/login.php:38 controllers/register.php:56
 msgid "An unexpected error has occurred."
 msgstr ""
 
-#: controllers/tree.php:23
+#: controllers/tree.php:24
 msgid "Unassigned"
 msgstr ""
 
-#: controllers/tree.php:24
+#: controllers/tree.php:25
 msgid "Move these to the"
 msgstr ""
 
-#: controllers/tree.php:24
+#: controllers/tree.php:25
 msgid "to assign them to a"
 msgstr ""
 
-#: controllers/tree.php:25
+#: controllers/tree.php:26
 msgid "Key"
 msgstr ""
 
-#: controllers/tree.php:26
+#: controllers/tree.php:27
 msgid "you are assigned"
 msgstr ""
 
-#: controllers/tree.php:27
+#: controllers/tree.php:28
 msgid "assigned to those you coach"
 msgstr ""
 
-#: controllers/tree.php:28
+#: controllers/tree.php:29
 msgid "you lead"
 msgstr ""
 
-#: controllers/tree.php:29
+#: controllers/tree.php:30
 msgid "Generation Number"
 msgstr ""
 
-#: controllers/tree.php:30
+#: controllers/tree.php:31
 msgid "No "
 msgstr ""
 
-#: disciple-tools-autolink.php:178
+#: disciple-tools-autolink.php:179
 msgid "Autolink"
 msgstr ""
 
-#: magic-link/functions.php:73
+#: magic-link/functions.php:83
 msgid "Add Magic"
 msgstr ""
 
-#: magic-link/functions.php:74
+#: magic-link/functions.php:84
 msgid "Go to Disciple.Tools"
 msgstr ""
 
-#: magic-link/functions.php:75
+#: magic-link/functions.php:85
 msgid "Update Survey Answers"
 msgstr ""
 
-#: magic-link/functions.php:76
+#: magic-link/functions.php:86
 msgid "Give Feedback"
 msgstr ""
 
-#: magic-link/functions.php:77
+#: magic-link/functions.php:87
 msgid "Log Out"
 msgstr ""
 
-#: magic-link/functions.php:79
+#: magic-link/functions.php:89
 msgid "Toggle Menu"
 msgstr ""
 
-#: magic-link/functions.php:83
+#: magic-link/functions.php:90
+msgid "Language"
+msgstr ""
+
+#: magic-link/functions.php:94
 msgid "My Churches"
 msgstr ""
 
-#: magic-link/functions.php:233
+#: magic-link/functions.php:95
+msgid "Close"
+msgstr ""
+
+#: magic-link/functions.php:303
 msgid "How many leaders are you coaching?"
 msgstr ""
 
-#: magic-link/functions.php:237
+#: magic-link/functions.php:307
 msgid "How many"
 msgstr ""
 
-#: magic-link/functions.php:237
+#: magic-link/functions.php:307
 msgid "are you leading?"
 msgstr ""
 
