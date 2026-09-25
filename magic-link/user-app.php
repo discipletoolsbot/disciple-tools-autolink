@@ -24,6 +24,7 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 	public $login_controller;
 	public $field_controller;
 	public $training_controller;
+	public $language_controller;
 	public $meta = [];
 	private $meta_key = 'autolink-app'; // Allows for instance specific data.
 
@@ -66,14 +67,20 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 		$this->login_controller    = new Disciple_Tools_Autolink_Login_Controller();
 		$this->field_controller    = new Disciple_Tools_Autolink_Field_Controller();
 		$this->training_controller = new Disciple_Tools_Autolink_Training_Controller();
+		$this->language_controller = new Disciple_Tools_Autolink_Language_Controller();
 		//Genmapper isn't loaded on every request
 		$this->functions->init_genmapper();
 
 		$action = sanitize_key( wp_unslash( $_GET['action'] ?? '' ) );
-		if ( dt_is_rest() || $action === 'genmap'
-		                     && class_exists( 'DT_Genmapper_Metrics' ) ) {
+		// Genmapper is an optional dependency. `&&` binds tighter than `||`, so the
+		// class_exists() check used to apply only to the genmap screen and every REST
+		// request loaded the chart - which fatals on a site without the plugin.
+		if ( ( dt_is_rest() || $action === 'genmap' ) && class_exists( 'DT_Genmapper_Metrics' ) ) {
 			require_once __DIR__ . "/../charts/groups-genmap.php";
-			new Disciple_Tools_Autolink_Genmap();
+
+			if ( class_exists( 'Disciple_Tools_Autolink_Genmap' ) ) {
+				new Disciple_Tools_Autolink_Genmap();
+			}
 		}
 
 		/**
@@ -162,13 +169,14 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 					$this->login_controller->logout();
 					break;
 				case 'training':
+					// The controller redirects back to the app when training is disabled.
 					$this->training_controller->show();
 					break;
 				case 'group':
 					$this->group_controller->show();
 					break;
 				default:
-					if ( ! $this->functions->survey_completed() ) {
+					if ( ! $this->functions->survey_completed() && $this->functions->survey_enabled() ) {
 						return wp_redirect( $this->functions->get_app_link() . '?action=survey' );
 					}
 					$this->app_controller->show();
@@ -217,7 +225,7 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 	 * - description:       Magic link type description.
 	 * - settings_display:  Boolean flag which determines if magic link type is to be listed within frontend user profile settings.
 	 *
-	 * @param $apps_list
+	 * @param array $apps_list
 	 *
 	 * @return mixed
 	 */
@@ -296,6 +304,8 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 				return $this->tree_controller->process( $request, $params, $user_id );
 			case 'update_field':
 				return $this->field_controller->update( $request, $params, $user_id );
+			case 'switch_language':
+				return $this->language_controller->update( $request, $params, $user_id );
 			default:
 				return new WP_Error( __METHOD__, "Invalid action", [ 'status' => 400 ] );
 		}

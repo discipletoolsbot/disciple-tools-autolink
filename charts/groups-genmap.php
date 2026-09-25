@@ -3,7 +3,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly.
 
-require_once WP_PLUGIN_DIR . '/disciple-tools-genmapper/includes/charts/charts-base.php';
+$dt_autolink_genmapper_charts_base = WP_PLUGIN_DIR . '/disciple-tools-genmapper/includes/charts/charts-base.php';
+
+// Genmapper is an optional dependency - the genmap tab is hidden without it (see
+// templates/parts/church-view-tabs.php). Bail rather than fataling on the require
+// so this file is safe to include on a site that does not have the plugin.
+if ( ! file_exists( $dt_autolink_genmapper_charts_base ) ) {
+	return;
+}
+
+require_once $dt_autolink_genmapper_charts_base;
 
 class Disciple_Tools_Autolink_Genmap extends DT_Genmapper_Metrics_Chart_Base {
 	public $title = 'Groups';

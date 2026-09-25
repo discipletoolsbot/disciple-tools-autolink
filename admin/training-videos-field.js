@@ -1,8 +1,6 @@
 import {html, css, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
-@customElement('admin-training-videos-field')
 export class TrainingVideosField extends LitElement {
     static styles = css`
       .button,
@@ -67,34 +65,32 @@ export class TrainingVideosField extends LitElement {
       }
     `;
 
-    internals;
-    @property({
-        type: Array,
-        reflect: true
-    })
-    value = [];
-    @property({
-        type: Array
-    })
-    default = []
-    @property({
-        type: Object
-    })
-    translations = {
-        title: 'Title',
-        embed: 'Embed',
-        reset: 'Reset',
-        add: 'Add',
-        remove: 'Remove',
-        resetConfirm: 'Are you sure you want to revert to default content?',
-        removeConfirm: 'Are you sure you want to remove this video?',
-        up: 'Up',
-        down: 'Down'
+    static get properties() {
+        return {
+            value: {type: Array, reflect: true},
+            default: {type: Array},
+            translations: {type: Object},
+        };
     }
+
+    internals;
 
     constructor() {
         super();
         this.internals = this.attachInternals();
+        this.value = [];
+        this.default = [];
+        this.translations = {
+            title: 'Title',
+            embed: 'Embed',
+            reset: 'Reset',
+            add: 'Add',
+            remove: 'Remove',
+            resetConfirm: 'Are you sure you want to revert to default content?',
+            removeConfirm: 'Are you sure you want to remove this video?',
+            up: 'Up',
+            down: 'Down'
+        };
     }
 
     static get formAssociated() {
@@ -238,3 +234,5 @@ export class TrainingVideosField extends LitElement {
         this.value = [...this.value];
     }
 }
+
+window.customElements.define("admin-training-videos-field", TrainingVideosField);

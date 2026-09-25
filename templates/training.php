@@ -4,12 +4,12 @@
 
 <div class="container">
 	<?php foreach ( $videos as $video ): ?>
-        <dt-tile title="<?php echo esc_attr( $video->title ) ?>">
+        <dt-tile title="<?php echo esc_attr( $video['title'] ) ?>">
             <div class="section__inner">
                 <div class="embed embed--video">
 					<?php
 					/* phpcs:ignore */
-					echo $video->embed
+					echo $video['embed']
 					?>
                 </div>
             </div>

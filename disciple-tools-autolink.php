@@ -85,6 +85,7 @@ class Disciple_Tools_Autolink {
 		require_once __DIR__ . '/controllers/admin.php';
 		require_once __DIR__ . '/controllers/admin-general.php';
 		require_once __DIR__ . '/controllers/training.php';
+		require_once __DIR__ . '/controllers/language.php';
 		require_once __DIR__ . '/charts/groups-tree.php';
 		require_once __DIR__ . '/admin/settings.php';
 
@@ -288,7 +289,7 @@ if ( ! function_exists( "dt_hook_ajax_notice_handler" ) ) {
 
 
 add_action( 'plugins_loaded', function () {
-	if ( is_admin() && ! ( is_multisite() && class_exists( "DT_Multisite" ) ) || wp_doing_cron() ) {
+	if ( ( is_admin() && ! ( is_multisite() && class_exists( "DT_Multisite" ) ) ) || wp_doing_cron() ) {
 		// Check for plugin updates
 		if ( ! class_exists( 'Puc_v4_Factory' ) ) {
 			if ( file_exists( get_template_directory() . '/dt-core/libraries/plugin-update-checker/plugin-update-checker.php' ) ) {

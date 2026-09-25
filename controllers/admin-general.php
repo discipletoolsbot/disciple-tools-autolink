@@ -6,7 +6,7 @@ class Disciple_Tools_Autolink_Admin_General_Controller extends Disciple_Tools_Au
 	/**
 	 * Show the admin tab
 	 *
-	 * @param $params
+	 * @param array $params
 	 *
 	 * @return void
 	 */
@@ -16,6 +16,8 @@ class Disciple_Tools_Autolink_Admin_General_Controller extends Disciple_Tools_Au
 			'disciple_tools_autolink_allow_parent_group_selection' => $this->settings->get_option( 'disciple_tools_autolink_allow_parent_group_selection' ),
 			'disciple_tools_autolink_training_videos'              => $this->settings->get_option( 'disciple_tools_autolink_training_videos' ),
 			'disciple_tools_autolink_show_in_menu'                 => $this->settings->get_option( 'disciple_tools_autolink_show_in_menu' ),
+			'disciple_tools_autolink_show_survey'                  => $this->settings->get_option( 'disciple_tools_autolink_show_survey' ),
+			'disciple_tools_autolink_show_training'                => $this->settings->get_option( 'disciple_tools_autolink_show_training' ),
 		];
 		$error                   = $params['error'] ?? null;
 
@@ -48,13 +50,9 @@ class Disciple_Tools_Autolink_Admin_General_Controller extends Disciple_Tools_Au
 			return false;
 		}
 
-		if ( ! str_contains( $videos, 'title' ) ) {
-			return false;
-		}
+		$videos = json_decode( $videos );
 
-		try {
-			$videos = json_decode( $videos );
-		} catch ( Exception $e ) {
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
 			return false;
 		}
 
@@ -62,8 +60,9 @@ class Disciple_Tools_Autolink_Admin_General_Controller extends Disciple_Tools_Au
 			return false;
 		}
 
+		// An empty list is valid: it is how an admin turns the training section off.
 		if ( count( $videos ) === 0 ) {
-			return false;
+			return true;
 		}
 
 		foreach ( $videos as $video ) {
@@ -86,7 +85,7 @@ class Disciple_Tools_Autolink_Admin_General_Controller extends Disciple_Tools_Au
 	/**
 	 * Save the admin  settings
 	 *
-	 * @param $params
+	 * @param array $params
 	 *
 	 * @throws Exception
 	 *
@@ -98,19 +97,23 @@ class Disciple_Tools_Autolink_Admin_General_Controller extends Disciple_Tools_Au
 		}
 
 		$post_vars = dt_recursive_sanitize_array( $_POST );
-		//Don't sanitize the training videos because we are saving HTML
-		// phpcs:ignore
-		$post_vars['disciple_tools_autolink_training_videos'] = stripslashes( preg_replace( '/[\x00-\x1F\x80-\xFF]/', '', $_POST['disciple_tools_autolink_training_videos'] ) ) ?? false;
 
-		if ( isset( $post_vars['disciple_tools_autolink_training_videos'] ) ) {
-			$is_valid = $this->validate_videos( $post_vars['disciple_tools_autolink_training_videos'] );
-			if ( ! $is_valid ) {
+		if ( isset( $_POST['disciple_tools_autolink_training_videos'] ) ) {
+			//Don't sanitize the training videos because we are saving HTML.
+			//Strip control characters only - they break JSON decoding. Leave
+			//high bytes alone so non-ASCII titles survive the round trip.
+			// phpcs:ignore
+			$training_videos = stripslashes( preg_replace( '/[\x00-\x1F]/', '', (string) $_POST['disciple_tools_autolink_training_videos'] ) );
+
+			if ( ! $this->validate_videos( $training_videos ) ) {
 				throw new Exception( esc_attr( __( 'Invalid training videos.', 'disciple-tools-autolink' ) ) );
 			}
-			update_option( 'disciple_tools_autolink_training_videos', $post_vars['disciple_tools_autolink_training_videos'] );
+			update_option( 'disciple_tools_autolink_training_videos', $training_videos );
 		}
 
 		update_option( 'disciple_tools_autolink_allow_parent_group_selection', ( isset( $post_vars['disciple_tools_autolink_allow_parent_group_selection'] ) && $post_vars['disciple_tools_autolink_allow_parent_group_selection'] === '1' ) ? "1" : "0" );
 		update_option( 'disciple_tools_autolink_show_in_menu', ( isset( $post_vars['disciple_tools_autolink_show_in_menu'] ) && $post_vars['disciple_tools_autolink_show_in_menu'] === '1' ) ? "1" : "0" );
+		update_option( 'disciple_tools_autolink_show_survey', ( isset( $post_vars['disciple_tools_autolink_show_survey'] ) && $post_vars['disciple_tools_autolink_show_survey'] === '1' ) ? "1" : "0" );
+		update_option( 'disciple_tools_autolink_show_training', ( isset( $post_vars['disciple_tools_autolink_show_training'] ) && $post_vars['disciple_tools_autolink_show_training'] === '1' ) ? "1" : "0" );
 	}
 }

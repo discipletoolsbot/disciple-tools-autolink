@@ -7,6 +7,7 @@ class Disciple_Tools_Autolink_Tree_Controller extends Disciple_Tools_Autolink_Co
 	private $tree_chart = null;
 
 	public function __construct() {
+		parent::__construct();
 		$this->functions  = Disciple_Tools_Autolink_Magic_Functions::instance();
 		$this->tree_chart = Disciple_Tools_Autolink_Groups_Tree::instance();
 	}

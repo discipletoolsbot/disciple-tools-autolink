@@ -23,7 +23,9 @@ class Disciple_Tools_Autolink_Field_Controller extends Disciple_Tools_Autolink_C
         $field     = implode( "_", $field_info );
 
         $value = wp_unslash( $body['value'] );
-        if ( ! is_array( $value ) ) {
+        if ( is_array( $value ) ) {
+            $value = dt_recursive_sanitize_array( $value );
+        } else {
             $value = sanitize_text_field( $value );
         }
 
@@ -34,7 +36,7 @@ class Disciple_Tools_Autolink_Field_Controller extends Disciple_Tools_Autolink_C
         }
 
         $payload = [
-            $field => $value
+            $field => $this->format_value( $post_type, $field, $value )
         ];
 
         try {
@@ -49,5 +51,51 @@ class Disciple_Tools_Autolink_Field_Controller extends Disciple_Tools_Autolink_C
         }
 
         wp_send_json_error( [ "message" => $result->get_error_message() ] );
+    }
+
+    /**
+     * Translate a submitted value into the format DT_Posts::update_post expects.
+     *
+     * dt-multi-select (which dt-church-health-circle extends) emits a flat
+     * array of keys, prefixing removed values with "-". Multi select fields in
+     * DT instead take [ 'values' => [ [ 'value' => x, 'delete' => bool ] ] ].
+     * Values that already arrive in the DT shape are passed through untouched.
+     *
+     * @param string $post_type
+     * @param string $field
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    private function format_value( $post_type, $field, $value ) {
+        if ( ! is_array( $value ) || isset( $value['values'] ) ) {
+            return $value;
+        }
+
+        $field_settings = DT_Posts::get_post_field_settings( $post_type );
+        $field_type     = $field_settings[ $field ]['type'] ?? '';
+
+        if ( $field_type !== 'multi_select' ) {
+            return $value;
+        }
+
+        $values = [];
+
+        foreach ( $value as $item ) {
+            if ( ! is_string( $item ) || $item === '' ) {
+                continue;
+            }
+
+            if ( strpos( $item, '-' ) === 0 ) {
+                $values[] = [
+                    'value'  => substr( $item, 1 ),
+                    'delete' => true,
+                ];
+            } else {
+                $values[] = [ 'value' => $item ];
+            }
+        }
+
+        return [ 'values' => $values ];
     }
 }

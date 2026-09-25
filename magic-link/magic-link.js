@@ -7,6 +7,7 @@ import "./js/church-tile";
 import "./js/lazyReveal";
 import "./js/churchMenu";
 import "./js/church-health-field";
+import "./js/church-counts";
 import "./js/ajax-field";
 import "./js/groups-tree";
 import "./js/churches"
@@ -18,37 +19,13 @@ import "@shoelace-style/shoelace/dist/components/tab/tab.js";
 import "@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js";
 
 
-import locationField from "./js/locationField";
+import buttonLinks from "./js/button-links";
+import componentService from "./js/component-service";
 
 loaded(() => {
     document.body.classList.add("dom-loaded");
 
-    document.querySelectorAll(".location-field").forEach(locationField);
+    buttonLinks();
+    componentService();
 
-    //Event Listener to update the church count number when the user updated the input in the modal.
-    document.addEventListener("change", (event) => {
-        let postID = event.srcElement.postID;
-        if (!event.detail) {
-            return;
-        }
-        let updatedValue = event.detail.newValue;
-        let counter = document.querySelector(
-            '[data-churchid="' +
-            postID +
-            '"][data-field="' +
-            event.srcElement.name +
-            '"]'
-        );
-
-        if (!counter) {
-            return;
-        }
-
-        let numberBadge = counter.querySelector("dt-modal > div > span");
-
-        if (!numberBadge) {
-            return;
-        }
-        numberBadge.innerHTML = updatedValue;
-    });
 });

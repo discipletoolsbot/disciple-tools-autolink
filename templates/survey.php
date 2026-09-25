@@ -24,15 +24,15 @@
                     <dt-button type="submit"
                                class="pagination__previous"
                                href="<?php echo esc_url( $previous_url ) ?>"
-                               rounded>
+                               round>
                         <dt-icon icon="mdi:chevron-left"></dt-icon>
                     </dt-button>
                 <?php endif; ?>
-                <dt-button type="submit"
-                           class="pagination__next"
-                           rounded>
+                <submit-button class="pagination__next"
+                                type="submit"
+                                round>
                     <dt-icon icon="mdi:chevron-right"></dt-icon>
-                </dt-button>
+                </submit-button>
             </div>
         </div>
     </dt-tile>

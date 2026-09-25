@@ -135,8 +135,8 @@ class Disciple_Tools_Autolink_Login_App extends DT_Magic_Url_Base
     /**
      * change the error message if it is invalid_username or incorrect password
      *
-     * @param $message string Error string provided by WordPress
-     * @return $message string Modified error string
+     * @param string $message Error string provided by WordPress
+     * @return string $message Modified error string
      */
     public function login_errors( $message ){
         global $errors;

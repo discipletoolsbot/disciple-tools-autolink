@@ -6,6 +6,13 @@ mix.webpackConfig({
     output: {
         publicPath: "/wp-content/plugins/disciple-tools-autolink/dist/",
     },
+    // The Disciple.Tools theme ships the web component library and enqueues it
+    // as the `web-components` script, which exposes the `DtWebComponents`
+    // global. Treat the package as external so we always run against the
+    // theme's copy instead of bundling (and drifting from) our own.
+    externals: {
+        "@disciple.tools/web-components": "DtWebComponents",
+    },
 });
 
 mix
