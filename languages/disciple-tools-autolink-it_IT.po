@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Disciple.Tools - Autolink 1.0.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/disciple-tools-"
 "autolink\n"
-"POT-Creation-Date: 2026-09-25T08:01:05+00:00\n"
+"POT-Creation-Date: 2026-09-25T08:46:16+00:00\n"
 "PO-Revision-Date: 2024-10-15 14:59+0000\n"
 "Last-Translator: Kyle Koval <kyle.koval@gmail.com>\n"
 "Language-Team: Italian <https://translate.disciple.tools/projects/disciple-"
@@ -44,7 +44,7 @@ msgstr ""
 msgid "https://www.eastwest.org/"
 msgstr "https://www.eastwest.org/"
 
-#: charts/groups-genmap.php:104 controllers/group.php:307
+#: charts/groups-genmap.php:104
 msgid "Parent"
 msgstr "Genitore"
 
@@ -52,7 +52,7 @@ msgstr "Genitore"
 msgid "Save Changes"
 msgstr "Salva Cambiamenti"
 
-#: charts/groups-genmap.php:106 controllers/group.php:60
+#: charts/groups-genmap.php:106 controllers/group.php:62
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -132,107 +132,126 @@ msgstr "Giù"
 msgid "Invalid training videos."
 msgstr "I video per la formazione non sono validi."
 
-#: controllers/app.php:34 controllers/controller.php:28
-#: magic-link/functions.php:330
-msgid "My Groups"
+#. translators: %s: plural name of the group post type, e.g. "Churches".
+#: controllers/app.php:35 controllers/controller.php:29
+#: magic-link/functions.php:97 magic-link/functions.php:335
+#, php-format
+msgid "My %s"
 msgstr ""
 
-#: controllers/app.php:35
+#: controllers/app.php:36
 msgid "Church Start Date"
 msgstr "Data d'inizio della chiesa"
 
-#: controllers/app.php:36
-msgid "View Group"
-msgstr ""
+#. translators: %s: singular name of the group post type, e.g. "Church".
+#: controllers/app.php:38 controllers/controller.php:38
+#: magic-link/functions.php:343
+#, fuzzy, php-format
+#| msgid "View"
+msgid "View %s"
+msgstr "Visualizza"
 
-#: controllers/app.php:37
-#, fuzzy
+#. translators: %s: singular name of the group post type, e.g. "Church".
+#: controllers/app.php:40
+#, fuzzy, php-format
 #| msgid "Delete"
-msgid "Delete Group"
+msgid "Delete %s"
 msgstr "Cancellare"
 
-#: controllers/app.php:38
-#, fuzzy
+#. translators: %s: lowercased singular name of the group post type, e.g. "church".
+#: controllers/app.php:42
+#, fuzzy, php-format
 #| msgid "Are you sure you want to delete this "
-msgid "Are you sure you want to delete this group?"
+msgid "Are you sure you want to delete this %s?"
 msgstr "Sei sicuro di voler eliminarlo "
 
-#: controllers/app.php:39
-msgid "Edit Group"
-msgstr ""
+#. translators: %s: singular name of the group post type, e.g. "Church".
+#: controllers/app.php:44 controllers/group.php:50
+#, fuzzy, php-format
+#| msgid "Edit"
+msgid "Edit %s"
+msgstr "Modificare"
 
-#: controllers/app.php:40
+#: controllers/app.php:45
 msgid "More"
 msgstr "Ancora"
 
-#: controllers/controller.php:22 magic-link/functions.php:91
-#: magic-link/functions.php:324
+#: controllers/controller.php:22 magic-link/functions.php:93
+#: magic-link/functions.php:328
 msgid "Hello,"
 msgstr "Ciao,"
 
-#: controllers/controller.php:25 magic-link/functions.php:92
-#: magic-link/functions.php:327
+#: controllers/controller.php:25 magic-link/functions.php:94
+#: magic-link/functions.php:331
 msgid "Coached by"
 msgstr "Il suo coach è"
 
-#: controllers/controller.php:26 magic-link/functions.php:93
-#: magic-link/functions.php:328
+#: controllers/controller.php:26 magic-link/functions.php:95
+#: magic-link/functions.php:332
 msgid "My Link"
 msgstr "Il mio link"
 
-#: controllers/controller.php:27 magic-link/functions.php:329
+#: controllers/controller.php:27 magic-link/functions.php:333
 msgid "Copy this link and share it with people you are coaching."
 msgstr "Copia questo link e condividilo con le persone che segui come coach."
 
-#: controllers/controller.php:36 magic-link/functions.php:337
-msgid "View"
-msgstr "Visualizza"
-
-#: controllers/controller.php:38 magic-link/functions.php:339
-msgid "Health"
+#. translators: %s: singular name of the group post type, e.g. "Church".
+#: controllers/controller.php:41 magic-link/functions.php:346
+#, fuzzy, php-format
+#| msgid "Health"
+msgid "%s Health"
 msgstr "Salute"
 
-#: controllers/controller.php:39 magic-link/functions.php:340
+#: controllers/controller.php:42 magic-link/functions.php:347
 msgid "Tree"
 msgstr "Albero"
 
-#: controllers/controller.php:40 magic-link/functions.php:341
+#: controllers/controller.php:43 magic-link/functions.php:348
 msgid "GenMap"
 msgstr "Mappa Generazionale"
 
-#: controllers/controller.php:41 magic-link/functions.php:88
+#: controllers/controller.php:44 magic-link/functions.php:90
 msgid "Training"
 msgstr "Formazione"
 
-#: controllers/group.php:49
-msgid "Edit"
-msgstr "Modificare"
-
-#: controllers/group.php:51
-msgid "Create"
+#. translators: %s: singular name of the group post type, e.g. "Church".
+#: controllers/group.php:53
+#, fuzzy, php-format
+#| msgid "Create"
+msgid "Create %s"
 msgstr "Crea"
 
-#: controllers/group.php:61
+#: controllers/group.php:63
 msgid "Save"
 msgstr "Salva"
 
-#: controllers/group.php:298
-msgid "Select a"
+#. translators: %s: lowercased singular name of the group post type, e.g. "church".
+#: controllers/group.php:301
+#, fuzzy, php-format
+#| msgid "Select a"
+msgid "Select a %s..."
 msgstr "Seleziona"
 
-#: controllers/group.php:341
+#. translators: %s: singular name of the group post type, e.g. "Church".
+#: controllers/group.php:311
+#, fuzzy, php-format
+#| msgid "Parent"
+msgid "Parent %s"
+msgstr "Genitore"
+
+#: controllers/group.php:345
 msgid "Unauthorized action. Please refresh the page and try again."
 msgstr "Azione non autorizzata. Ripristina la pagina e riprova."
 
-#: controllers/group.php:363
+#: controllers/group.php:367
 msgid "Back to AutoLink"
 msgstr "Torna a AutoLink"
 
-#: controllers/group.php:573
+#: controllers/group.php:577
 msgid "Unauthorized"
 msgstr "Non Autorizzato"
 
-#: controllers/group.php:588
+#: controllers/group.php:592
 msgid "Could not fetch groups"
 msgstr "Impossibile recuperare i gruppi"
 
@@ -248,93 +267,107 @@ msgstr ""
 msgid "An unexpected error has occurred."
 msgstr "È avvenuto un errore inaspettato."
 
+#. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/tree.php:24
-msgid "Unassigned"
+#, fuzzy, php-format
+#| msgid "Tree"
+msgid "%s Tree"
+msgstr "Albero"
+
+#. translators: %s: plural name of the group post type, e.g. "Churches".
+#: controllers/tree.php:26
+#, fuzzy, php-format
+#| msgid "Unassigned"
+msgid "Unassigned %s"
 msgstr "Non Assegnato"
 
-#: controllers/tree.php:25
-msgid "Move these to the"
-msgstr "Sposta questi nel"
+#. translators: 1: singular name of the group post type, e.g. "Church". 2: the translated word "Tree".
+#: controllers/tree.php:28
+#, php-format
+msgid "Move these to the %1$s %2$s to assign them to a %1$s."
+msgstr ""
 
-#: controllers/tree.php:25
-msgid "to assign them to a"
-msgstr "per assegnarli a"
-
-#: controllers/tree.php:26
+#: controllers/tree.php:29
 msgid "Key"
 msgstr "Key"
 
-#: controllers/tree.php:27
-msgid "you are assigned"
+#. translators: %s: plural name of the group post type, e.g. "Churches".
+#: controllers/tree.php:31
+#, fuzzy, php-format
+#| msgid "you are assigned"
+msgid "%s you are assigned"
 msgstr "Sei stato assegnato"
 
-#: controllers/tree.php:28
-msgid "assigned to those you coach"
+#. translators: %s: plural name of the group post type, e.g. "Churches".
+#: controllers/tree.php:33
+#, fuzzy, php-format
+#| msgid "assigned to those you coach"
+msgid "%s assigned to those you coach"
 msgstr "assegnato a coloro che segui come coach"
 
-#: controllers/tree.php:29
-msgid "you lead"
+#. translators: %s: plural name of the group post type, e.g. "Churches".
+#: controllers/tree.php:35
+#, fuzzy, php-format
+#| msgid "you lead"
+msgid "%s you lead"
 msgstr "guidi"
 
-#: controllers/tree.php:30
+#: controllers/tree.php:36
 msgid "Generation Number"
 msgstr "Numero di Generazione"
 
-#: controllers/tree.php:31
-msgid "No "
-msgstr "No "
+#. translators: %s: plural name of the group post type, e.g. "Churches".
+#: controllers/tree.php:38
+#, php-format
+msgid "No %s found."
+msgstr ""
 
 #: disciple-tools-autolink.php:179
 msgid "Autolink"
 msgstr "Autolink"
 
-#: magic-link/functions.php:83
+#: magic-link/functions.php:85
 msgid "Add Magic"
 msgstr "Aggiungi Magic"
 
-#: magic-link/functions.php:84
+#: magic-link/functions.php:86
 msgid "Go to Disciple.Tools"
 msgstr "Vai a Disciple.Tools"
 
-#: magic-link/functions.php:85
+#: magic-link/functions.php:87
 msgid "Update Survey Answers"
 msgstr "Aggiorna Risposte al Sondaggio"
 
-#: magic-link/functions.php:86
+#: magic-link/functions.php:88
 msgid "Give Feedback"
 msgstr "Lasciare un Feedback"
 
-#: magic-link/functions.php:87
+#: magic-link/functions.php:89
 msgid "Log Out"
 msgstr "Uscire"
 
-#: magic-link/functions.php:89
+#: magic-link/functions.php:91
 msgid "Toggle Menu"
 msgstr "Attiva Menu"
 
-#: magic-link/functions.php:90
+#: magic-link/functions.php:92
 msgid "Language"
 msgstr ""
 
-#: magic-link/functions.php:94
-msgid "My Churches"
-msgstr "Le mie chiese"
-
-#: magic-link/functions.php:95
+#: magic-link/functions.php:98
 msgid "Close"
 msgstr ""
 
-#: magic-link/functions.php:303
+#: magic-link/functions.php:306
 msgid "How many leaders are you coaching?"
 msgstr "Per quanti leader sei il loro coach?"
 
-#: magic-link/functions.php:307
-msgid "How many"
-msgstr "Quanti"
-
-#: magic-link/functions.php:307
-msgid "are you leading?"
-msgstr "stai guidando?"
+#. translators: %s: lowercased plural name of the group post type, e.g. "churches".
+#: magic-link/functions.php:311
+#, fuzzy, php-format
+#| msgid "How many leaders are you coaching?"
+msgid "How many %s are you leading?"
+msgstr "Per quanti leader sei il loro coach?"
 
 #: magic-link/login-app.php:144
 msgid "Error: Invalid username/password combination."
@@ -387,6 +420,24 @@ msgstr "Conferma Password"
 #: templates/register.php:52
 msgid "Register"
 msgstr "Registrati"
+
+#~ msgid "Move these to the"
+#~ msgstr "Sposta questi nel"
+
+#~ msgid "to assign them to a"
+#~ msgstr "per assegnarli a"
+
+#~ msgid "No "
+#~ msgstr "No "
+
+#~ msgid "My Churches"
+#~ msgstr "Le mie chiese"
+
+#~ msgid "How many"
+#~ msgstr "Quanti"
+
+#~ msgid "are you leading?"
+#~ msgstr "stai guidando?"
 
 #~ msgid "My"
 #~ msgstr "Mio"
