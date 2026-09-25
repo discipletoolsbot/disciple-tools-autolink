@@ -30,9 +30,9 @@ msgstr ""
 #: disciple-tools-autolink.php
 #, fuzzy
 msgid ""
-"Provides a simplified interface for managing and visualizing your "
-"Disciple.Tools network. Share access with your downstream leaders to easily "
-"build your group tree."
+"Provides a simplified interface for managing and visualizing your Disciple."
+"Tools network. Share access with your downstream leaders to easily build "
+"your group tree."
 msgstr ""
 "توفّر واجهة مبسّطة لإدارة شبكة Disciple.Tools الخاصة بك وعرضها بصريًا. شارك "
 "الوصول مع القادة التابعين لك لبناء شجرة مجموعاتك بسهولة."
@@ -162,7 +162,7 @@ msgstr "فيديوهات تدريب غير صالحة."
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/app.php:35 controllers/controller.php:29
 #: magic-link/functions.php:97 magic-link/functions.php:335
-#, fuzzy
+#, fuzzy, php-format
 msgid "My %s"
 msgstr "%s الخاصة بي"
 
@@ -175,25 +175,25 @@ msgstr "تاريخ إنشاء الكنيسة"
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:38 controllers/controller.php:38
 #: magic-link/functions.php:343
-#, fuzzy
+#, fuzzy, php-format
 msgid "View %s"
 msgstr "عرض %s"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:40
-#, fuzzy
+#, fuzzy, php-format
 msgid "Delete %s"
 msgstr "حذف %s"
 
 #. translators: %s: lowercased singular name of the group post type, e.g. "church".
 #: controllers/app.php:42
-#, fuzzy
+#, fuzzy, php-format
 msgid "Are you sure you want to delete this %s?"
 msgstr "هل أنت متأكد أنك تريد حذف %s؟"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:44 controllers/group.php:50
-#, fuzzy
+#, fuzzy, php-format
 msgid "Edit %s"
 msgstr "تحرير %s"
 
@@ -231,7 +231,7 @@ msgstr "انسخ هذا الرابط وشاركه مع الأشخاص الذين
 # matching the theme's "Church Health" => "حالة الكنيسة".
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/controller.php:41 magic-link/functions.php:346
-#, fuzzy
+#, fuzzy, php-format
 msgid "%s Health"
 msgstr "حالة %s"
 
@@ -256,7 +256,7 @@ msgstr "التدريب"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/group.php:53
-#, fuzzy
+#, fuzzy, php-format
 msgid "Create %s"
 msgstr "إنشاء %s"
 
@@ -270,7 +270,7 @@ msgstr "حفظ"
 
 #. translators: %s: lowercased singular name of the group post type, e.g. "church".
 #: controllers/group.php:301
-#, fuzzy
+#, fuzzy, php-format
 msgid "Select a %s..."
 msgstr "اختر %s..."
 
@@ -279,7 +279,7 @@ msgstr "اختر %s..."
 # that renames the post type to a masculine noun would need "أصلي".
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/group.php:311
-#, fuzzy
+#, fuzzy, php-format
 msgid "Parent %s"
 msgstr "%s أصلية"
 
@@ -321,14 +321,14 @@ msgstr "حدث خطأ غير متوقع."
 # Placeholder moved to the end so the phrase reads as an idafa construction.
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/tree.php:24
-#, fuzzy
+#, fuzzy, php-format
 msgid "%s Tree"
 msgstr "شجرة %s"
 
 # Placeholder moved to the front: Arabic puts the adjective after the noun.
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:26
-#, fuzzy
+#, fuzzy, php-format
 msgid "Unassigned %s"
 msgstr "%s غير المعيّنة"
 
@@ -337,7 +337,7 @@ msgstr "%s غير المعيّنة"
 # depends on "Tree" being translated without a leading article - see that entry.
 #. translators: 1: singular name of the group post type, e.g. "Church". 2: the translated word "Tree".
 #: controllers/tree.php:28
-#, fuzzy
+#, fuzzy, php-format
 msgid "Move these to the %1$s %2$s to assign them to a %1$s."
 msgstr "انقل هذه إلى %2$s %1$s لتعيينها إلى %1$s."
 
@@ -349,19 +349,19 @@ msgstr "المفتاح"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:31
-#, fuzzy
+#, fuzzy, php-format
 msgid "%s you are assigned"
 msgstr "%s المعيّنة لك"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:33
-#, fuzzy
+#, fuzzy, php-format
 msgid "%s assigned to those you coach"
 msgstr "%s المعيّنة لمن تدرّبهم"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:35
-#, fuzzy
+#, fuzzy, php-format
 msgid "%s you lead"
 msgstr "%s التي تقودها"
 
@@ -372,7 +372,7 @@ msgstr "رقم الجيل"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/tree.php:38
-#, fuzzy
+#, fuzzy, php-format
 msgid "No %s found."
 msgstr "لم يتم العثور على %s."
 
@@ -433,7 +433,7 @@ msgstr "كم عدد القادة الذين تدرّبهم؟"
 
 #. translators: %s: lowercased plural name of the group post type, e.g. "churches".
 #: magic-link/functions.php:311
-#, fuzzy
+#, fuzzy, php-format
 msgid "How many %s are you leading?"
 msgstr "كم عدد %s التي تقودها؟"
 
