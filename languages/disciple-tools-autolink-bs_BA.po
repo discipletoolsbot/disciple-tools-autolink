@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Disciple.Tools - Autolink 1.0.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/disciple-tools-"
 "autolink\n"
-"POT-Creation-Date: 2025-02-25T16:40:06+00:00\n"
+"POT-Creation-Date: 2026-09-25T08:01:05+00:00\n"
 "PO-Revision-Date: 2024-05-26 17:59+0000\n"
 "Last-Translator: Dragana <celikdragana0@gmail.com>\n"
 "Language-Team: Bosnian <https://translate.disciple.tools/projects/disciple-"
@@ -45,268 +45,292 @@ msgstr ""
 msgid "https://www.eastwest.org/"
 msgstr "https://www.eastwest.org/"
 
-#: charts/groups-genmap.php:95 controllers/group.php:207
+#: charts/groups-genmap.php:104 controllers/group.php:307
 msgid "Parent"
 msgstr "Roditelj"
 
-#: charts/groups-genmap.php:96
+#: charts/groups-genmap.php:105
 msgid "Save Changes"
 msgstr "Sačuvaj promjene"
 
-#: charts/groups-genmap.php:97 controllers/group.php:82
+#: charts/groups-genmap.php:106 controllers/group.php:60
 msgid "Cancel"
 msgstr "Otkažite"
 
-#: charts/groups-genmap.php:98 charts/groups-genmap.php:105
+#: charts/groups-genmap.php:107 charts/groups-genmap.php:114
 msgid "Open Record"
 msgstr "Otvorite snimanje"
 
-#: charts/groups-genmap.php:99
+#: charts/groups-genmap.php:108
 msgid "Center on this Node"
 msgstr "Centar na ovom čvoru"
 
-#: charts/groups-genmap.php:100
+#: charts/groups-genmap.php:109
 msgid "OK"
 msgstr "OK"
 
-#: charts/groups-genmap.php:101
+#: charts/groups-genmap.php:110
 msgid "Edit Record"
 msgstr "Uredi zapis"
 
-#: charts/groups-genmap.php:102 controllers/admin-general.php:32
+#: charts/groups-genmap.php:111 controllers/admin-general.php:34
 msgid "Reset"
 msgstr "Resetovati"
 
-#: charts/groups-genmap.php:103
+#: charts/groups-genmap.php:112
 msgid "Zoom In"
 msgstr "Približi"
 
-#: charts/groups-genmap.php:104
+#: charts/groups-genmap.php:113
 msgid "Zoom Out"
 msgstr "Udalji"
 
-#: controllers/admin-general.php:25
+#: controllers/admin-general.php:27
 msgid "Training videos could not be loaded. Resetting to default content."
 msgstr "Video snimci kursa se ne može učitati. Vraćanje na zadani sadržaj."
 
-#: controllers/admin-general.php:29
+#: controllers/admin-general.php:31
 msgid "Training Videos"
 msgstr "Video zapisi kursa"
 
-#: controllers/admin-general.php:30
+#: controllers/admin-general.php:32
 msgid "Title"
 msgstr "Naslov"
 
-#: controllers/admin-general.php:31
+#: controllers/admin-general.php:33
 msgid "Embed"
 msgstr "Umetni"
 
-#: controllers/admin-general.php:33
+#: controllers/admin-general.php:35
 msgid "Add"
 msgstr "Dodaj"
 
-#: controllers/admin-general.php:34
+#: controllers/admin-general.php:36
 msgid "Remove"
 msgstr "Ukloni"
 
-#: controllers/admin-general.php:35
+#: controllers/admin-general.php:37
 msgid "Are you sure you want to reset the training videos to default content?"
 msgstr ""
 "Jeste li sigurni da želite vratiti videozapise treninga na zadani sadržaj?"
 
-#: controllers/admin-general.php:36
+#: controllers/admin-general.php:38
 msgid "Are you sure you want to remove this video?"
 msgstr "Jeste li sigurni da želite ukloniti ovaj videozapis?"
 
-#: controllers/admin-general.php:37
+#: controllers/admin-general.php:39
 msgid "Up"
 msgstr "Gore"
 
-#: controllers/admin-general.php:38
+#: controllers/admin-general.php:40
 msgid "Down"
 msgstr "Dole"
 
-#: controllers/admin-general.php:108
+#: controllers/admin-general.php:109
 msgid "Invalid training videos."
 msgstr "Nevažeći video zapisi obuke."
 
-#: controllers/app.php:34
-msgid "My"
-msgstr "Moje"
+#: controllers/app.php:34 controllers/controller.php:28
+#: magic-link/functions.php:330
+msgid "My Groups"
+msgstr ""
 
 #: controllers/app.php:35
 msgid "Church Start Date"
 msgstr "Datum početka crkve"
 
-#: controllers/app.php:36 controllers/controller.php:36
-#: magic-link/functions.php:267
-msgid "View"
-msgstr "Pogled"
+#: controllers/app.php:36
+msgid "View Group"
+msgstr ""
 
 #: controllers/app.php:37
-msgid "Delete"
+#, fuzzy
+#| msgid "Delete"
+msgid "Delete Group"
 msgstr "Izbriši"
 
 #: controllers/app.php:38
-msgid "Are you sure you want to delete this "
+#, fuzzy
+#| msgid "Are you sure you want to delete this "
+msgid "Are you sure you want to delete this group?"
 msgstr "Jeste li sigurni da želite ovo izbrisati "
 
-#: controllers/app.php:39 controllers/group.php:71
-msgid "Edit"
-msgstr "Uredite"
+#: controllers/app.php:39
+msgid "Edit Group"
+msgstr ""
 
 #: controllers/app.php:40
 msgid "More"
 msgstr "Više"
 
-#: controllers/controller.php:22 magic-link/functions.php:80
-#: magic-link/functions.php:254
+#: controllers/controller.php:22 magic-link/functions.php:91
+#: magic-link/functions.php:324
 msgid "Hello,"
 msgstr "Zdravo,"
 
-#: controllers/controller.php:25 magic-link/functions.php:81
-#: magic-link/functions.php:257
+#: controllers/controller.php:25 magic-link/functions.php:92
+#: magic-link/functions.php:327
 msgid "Coached by"
 msgstr "Obučen od"
 
-#: controllers/controller.php:26 magic-link/functions.php:82
-#: magic-link/functions.php:258
+#: controllers/controller.php:26 magic-link/functions.php:93
+#: magic-link/functions.php:328
 msgid "My Link"
 msgstr "Moj link"
 
-#: controllers/controller.php:27 magic-link/functions.php:259
+#: controllers/controller.php:27 magic-link/functions.php:329
 msgid "Copy this link and share it with people you are coaching."
 msgstr "Kopirajte ovaj link i podijelite ga s ljudima koje podučavate."
 
-#: controllers/controller.php:28 magic-link/functions.php:260
-msgid "My "
-msgstr "Moje "
+#: controllers/controller.php:36 magic-link/functions.php:337
+msgid "View"
+msgstr "Pogled"
 
-#: controllers/controller.php:38 magic-link/functions.php:269
+#: controllers/controller.php:38 magic-link/functions.php:339
 msgid "Health"
 msgstr "Zdravlje"
 
-#: controllers/controller.php:39 magic-link/functions.php:270
+#: controllers/controller.php:39 magic-link/functions.php:340
 msgid "Tree"
 msgstr "Drvo"
 
-#: controllers/controller.php:40 magic-link/functions.php:271
+#: controllers/controller.php:40 magic-link/functions.php:341
 msgid "GenMap"
 msgstr "Generacijska mapa"
 
-#: controllers/controller.php:41 magic-link/functions.php:78
+#: controllers/controller.php:41 magic-link/functions.php:88
 msgid "Training"
 msgstr "Kurs"
 
-#: controllers/group.php:73
+#: controllers/group.php:49
+msgid "Edit"
+msgstr "Uredite"
+
+#: controllers/group.php:51
 msgid "Create"
 msgstr "Kreiraj"
 
-#: controllers/group.php:83
+#: controllers/group.php:61
 msgid "Save"
 msgstr "Spremite"
 
-#: controllers/group.php:198
+#: controllers/group.php:298
 msgid "Select a"
 msgstr "Izaberi"
 
-#: controllers/group.php:241
+#: controllers/group.php:341
 msgid "Unauthorized action. Please refresh the page and try again."
 msgstr "Neovlaštena radnja. Osvježite stranicu i pokušajte ponovo."
 
-#: controllers/group.php:263
+#: controllers/group.php:363
 msgid "Back to AutoLink"
 msgstr "Nazad na AutoLink"
 
-#: controllers/group.php:457
+#: controllers/group.php:573
 msgid "Unauthorized"
 msgstr "Neovlašteno"
 
-#: controllers/group.php:472
+#: controllers/group.php:588
 msgid "Could not fetch groups"
 msgstr "Nije moguće preuzeti grupe"
+
+#: controllers/language.php:20
+msgid "No language was given."
+msgstr ""
+
+#: controllers/language.php:26
+msgid "That language is not available."
+msgstr ""
 
 #: controllers/login.php:38 controllers/register.php:56
 msgid "An unexpected error has occurred."
 msgstr "Došlo je do neočekivane greške."
 
-#: controllers/tree.php:23
+#: controllers/tree.php:24
 msgid "Unassigned"
 msgstr "Nedodijeljeno"
 
-#: controllers/tree.php:24
+#: controllers/tree.php:25
 msgid "Move these to the"
 msgstr "Premjestite ovo na"
 
-#: controllers/tree.php:24
+#: controllers/tree.php:25
 msgid "to assign them to a"
 msgstr "da ih dodijelite"
 
-#: controllers/tree.php:25
+#: controllers/tree.php:26
 msgid "Key"
 msgstr "Ključ"
 
-#: controllers/tree.php:26
+#: controllers/tree.php:27
 msgid "you are assigned"
 msgstr "ti si dodijeljen"
 
-#: controllers/tree.php:27
+#: controllers/tree.php:28
 msgid "assigned to those you coach"
 msgstr "dodijeljen onima koje obučavate"
 
-#: controllers/tree.php:28
+#: controllers/tree.php:29
 msgid "you lead"
 msgstr "ti vodiš"
 
-#: controllers/tree.php:29
+#: controllers/tree.php:30
 msgid "Generation Number"
 msgstr "Broj"
 
-#: controllers/tree.php:30
+#: controllers/tree.php:31
 msgid "No "
 msgstr "Ne. "
 
-#: disciple-tools-autolink.php:178
+#: disciple-tools-autolink.php:179
 msgid "Autolink"
 msgstr "Autolink"
 
-#: magic-link/functions.php:73
+#: magic-link/functions.php:83
 msgid "Add Magic"
 msgstr "Dodaj magično"
 
-#: magic-link/functions.php:74
+#: magic-link/functions.php:84
 msgid "Go to Disciple.Tools"
 msgstr "Idi na Disciple.Tools"
 
-#: magic-link/functions.php:75
+#: magic-link/functions.php:85
 msgid "Update Survey Answers"
 msgstr "Ažurirajte odgovore na anketu"
 
-#: magic-link/functions.php:76
+#: magic-link/functions.php:86
 msgid "Give Feedback"
 msgstr "Daj povratne informacije"
 
-#: magic-link/functions.php:77
+#: magic-link/functions.php:87
 msgid "Log Out"
 msgstr "Odjavi se"
 
-#: magic-link/functions.php:79
+#: magic-link/functions.php:89
 msgid "Toggle Menu"
 msgstr "Prebaci meni"
 
-#: magic-link/functions.php:83
+#: magic-link/functions.php:90
+msgid "Language"
+msgstr ""
+
+#: magic-link/functions.php:94
 msgid "My Churches"
 msgstr "Moje crkve"
 
-#: magic-link/functions.php:233
+#: magic-link/functions.php:95
+msgid "Close"
+msgstr ""
+
+#: magic-link/functions.php:303
 msgid "How many leaders are you coaching?"
 msgstr "Koliko lidera obučavate?"
 
-#: magic-link/functions.php:237
+#: magic-link/functions.php:307
 msgid "How many"
 msgstr "Koliko"
 
-#: magic-link/functions.php:237
+#: magic-link/functions.php:307
 msgid "are you leading?"
 msgstr "vodiš li?"
 
@@ -361,3 +385,9 @@ msgstr "Potvrdi lozinku"
 #: templates/register.php:52
 msgid "Register"
 msgstr "Registrirajte se"
+
+#~ msgid "My"
+#~ msgstr "Moje"
+
+#~ msgid "My "
+#~ msgstr "Moje "
