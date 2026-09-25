@@ -423,9 +423,12 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		// ( label / lat / lng / level / grid_id ), which is the shape
 		// DT_Mapping_Module::validate_location_grid_meta() expects.
 		// The raw value is a JSON string; sanitizing before decoding would mangle it,
-		// so it is decoded first and then sanitized recursively.
+		// so it is decoded first and then sanitized recursively. A crafted request can
+		// post it as an array, which json_decode() rejects with a TypeError, so only a
+		// string is ever decoded - anything else is treated as "not submitted".
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$location = json_decode( wp_unslash( $_POST['location_grid_meta'] ?? 'null' ), true );
+		$raw_location = wp_unslash( $_POST['location_grid_meta'] ?? null );
+		$location     = is_string( $raw_location ) ? json_decode( $raw_location, true ) : null;
 
 		// An untouched <dt-location-map> posts `null`, while one the user has emptied
 		// posts `[]`. Only the second is an instruction to clear the field, so anything

@@ -23,7 +23,9 @@ class Disciple_Tools_Autolink_Field_Controller extends Disciple_Tools_Autolink_C
         $field     = implode( "_", $field_info );
 
         $value = wp_unslash( $body['value'] );
-        if ( ! is_array( $value ) ) {
+        if ( is_array( $value ) ) {
+            $value = dt_recursive_sanitize_array( $value );
+        } else {
             $value = sanitize_text_field( $value );
         }
 

@@ -2,9 +2,6 @@ import {css, html, LitElement} from "lit";
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {DtBase} from "@disciple.tools/web-components";
 
-const FIELD_SELECTOR =
-    "input, select, textarea, dt-text dt-select dt-textarea [value] [name]";
-
 /**
  * @class AjaxField
  */
@@ -35,13 +32,6 @@ export class AjaxField extends DtBase {
         this.events = ['input', 'change'];
         this.prefetch = true;
         this.loading = false;
-    }
-
-    /**
-     * Replaces the @queryAll decorator.
-     */
-    get fields() {
-        return (this.renderRoot ?? this).querySelectorAll(FIELD_SELECTOR);
     }
 
     /**
