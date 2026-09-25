@@ -31,12 +31,17 @@ class Disciple_Tools_Autolink_App_Controller extends Disciple_Tools_Autolink_Con
 		}, $churches['posts'] ?? [] );
 		$churches['total'] = $churches['total'] ?? 0;
 		$translations      = [
-			'groups_heading'       => __( 'My Groups', 'disciple-tools-autolink' ),
+			/* translators: %s: plural name of the group post type, e.g. "Churches". */
+			'groups_heading'       => sprintf( __( 'My %s', 'disciple-tools-autolink' ), $group_labels->name ),
 			'start_date_label'     => __( 'Church Start Date', 'disciple-tools-autolink' ),
-			'view_group'           => __( 'View Group', 'disciple-tools-autolink' ),
-			'delete_group'         => __( 'Delete Group', 'disciple-tools-autolink' ),
-			'delete_group_confirm' => __( 'Are you sure you want to delete this group?', 'disciple-tools-autolink' ),
-			'edit_group'           => __( 'Edit Group', 'disciple-tools-autolink' ),
+			/* translators: %s: singular name of the group post type, e.g. "Church". */
+			'view_group'           => sprintf( __( 'View %s', 'disciple-tools-autolink' ), $group_labels->singular_name ),
+			/* translators: %s: singular name of the group post type, e.g. "Church". */
+			'delete_group'         => sprintf( __( 'Delete %s', 'disciple-tools-autolink' ), $group_labels->singular_name ),
+			/* translators: %s: lowercased singular name of the group post type, e.g. "church". */
+			'delete_group_confirm' => sprintf( __( 'Are you sure you want to delete this %s?', 'disciple-tools-autolink' ), strtolower( $group_labels->singular_name ) ),
+			/* translators: %s: singular name of the group post type, e.g. "Church". */
+			'edit_group'           => sprintf( __( 'Edit %s', 'disciple-tools-autolink' ), $group_labels->singular_name ),
 			'more'                 => __( 'More', 'disciple-tools-autolink' )
 		];
 		$links             = [

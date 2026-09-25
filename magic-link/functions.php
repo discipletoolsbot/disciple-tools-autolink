@@ -45,8 +45,10 @@ class Disciple_Tools_Autolink_Magic_Functions {
 	}
 
 	public function wp_enqueue_scripts() {
-		$plugin_url  = plugins_url() . '/disciple-tools-autolink';
-		$plugin_path = WP_PLUGIN_DIR . '/disciple-tools-autolink';
+		$plugin_url   = plugins_url() . '/disciple-tools-autolink';
+		$plugin_path  = WP_PLUGIN_DIR . '/disciple-tools-autolink';
+		$post_type    = get_post_type_object( 'groups' );
+		$group_labels = get_post_type_labels( $post_type );
 
 		// `web-components` is a dependency so the theme's library is defined
 		// before our components try to extend it.
@@ -91,7 +93,8 @@ class Disciple_Tools_Autolink_Magic_Functions {
 					'user_greeting,'     => __( 'Hello,', 'disciple-tools-autolink' ),
 					'coached_by'         => __( 'Coached by', 'disciple-tools-autolink' ),
 					'my_link'            => __( 'My Link', 'disciple-tools-autolink' ),
-					'my_churches'        => __( 'My Churches', 'disciple-tools-autolink' ),
+					/* translators: %s: plural name of the group post type, e.g. "Churches". */
+					'my_churches'        => sprintf( __( 'My %s', 'disciple-tools-autolink' ), $group_labels->name ),
 					'close'              => __( 'Close', 'disciple-tools-autolink' ),
 				]
 			]
@@ -304,7 +307,8 @@ class Disciple_Tools_Autolink_Magic_Functions {
 			],
 			[
 				'name'  => 'dt_autolink_number_of_churches_led',
-				'label' => __( 'How many', 'disciple-tools-autolink' ) . ' ' . strtolower( $group_labels->name ) . ' ' . __( 'are you leading?', 'disciple-tools-autolink' ),
+				/* translators: %s: lowercased plural name of the group post type, e.g. "churches". */
+				'label' => sprintf( __( 'How many %s are you leading?', 'disciple-tools-autolink' ), strtolower( $group_labels->name ) ),
 
 			]
 		] );
@@ -327,16 +331,19 @@ class Disciple_Tools_Autolink_Magic_Functions {
 		$data['coached_by_label']     = __( 'Coached by', 'disciple-tools-autolink' );
 		$data['link_heading']         = __( 'My Link', 'disciple-tools-autolink' );
 		$data['share_link_help_text'] = __( 'Copy this link and share it with people you are coaching.', 'disciple-tools-autolink' );
-		$data['churches_heading']     = __( "My Groups", 'disciple-tools-autolink' );
+		/* translators: %s: plural name of the group post type, e.g. "Churches". */
+		$data['churches_heading']     = sprintf( __( 'My %s', 'disciple-tools-autolink' ), $group_labels->name );
 		$data['share_link']           = $this->get_share_link();
 		$data['group_fields']         = DT_Posts::get_post_field_settings( 'groups' );
 		$data['create_church_link']   = $this->get_app_link() . '?action=create-group';
 		$data['contact']              = Disciple_Tools_Users::get_contact_for_user( get_current_user_id() );
 		$data['coach']                = null;
 		$data['coach_name']           = '';
-		$data['view_church_label']    = __( 'View', 'disciple-tools-autolink' ) . ' ' . $group_labels->singular_name;
+		/* translators: %s: singular name of the group post type, e.g. "Church". */
+		$data['view_church_label']    = sprintf( __( 'View %s', 'disciple-tools-autolink' ), $group_labels->singular_name );
 		$data['churches']             = [];
-		$data['church_health_label']  = $group_labels->singular_name . ' ' . __( 'Health', 'disciple-tools-autolink' );
+		/* translators: %s: singular name of the group post type, e.g. "Church". */
+		$data['church_health_label']  = sprintf( __( '%s Health', 'disciple-tools-autolink' ), $group_labels->singular_name );
 		$data['tree_label']           = __( 'Tree', 'disciple-tools-autolink' );
 		$data['genmap_label']         = __( 'GenMap', 'disciple-tools-autolink' );
 

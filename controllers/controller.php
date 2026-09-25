@@ -25,7 +25,8 @@ abstract class Disciple_Tools_Autolink_Controller {
 		$data['coached_by_label']     = __( 'Coached by', 'disciple-tools-autolink' );
 		$data['link_heading']         = __( 'My Link', 'disciple-tools-autolink' );
 		$data['share_link_help_text'] = __( 'Copy this link and share it with people you are coaching.', 'disciple-tools-autolink' );
-		$data['churches_heading']     = __( "My Groups", 'disciple-tools-autolink' );
+		/* translators: %s: plural name of the group post type, e.g. "Churches". */
+		$data['churches_heading']     = sprintf( __( 'My %s', 'disciple-tools-autolink' ), $group_labels->name );
 		$data['share_link']           = $this->functions->get_share_link();
 		$data['group_fields']         = DT_Posts::get_post_field_settings( 'groups' );
 		$data['create_group_link']    = $this->functions->get_create_group_url();
@@ -33,9 +34,11 @@ abstract class Disciple_Tools_Autolink_Controller {
 		$data['contact']              = Disciple_Tools_Users::get_contact_for_user( get_current_user_id() );
 		$data['coach']                = null;
 		$data['coach_name']           = '';
-		$data['view_church_label']    = __( 'View', 'disciple-tools-autolink' ) . ' controller.php' . $group_labels->singular_name;
+		/* translators: %s: singular name of the group post type, e.g. "Church". */
+		$data['view_church_label']    = sprintf( __( 'View %s', 'disciple-tools-autolink' ), $group_labels->singular_name );
 		$data['churches']             = [];
-		$data['church_health_label']  = $group_labels->singular_name . ' ' . __( 'Health', 'disciple-tools-autolink' );
+		/* translators: %s: singular name of the group post type, e.g. "Church". */
+		$data['church_health_label']  = sprintf( __( '%s Health', 'disciple-tools-autolink' ), $group_labels->singular_name );
 		$data['tree_label']           = __( 'Tree', 'disciple-tools-autolink' );
 		$data['genmap_label']         = __( 'GenMap', 'disciple-tools-autolink' );
 		$data['training-label']       = __( 'Training', 'disciple-tools-autolink' );

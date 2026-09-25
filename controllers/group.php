@@ -46,9 +46,11 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$user         = wp_get_current_user();
 		$contact_id   = Disciple_Tools_Users::get_contact_for_user( $user->ID, true );
 		if ( $group ) {
-			$heading = __( 'Edit', 'disciple-tools-autolink' ) . ' ' . $group_labels->singular_name;
+			/* translators: %s: singular name of the group post type, e.g. "Church". */
+			$heading = sprintf( __( 'Edit %s', 'disciple-tools-autolink' ), $group_labels->singular_name );
 		} else {
-			$heading = __( 'Create', 'disciple-tools-autolink' ) . ' ' . $group_labels->singular_name;
+			/* translators: %s: singular name of the group post type, e.g. "Church". */
+			$heading = sprintf( __( 'Create %s', 'disciple-tools-autolink' ), $group_labels->singular_name );
 		}
 		$name_label       = $group_fields['name']['name'];
 		$name_placeholder = $group_fields['name']['name'];
@@ -295,7 +297,8 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 
 		array_unshift( $parent_group_options, [
 			'id'    => '',
-			'label' => __( 'Select a', 'disciple-tools-autolink' ) . ' ' . strtolower( $group_labels->singular_name ) . '...',
+			/* translators: %s: lowercased singular name of the group post type, e.g. "church". */
+			'label' => sprintf( __( 'Select a %s...', 'disciple-tools-autolink' ), strtolower( $group_labels->singular_name ) ),
 		] );
 
 		$parent_group = $default_parent_group;
@@ -304,7 +307,8 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 			$parent_group = count( $group['parent_groups'] ) ? $group['parent_groups'][0]["ID"] : '';
 		}
 
-		$parent_group_label = __( 'Parent', 'disciple-tools-autolink' ) . ' ' . $group_labels->singular_name;
+		/* translators: %s: singular name of the group post type, e.g. "Church". */
+		$parent_group_label = sprintf( __( 'Parent %s', 'disciple-tools-autolink' ), $group_labels->singular_name );
 
 		include __DIR__ . '/../templates/parts/parent-group-field.php';
 	}

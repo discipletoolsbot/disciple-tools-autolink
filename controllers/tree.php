@@ -20,15 +20,22 @@ class Disciple_Tools_Autolink_Tree_Controller extends Disciple_Tools_Autolink_Co
 		$fetch_url    = '/wp-json/autolink/v1/' . $magic_link->parts['type'];
 		$parts        = $magic_link->parts;
 		$translations = [
-			'tree_title'        => $church_label . ' ' . $tree_label,
-			'unassigned_title'  => __( 'Unassigned', 'disciple-tools-autolink' ) . ' ' . $churches_label,
-			'unassigned_tip'    => __( 'Move these to the', 'disciple-tools-autolink' ) . ' ' . $church_label . ' ' . $tree_label . ' ' . __( 'to assign them to a', 'disciple-tools-autolink' ) . ' ' . $church_label . '.',
+			/* translators: %s: singular name of the group post type, e.g. "Church". */
+			'tree_title'        => sprintf( __( '%s Tree', 'disciple-tools-autolink' ), $church_label ),
+			/* translators: %s: plural name of the group post type, e.g. "Churches". */
+			'unassigned_title'  => sprintf( __( 'Unassigned %s', 'disciple-tools-autolink' ), $churches_label ),
+			/* translators: 1: singular name of the group post type, e.g. "Church". 2: the translated word "Tree". */
+			'unassigned_tip'    => sprintf( __( 'Move these to the %1$s %2$s to assign them to a %1$s.', 'disciple-tools-autolink' ), $church_label, $tree_label ),
 			'key_title'         => __( 'Key', 'disciple-tools-autolink' ),
-			'assigned_label'    => $churches_label . ' ' . __( 'you are assigned', 'disciple-tools-autolink' ),
-			'coached_label'     => $churches_label . ' ' . __( 'assigned to those you coach', 'disciple-tools-autolink' ),
-			'leading_label'     => $churches_label . ' ' . __( 'you lead', 'disciple-tools-autolink' ),
+			/* translators: %s: plural name of the group post type, e.g. "Churches". */
+			'assigned_label'    => sprintf( __( '%s you are assigned', 'disciple-tools-autolink' ), $churches_label ),
+			/* translators: %s: plural name of the group post type, e.g. "Churches". */
+			'coached_label'     => sprintf( __( '%s assigned to those you coach', 'disciple-tools-autolink' ), $churches_label ),
+			/* translators: %s: plural name of the group post type, e.g. "Churches". */
+			'leading_label'     => sprintf( __( '%s you lead', 'disciple-tools-autolink' ), $churches_label ),
 			'generation_label'  => __( 'Generation Number', 'disciple-tools-autolink' ),
-			'no_groups_message' => __( 'No ', 'disciple-tools-autolink' ) . ' ' . $churches_label . ' found.',
+			/* translators: %s: plural name of the group post type, e.g. "Churches". */
+			'no_groups_message' => sprintf( __( 'No %s found.', 'disciple-tools-autolink' ), $churches_label ),
 		];
 
 		include __DIR__ . '/../templates/tree.php';
