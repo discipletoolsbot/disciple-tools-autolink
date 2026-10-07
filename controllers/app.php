@@ -13,11 +13,10 @@ class Disciple_Tools_Autolink_App_Controller extends Disciple_Tools_Autolink_Con
 		$delete_group_nonce = wp_create_nonce( 'dt_autolink_delete_group' );
 		$action             = '';
 		$limit              = 10;
-		$churches           = DT_Posts::list_posts( 'groups', [
-			'assigned_to' => [ get_current_user_id() ],
-			'limit'       => $limit,
-			'sort'        => '-post_date'
-		], false );
+		$churches           = $this->actor()->query_groups( [
+			'limit' => $limit,
+			'sort'  => '-post_date'
+		] );
 
 		//Apply WP formatting to all date fields.
 		$churches['posts'] = array_map( function ( $church ) {

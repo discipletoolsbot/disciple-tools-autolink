@@ -7,6 +7,10 @@
                href="<?php echo esc_url( $app_url . "?" . http_build_query( [ 'action' => 'tree' ] ) ); ?>">
         <?php echo esc_html( $tree_label ); ?>
     </dt-button>
+    <dt-button context="<?php echo $action === 'disciples' ? 'primary' : 'inactive'; ?>"
+               href="<?php echo esc_url( $app_url . "?" . http_build_query( [ 'action' => 'disciples' ] ) ); ?>">
+        <?php echo esc_html( $disciples_label ); ?>
+    </dt-button>
     <?php if ( function_exists( 'dt_genmapper_metrics' ) ): ?>
         <dt-button context="<?php echo $action === 'genmap' ? 'primary' : 'inactive'; ?>"
                    href="<?php echo esc_url( $app_url . "?" . http_build_query( [ 'action' => 'genmap' ] ) ); ?>">

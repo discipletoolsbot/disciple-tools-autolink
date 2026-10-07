@@ -10,7 +10,7 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$group_id         = sanitize_key( wp_unslash( $_GET['post'] ?? "" ) );
 		$params['action'] = $this->functions->get_edit_group_url();
 
-		if ( ! $group_id ) {
+		if ( ! $group_id || ! $this->actor()->can_edit_group( $group_id ) ) {
 			$this->functions->redirect_to_app();
 			exit;
 		}
@@ -29,6 +29,10 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$group    = null;
 		$group_id = sanitize_key( wp_unslash( $_GET['post'] ?? $params['post'] ?? null ) );
 		if ( $group_id ) {
+			if ( ! $this->actor()->can_edit_group( $group_id ) ) {
+				$this->functions->redirect_to_app();
+				exit;
+			}
 			$group = DT_Posts::get_post( 'groups', $group_id, true, false );
 			if ( ! $group || is_wp_error( $group ) ) {
 				$this->functions->redirect_to_app();
@@ -36,15 +40,16 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 			}
 		}
 
-		$magic_link = Disciple_Tools_Autolink_Magic_User_App::instance();
+		// Whichever magic link is serving this request - the user app or a
+		// contact app - so the form posts back to the link the person arrived on.
+		$magic_link = Disciple_Tools_Autolink_Magic_Functions::app();
 
 
 		$group_fields = DT_Posts::get_post_settings( 'groups' )['fields'];
 		$post_type    = get_post_type_object( 'groups' );
 		$group_labels = get_post_type_labels( $post_type );
 		$group        = $group ?? [];
-		$user         = wp_get_current_user();
-		$contact_id   = Disciple_Tools_Users::get_contact_for_user( $user->ID, true );
+		$contact_id   = $this->actor()->contact_id();
 		if ( $group ) {
 			/* translators: %s: singular name of the group post type, e.g. "Church". */
 			$heading = sprintf( __( 'Edit %s', 'disciple-tools-autolink' ), $group_labels->singular_name );
@@ -63,7 +68,9 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$submit_label     = __( 'Save', 'disciple-tools-autolink' );
 		$error            = $params['error'] ?? '';
 		$name             = sanitize_text_field( wp_unslash( $params['name'] ?? "" ) );
-		$contacts         = [ DT_Posts::get_post( 'contacts', $contact_id ) ];
+		$contacts         = array_filter( [ DT_Posts::get_post( 'contacts', $contact_id, true, false ) ], function ( $contact ) {
+			return $contact && ! is_wp_error( $contact );
+		} );
 		$coaching         = dt_autolink_queries()->tree( 'coaching', [
 			'check_health' => false,
 			'id'           => $contact_id,
@@ -241,9 +248,13 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$leaders_ids  = $this->submitted_leader_ids( dt_recursive_sanitize_array( $_GET['leaders'] ?? [] ) );
 
-		//Filter out new leaders, which have no id to look up yet
-		$leader_ids = array_filter( $leaders_ids, function ( $leader ) {
-			return is_numeric( $leader ) && $leader > 0;
+		// Filter out new leaders, which have no id to look up yet, and anyone
+		// this actor has no business reading. A contact link carries no
+		// capabilities, so without this the endpoint would happily report the
+		// churches of any contact id a caller cared to submit.
+		$actor      = $this->actor();
+		$leader_ids = array_filter( $leaders_ids, function ( $leader ) use ( $actor ) {
+			return is_numeric( $leader ) && $leader > 0 && $actor->can_edit_contact( $leader );
 		} );
 
 
@@ -320,9 +331,9 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$group_id         = sanitize_key( wp_unslash( $_GET['post'] ?? "" ) );
 		$params['action'] = $this->functions->get_create_group_url();
 
-		// Default the current user as the leader
+		// Default the person using the app as the leader
 		$params['leaders'] = [
-			(string) Disciple_Tools_Users::get_contact_for_user( get_current_user_id() )
+			(string) $this->actor()->contact_id()
 		];
 
 		if ( $group_id ) {
@@ -349,6 +360,12 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 
 		$group_id = (int) $group_id;
 
+		if ( ! $this->actor()->can_edit_group( $group_id ) ) {
+			$app_controller->show( [ 'error' => __( 'Unauthorized action. Please refresh the page and try again.', 'disciple-tools-autolink' ) ] );
+
+			return;
+		}
+
 		$result = DT_Posts::delete_post( 'groups', $group_id, false );
 
 		if ( is_wp_error( $result ) ) {
@@ -366,13 +383,23 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$back_link  = $this->functions->get_app_link();
 		$back_label = __( 'Back to AutoLink', 'disciple-tools-autolink' );
 
-		if ( ! $post_id || ! $back_link ) {
+		// This screen frames the record's own Disciple.Tools page, which needs a
+		// login. A contact holding a magic link does not have one and would only
+		// see the login screen inside the frame, so send them to the edit form -
+		// the same information, rendered by the app itself.
+		if ( $this->actor()->is_contact() ) {
+			wp_redirect( $this->functions->get_edit_group_url() . '&post=' . rawurlencode( $post_id ) );
+
+			return;
+		}
+
+		if ( ! $post_id || ! $back_link || ! $this->actor()->can_edit_group( $post_id ) ) {
 			$this->functions->redirect_to_app();
 
 			return;
 		}
 
-		$group = DT_Posts::get_post( 'groups', $post_id );
+		$group = DT_Posts::get_post( 'groups', $post_id, true, false );
 
 		if ( is_wp_error( $group ) ) {
 			$this->functions->redirect_to_app();
@@ -441,9 +468,8 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$location     = $has_location ? $this->clean_location_values( $location ) : [];
 		$leaders      = dt_recursive_sanitize_array( $_POST['leaders'] ?? [] );
 
-		$leaders = $this->submitted_leader_ids( $leaders );
-		$user         = wp_get_current_user();
-		$contact_id   = Disciple_Tools_Users::get_contact_for_user( $user->ID, true );
+		$leaders      = $this->submitted_leader_ids( $leaders );
+		$contact_id   = $this->actor()->contact_id();
 		$parent_group = sanitize_text_field( wp_unslash( $_POST['parent_group'] ?? 0 ) );
 		$action       = $params['action'];
 
@@ -465,17 +491,26 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		foreach ( $leaders as $idx => $value ) {
 			if ( ! is_numeric( $value ) ) {
 				$title           = $value;
-				$contact         = DT_Posts::create_post( 'contacts',
-					[
-						'name'       => $title,
-						'coached_by' => [
-							"values" => [
-								[ "value" => $contact_id ]
-							]
+				$new_contact_fields = [
+					'name'       => $title,
+					'coached_by' => [
+						"values" => [
+							[ "value" => $contact_id ]
 						]
-                ], true, false );
+					]
+				];
+
+				$assigned_to = $this->actor()->assigned_to_for_new_records();
+				if ( $assigned_to ) {
+					$new_contact_fields['assigned_to'] = $assigned_to;
+				}
+
+				$contact         = DT_Posts::create_post( 'contacts', $new_contact_fields, true, false );
 				$leaders[ $idx ] = $contact['ID'];
 				wp_publish_post( $contact['ID'] );
+				// Mint the new leader's own Autolink link straight away, so the
+				// coach can hand it over without anyone needing a DT login.
+				Disciple_Tools_Autolink_Actor::contact_app_link( $contact['ID'] );
 			}
 		}
 
@@ -519,6 +554,17 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		}
 
 		if ( $id ) {
+			// form() guards the screen; this guards the write, which also arrives
+			// from store()/update() and so has to stand on its own.
+			if ( ! $this->actor()->can_edit_group( $id ) ) {
+				$this->form( array_merge( $get_params, [
+					'error' => __( 'Unauthorized action. Please refresh the page and try again.', 'disciple-tools-autolink' ),
+					'post'  => (int) $id,
+				] ) );
+
+				return;
+			}
+
 			$group = DT_Posts::update_post( 'groups', (int) $id, $fields, false, false );
 			if ( is_wp_error( $group ) ) {
 				$this->form( array_merge( $get_params, [
@@ -530,6 +576,14 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 			}
 			do_action( 'dt_autolink_group_updated', $group );
 		} else {
+			// A contact link has no logged in user for DT to stamp on the record,
+			// so it would land on `user-0` - owned by nobody and missing from every
+			// DT list view. The site's base user is the catch-all for exactly this.
+			$assigned_to = $this->actor()->assigned_to_for_new_records();
+			if ( $assigned_to ) {
+				$fields['assigned_to'] = $assigned_to;
+			}
+
 			$group = DT_Posts::create_post( 'groups', $fields, false, false );
 			if ( is_wp_error( $group ) ) {
 				$this->form( array_merge( $get_params, [
@@ -580,12 +634,11 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$limit  = sanitize_key( wp_unslash( $_GET['limit'] ?? 10 ) );
 		$offset = sanitize_key( wp_unslash( $_GET['offset'] ?? 0 ) );
 
-		$result = DT_Posts::list_posts( 'groups', [
-			'assigned_to' => [ get_current_user_id() ],
-			'limit'       => $limit,
-			'offset'      => $offset,
-			'sort'        => '-last_modified'
-		], false );
+		$result = $this->actor()->query_groups( [
+			'limit'  => $limit,
+			'offset' => $offset,
+			'sort'   => '-last_modified'
+		] );
 
 
 		if ( ! $result ) {

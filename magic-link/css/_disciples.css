@@ -1,0 +1,134 @@
+.disciples {
+    position: relative;
+    display: block;
+}
+
+.disciples__heading h3 {
+    color: var(--dt-tile-header-color, #3f729b);
+    font-size: 1.5rem;
+    text-transform: var(--dt-tile-header-text-transform, capitalize);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.disciples__empty {
+    color: var(--gray-0);
+}
+
+.disciples__list {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+}
+
+.disciple {
+    display: block;
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--dt-form-border-color, #e4e4e4);
+}
+
+.disciple:first-child {
+    border-top: 0;
+}
+
+.disciple__name {
+    display: block;
+    font-weight: 700;
+}
+
+.disciple__relationships {
+    display: block;
+    color: var(--gray-0);
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+}
+
+.disciple__link-label {
+    display: block;
+    color: var(--gray-0);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.2rem;
+}
+
+.disciple__has-login {
+    display: inline-block;
+    color: var(--gray-0);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.disciples__heading-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.disciples__heading-row h3 {
+    margin: 0;
+}
+
+dt-button.disciples__add {
+    --dt-button-font-size: 1.7rem;
+    --dt-button-height: 30px;
+    --dt-button-width: 30px;
+}
+
+dt-button.disciples__add dt-icon {
+    display: flex;
+}
+
+.disciple-form__actions,
+.upgrade__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.upgrade__heading h3 {
+    color: var(--dt-tile-header-color, #3f729b);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.upgrade__keeps {
+    margin: 0.75rem 0;
+}
+
+.upgrade__notice {
+    color: var(--gray-0);
+    font-size: 0.85rem;
+    margin-top: 1rem;
+}
+
+.upgrade__label {
+    display: block;
+    margin-top: 0.75rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.upgrade__input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    border: 1px solid var(--dt-form-border-color, #e4e4e4);
+    border-radius: 4px;
+    background: var(--dt-form-background-color, #fff);
+    color: var(--dt-form-text-color, #0a0a0a);
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.upgrade__cta-heading {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+dt-tile.app__upgrade dt-button {
+    margin-top: 0.75rem;
+}

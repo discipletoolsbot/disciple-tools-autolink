@@ -71,6 +71,7 @@ class Disciple_Tools_Autolink {
 	private static $_instance = null;
 
 	private function __construct() {
+		require_once __DIR__ . '/magic-link/actor.php';
 		require_once __DIR__ . '/magic-link/functions.php';
 		require_once __DIR__ . '/queries.php';
 		require_once __DIR__ . '/controllers/controller.php';
@@ -81,6 +82,8 @@ class Disciple_Tools_Autolink {
 		require_once __DIR__ . '/controllers/genmap.php';
 		require_once __DIR__ . '/controllers/group.php';
 		require_once __DIR__ . '/controllers/tree.php';
+		require_once __DIR__ . '/controllers/disciples.php';
+		require_once __DIR__ . '/controllers/upgrade.php';
 		require_once __DIR__ . '/controllers/field.php';
 		require_once __DIR__ . '/controllers/admin.php';
 		require_once __DIR__ . '/controllers/admin-general.php';
@@ -90,12 +93,12 @@ class Disciple_Tools_Autolink {
 		require_once __DIR__ . '/admin/settings.php';
 
 
-		require_once __DIR__ .
-		             '/magic-link/contact-app.php';
-		require_once __DIR__ .
-		             '/magic-link/user-app.php';
-		require_once __DIR__ .
-		             '/magic-link/login-app.php';
+		require_once __DIR__ . '/magic-link/app-routes.php';
+		require_once __DIR__ . '/magic-link/contact-app.php';
+		require_once __DIR__ . '/magic-link/user-app.php';
+		// The contact app shares the user app's routing trait, so it loads after it.
+		require_once __DIR__ . '/magic-link/contact-link-app.php';
+		require_once __DIR__ . '/magic-link/login-app.php';
 
 		if ( is_admin() ) {
 			require_once 'admin/config-required-plugins.php'; // adds required plugins
