@@ -82,7 +82,7 @@ class Disciple_Tools_Autolink {
 		require_once __DIR__ . '/controllers/genmap.php';
 		require_once __DIR__ . '/controllers/group.php';
 		require_once __DIR__ . '/controllers/tree.php';
-		require_once __DIR__ . '/controllers/disciples.php';
+		require_once __DIR__ . '/controllers/contacts.php';
 		require_once __DIR__ . '/controllers/upgrade.php';
 		require_once __DIR__ . '/controllers/field.php';
 		require_once __DIR__ . '/controllers/admin.php';

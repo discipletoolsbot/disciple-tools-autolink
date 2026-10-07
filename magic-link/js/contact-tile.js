@@ -11,7 +11,7 @@ import { DtTile } from "@disciple.tools/web-components";
  * end of the line, so that a mark about the person reads as belonging to them
  * rather than floating in the corner.
  */
-export class DiscipleTile extends DtTile {
+export class ContactTile extends DtTile {
   constructor() {
     super();
   }
@@ -32,7 +32,7 @@ export class DiscipleTile extends DtTile {
         }
 
         /* Shrinks rather than grows, so the mark beside it stays against the name. */
-        .disciple__title {
+        .contact__title {
           flex: 0 1 auto;
           min-width: 0;
           white-space: nowrap;
@@ -56,7 +56,7 @@ export class DiscipleTile extends DtTile {
   renderHeading() {
     return html`
       <h3 class="section-header">
-        <span class="disciple__title">${this.title}</span>
+        <span class="contact__title">${this.title}</span>
         <slot name="after-name"></slot>
       </h3>
     `;
@@ -74,4 +74,4 @@ export class DiscipleTile extends DtTile {
   }
 }
 
-window.customElements.define("disciple-tile", DiscipleTile);
+window.customElements.define("contact-tile", ContactTile);

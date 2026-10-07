@@ -22,7 +22,7 @@ trait Disciple_Tools_Autolink_App_Routes {
 	public $field_controller;
 	public $training_controller;
 	public $language_controller;
-	public $disciples_controller;
+	public $contacts_controller;
 	public $upgrade_controller;
 
 	/**
@@ -39,7 +39,7 @@ trait Disciple_Tools_Autolink_App_Routes {
 		$this->field_controller    = new Disciple_Tools_Autolink_Field_Controller();
 		$this->training_controller = new Disciple_Tools_Autolink_Training_Controller();
 		$this->language_controller = new Disciple_Tools_Autolink_Language_Controller();
-		$this->disciples_controller = new Disciple_Tools_Autolink_Disciples_Controller();
+		$this->contacts_controller = new Disciple_Tools_Autolink_Contacts_Controller();
 		$this->upgrade_controller   = new Disciple_Tools_Autolink_Upgrade_Controller();
 		// Genmapper isn't loaded on every request
 		$this->functions->init_genmapper();
@@ -138,11 +138,11 @@ trait Disciple_Tools_Autolink_App_Routes {
 				case 'tree':
 					$this->tree_controller->show();
 					break;
-				case 'disciples':
-					$this->disciples_controller->show();
+				case 'contacts':
+					$this->contacts_controller->show();
 					break;
-				case 'add-disciple':
-					$this->disciples_controller->create();
+				case 'add-contact':
+					$this->contacts_controller->create();
 					break;
 				case 'upgrade':
 					$this->upgrade_controller->show();
@@ -185,8 +185,8 @@ trait Disciple_Tools_Autolink_App_Routes {
 				case 'edit-group':
 					$this->group_controller->update();
 					break;
-				case 'add-disciple':
-					$this->disciples_controller->store();
+				case 'add-contact':
+					$this->contacts_controller->store();
 					break;
 				case 'upgrade':
 					$this->upgrade_controller->process();

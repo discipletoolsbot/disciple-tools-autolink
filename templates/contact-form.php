@@ -3,9 +3,9 @@
 <?php include 'parts/church-view-tabs.php'; ?>
 
 <div class="container">
-    <dt-tile class="disciples">
+    <dt-tile class="contacts">
         <div class="section__inner">
-            <div class="disciples__heading">
+            <div class="contacts__heading">
                 <h3><?php echo esc_html( $translations['heading'] ); ?></h3>
                 <span class="help-text cloak"><?php echo esc_html( $translations['help_text'] ); ?></span>
             </div>
@@ -22,7 +22,7 @@
                          value="<?php echo esc_attr( $name ); ?>"
                          required></dt-text>
 
-                <div class="disciple-form__actions">
+                <div class="contact-form__actions">
                     <dt-button type="submit" context="success"><?php echo esc_html( $translations['submit_label'] ); ?></dt-button>
                     <dt-button href="<?php echo esc_url( $cancel_url ); ?>" context="inactive"><?php echo esc_html( $translations['cancel_label'] ); ?></dt-button>
                 </div>

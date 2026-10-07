@@ -32,7 +32,7 @@ class Disciple_Tools_Autolink_Actor {
 	private $coached_cache = null;
 	private $allowed_groups_cache = null;
 	private $own_groups_cache = null;
-	private $disciples_cache = null;
+	private $related_contacts_cache = null;
 
 	private function __construct( $mode, $user_id, $contact_id ) {
 		$this->mode       = $mode;
@@ -359,9 +359,9 @@ class Disciple_Tools_Autolink_Actor {
 	 *
 	 * @return array
 	 */
-	public function disciple_contacts() {
-		if ( $this->disciples_cache !== null ) {
-			return $this->disciples_cache;
+	public function related_contacts() {
+		if ( $this->related_contacts_cache !== null ) {
+			return $this->related_contacts_cache;
 		}
 
 		$filter  = [];
@@ -382,9 +382,9 @@ class Disciple_Tools_Autolink_Actor {
 			$filter['groups']       = $group_ids;
 		}
 
-		$this->disciples_cache = self::run_query( 'contacts', $filter, [ 'limit' => 1000 ] )['posts'];
+		$this->related_contacts_cache = self::run_query( 'contacts', $filter, [ 'limit' => 1000 ] )['posts'];
 
-		return $this->disciples_cache;
+		return $this->related_contacts_cache;
 	}
 
 	/**

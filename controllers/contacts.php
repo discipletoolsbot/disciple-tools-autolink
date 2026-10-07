@@ -4,69 +4,75 @@
  * The people around this leader: those they coach, and the leaders and members
  * of the churches they hold.
  */
-class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autolink_Controller {
-	const NONCE = 'dt_autolink_disciple';
+class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolink_Controller {
+	const NONCE = 'dt_autolink_contact';
 
 
 	/**
-	 * Show the disciples template
+	 * Show the contacts template
 	 */
 	public function show( $params = [] ) {
 		$data = $this->global_data();
 		// phpcs:ignore
 		extract( $data );
 
-		$action    = 'disciples';
-		$disciples = $this->disciples();
+		$action    = 'contacts';
+		$contacts = $this->gather_contacts();
 
 		$translations = [
-			'heading'      => __( 'Disciples', 'disciple-tools-autolink' ),
-			'help_text'    => __( 'The people you coach or are assigned, and the leaders and members of your churches.', 'disciple-tools-autolink' ),
-			'add'          => __( 'Add disciple', 'disciple-tools-autolink' ),
-			'link_label'   => __( 'Their link', 'disciple-tools-autolink' ),
-			'link_help'    => __( 'Send this to them. They can use the app without a Disciple.Tools login.', 'disciple-tools-autolink' ),
+			// Whatever this site calls contacts - some rename them to "Disciples".
+			'heading'   => $contacts_label,
+			/* translators: %s: lowercased plural name of the group post type, e.g. "churches". */
+			'help_text' => sprintf( __( 'The people you coach or are assigned, and the leaders and members of your %s.', 'disciple-tools-autolink' ), strtolower( $churches_label ) ),
+			/* translators: %s: singular name of the contact post type, e.g. "Contact". */
+			'add'       => sprintf( __( 'Add %s', 'disciple-tools-autolink' ), $contact_label ),
 			// One label whichever kind of link it is. What differs is where the
 			// link goes, which is our problem rather than theirs.
-			'has_login'       => __( 'Has a Disciple.Tools login', 'disciple-tools-autolink' ),
-			'copy_link'       => __( 'Copy link', 'disciple-tools-autolink' ),
-			'copied'          => __( 'Copied', 'disciple-tools-autolink' ),
-			/* translators: %s: plural name of the group post type, e.g. "Churches". */
-			'empty'        => sprintf( __( 'No disciples yet. People you coach, and the leaders and members of your %s, will appear here.', 'disciple-tools-autolink' ), strtolower( $churches_label ) ),
+			'has_login' => __( 'Has a Disciple.Tools login', 'disciple-tools-autolink' ),
+			'copy_link' => __( 'Copy link', 'disciple-tools-autolink' ),
+			'copied'    => __( 'Copied', 'disciple-tools-autolink' ),
+			/* translators: 1: lowercased plural name of the contact post type. 2: lowercased plural name of the group post type. */
+			'empty'     => sprintf(
+				__( 'No %1$s yet. People you coach, and the leaders and members of your %2$s, will appear here.', 'disciple-tools-autolink' ),
+				strtolower( $contacts_label ),
+				strtolower( $churches_label )
+			),
 		];
 
-		$add_disciple_link  = $this->functions->get_app_link() . '?action=add-disciple';
+		$add_contact_link  = $this->functions->get_app_link() . '?action=add-contact';
 		$relationship_icons = $this->relationship_icons();
 
-		include __DIR__ . '/../templates/disciples.php';
+		include __DIR__ . '/../templates/contacts.php';
 	}
 
 	/**
-	 * Show the form for adding a disciple.
+	 * Show the form for adding a contact.
 	 */
 	public function create( $params = [] ) {
 		$data = $this->global_data();
 		// phpcs:ignore
 		extract( $data );
 
-		$action       = 'disciples';
-		$form_action  = $this->functions->get_app_link() . '?action=add-disciple';
+		$action       = 'contacts';
+		$form_action  = $this->functions->get_app_link() . '?action=add-contact';
 		$nonce        = self::NONCE;
 		$error        = $params['error'] ?? '';
 		$name         = $params['name'] ?? '';
-		$cancel_url   = $this->functions->get_app_link() . '?action=disciples';
+		$cancel_url   = $this->functions->get_app_link() . '?action=contacts';
 		$translations = [
-			'heading'      => __( 'Add a disciple', 'disciple-tools-autolink' ),
+			/* translators: %s: singular name of the contact post type, e.g. "Contact". */
+			'heading'      => sprintf( __( 'Add a %s', 'disciple-tools-autolink' ), strtolower( $contact_label ) ),
 			'help_text'    => __( 'They will be added to the people you coach, and get their own link into this app.', 'disciple-tools-autolink' ),
 			'name_label'   => __( 'Name', 'disciple-tools-autolink' ),
 			'submit_label' => __( 'Add', 'disciple-tools-autolink' ),
 			'cancel_label' => __( 'Cancel', 'disciple-tools-autolink' ),
 		];
 
-		include __DIR__ . '/../templates/disciple-form.php';
+		include __DIR__ . '/../templates/contact-form.php';
 	}
 
 	/**
-	 * Create a disciple.
+	 * Create a contact.
 	 *
 	 * This is the answer to "how does someone new join the chain" - rather than a
 	 * link anyone can use to create records, the person doing the coaching adds
@@ -123,13 +129,13 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 		// Mint their link now, so it is waiting on the list they land back on.
 		Disciple_Tools_Autolink_Actor::offer_contact_app_link( $contact['ID'] );
 
-		wp_redirect( $this->functions->get_app_link() . '?action=disciples' );
+		wp_redirect( $this->functions->get_app_link() . '?action=contacts' );
 	}
 
 	/**
-	 * Gather the disciples, deduplicated, with how each one is connected.
+	 * Gather the contacts, deduplicated, with how each one is connected.
 	 *
-	 * Everyone arrives from one query - see Actor::disciple_contacts() - and every
+	 * Everyone arrives from one query - see Actor::related_contacts() - and every
 	 * connection is then read off their own record. Reading the church
 	 * relationships from the person rather than from the actor's churches is what
 	 * makes the card complete: it can say that someone leads a church the actor
@@ -141,52 +147,52 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 	 *
 	 * @return array
 	 */
-	private function disciples() {
+	private function gather_contacts() {
 		$actor      = $this->actor();
 		$contact_id = $actor->contact_id();
-		$disciples  = [];
+		$contacts  = [];
 
-		foreach ( $actor->disciple_contacts() as $contact ) {
+		foreach ( $actor->related_contacts() as $contact ) {
 			$id = (int) $contact['ID'];
 
-			$this->add_disciple( $disciples, $id, $contact['title'] ?? $contact['name'] ?? '' );
+			$this->add_contact( $contacts, $id, $contact['title'] ?? $contact['name'] ?? '' );
 
 			foreach ( $this->contact_relationships( $contact, $actor ) as $type ) {
-				$this->add_relationship( $disciples, $id, $type );
+				$this->add_relationship( $contacts, $id, $type );
 			}
 
 			foreach ( $contact['group_leader'] ?? [] as $church ) {
-				$this->add_relationship( $disciples, $id, 'leader', $church['ID'], $church['post_title'] ?? '' );
+				$this->add_relationship( $contacts, $id, 'leader', $church['ID'], $church['post_title'] ?? '' );
 			}
 
 			foreach ( $contact['groups'] ?? [] as $church ) {
-				$this->add_relationship( $disciples, $id, 'member', $church['ID'], $church['post_title'] ?? '' );
+				$this->add_relationship( $contacts, $id, 'member', $church['ID'], $church['post_title'] ?? '' );
 			}
 		}
 
 		// The person using the app is on their own churches as a leader and a
-		// member; they are not their own disciple.
-		unset( $disciples[ $contact_id ] );
+		// member; they are not their own contact.
+		unset( $contacts[ $contact_id ] );
 
 		$general_link = $this->functions->get_link_url();
 
-		foreach ( $disciples as $id => $disciple ) {
+		foreach ( $contacts as $id => $contact_row ) {
 			$has_login = Disciple_Tools_Autolink_Actor::contact_has_login( $id );
 
-			$disciples[ $id ]['has_login']     = $has_login;
+			$contacts[ $id ]['has_login']     = $has_login;
 			// Someone with their own Disciple.Tools login signs in rather than
 			// following a key - handing their coach a magic key into that account
 			// would hand over whatever the account can reach. They get the ordinary
 			// sign-in address instead, which is still useful to pass on.
-			$disciples[ $id ]['link']          = $has_login ? $general_link : Disciple_Tools_Autolink_Actor::contact_app_link( $id );
-			$disciples[ $id ]['relationships'] = $this->shape_relationships( $disciple['relationships'] );
+			$contacts[ $id ]['link']          = $has_login ? $general_link : Disciple_Tools_Autolink_Actor::contact_app_link( $id );
+			$contacts[ $id ]['relationships'] = $this->shape_relationships( $contact_row['relationships'] );
 		}
 
-		uasort( $disciples, function ( $a, $b ) {
+		uasort( $contacts, function ( $a, $b ) {
 			return strcasecmp( $a['name'], $b['name'] );
 		} );
 
-		return array_values( $disciples );
+		return array_values( $contacts );
 	}
 
 	/**
@@ -219,27 +225,27 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 	/**
 	 * Record one person.
 	 *
-	 * @param array $disciples
+	 * @param array $contacts
 	 * @param int $id
 	 * @param string $name
 	 */
-	private function add_disciple( &$disciples, $id, $name ) {
+	private function add_contact( &$contacts, $id, $name ) {
 		$id = (int) $id;
 
 		if ( ! $id ) {
 			return;
 		}
 
-		if ( ! isset( $disciples[ $id ] ) ) {
-			$disciples[ $id ] = [
+		if ( ! isset( $contacts[ $id ] ) ) {
+			$contacts[ $id ] = [
 				'id'            => $id,
 				'name'          => $name,
 				'relationships' => [],
 			];
 		}
 
-		if ( ! $disciples[ $id ]['name'] && $name ) {
-			$disciples[ $id ]['name'] = $name;
+		if ( ! $contacts[ $id ]['name'] && $name ) {
+			$contacts[ $id ]['name'] = $name;
 		}
 	}
 
@@ -250,25 +256,25 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 	 * leader and member sets can be compared without two churches that happen to
 	 * share a name being treated as one.
 	 *
-	 * @param array $disciples
+	 * @param array $contacts
 	 * @param int $id
 	 * @param string $type
 	 * @param int $church_id where the connection is through a church
 	 * @param string $church_name
 	 */
-	private function add_relationship( &$disciples, $id, $type, $church_id = 0, $church_name = '' ) {
+	private function add_relationship( &$contacts, $id, $type, $church_id = 0, $church_name = '' ) {
 		$id = (int) $id;
 
-		if ( ! isset( $disciples[ $id ] ) ) {
+		if ( ! isset( $contacts[ $id ] ) ) {
 			return;
 		}
 
-		if ( ! isset( $disciples[ $id ]['relationships'][ $type ] ) ) {
-			$disciples[ $id ]['relationships'][ $type ] = [];
+		if ( ! isset( $contacts[ $id ]['relationships'][ $type ] ) ) {
+			$contacts[ $id ]['relationships'][ $type ] = [];
 		}
 
 		if ( $church_id ) {
-			$disciples[ $id ]['relationships'][ $type ][ (int) $church_id ] = $church_name;
+			$contacts[ $id ]['relationships'][ $type ][ (int) $church_id ] = $church_name;
 		}
 	}
 
@@ -356,7 +362,7 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 	 * @return array
 	 */
 	private function relationship_icons() {
-		$sources = apply_filters( 'dt_autolink_disciple_relationship_icons', [
+		$sources = apply_filters( 'dt_autolink_contact_relationship_icons', [
 			'coaching' => [ 'contacts', 'coaching' ],      // "Is Coaching"
 			'assigned' => [ 'contacts', 'assigned_to' ],   // "Assigned"
 			'leader'   => [ 'groups', 'leader_count' ],    // as per the Group Health row

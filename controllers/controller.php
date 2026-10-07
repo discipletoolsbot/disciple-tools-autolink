@@ -27,8 +27,9 @@ abstract class Disciple_Tools_Autolink_Controller {
 	public function global_data() {
 		$actor        = $this->actor();
 		$data         = [];
-		$post_type    = get_post_type_object( 'groups' );
-		$group_labels = get_post_type_labels( $post_type );
+		$post_type      = get_post_type_object( 'groups' );
+		$group_labels   = get_post_type_labels( $post_type );
+		$contact_labels = get_post_type_labels( get_post_type_object( 'contacts' ) );
 
 		$data['logo_url']             = $this->functions->fetch_logo();
 		$data['greeting']             = __( 'Hello,', 'disciple-tools-autolink' );
@@ -58,7 +59,11 @@ abstract class Disciple_Tools_Autolink_Controller {
 		$data['church_health_label']  = sprintf( __( '%s Health', 'disciple-tools-autolink' ), $group_labels->singular_name );
 		$data['tree_label']           = __( 'Tree', 'disciple-tools-autolink' );
 		$data['genmap_label']         = __( 'GenMap', 'disciple-tools-autolink' );
-		$data['disciples_label']      = __( 'Disciples', 'disciple-tools-autolink' );
+		// The tab reads whatever this site calls the contacts post type, the way
+		// the churches tab reads the groups one. Sites that rename contacts to
+		// something like "Disciples" get that name here without a code change.
+		$data['contact_label']        = $contact_labels->singular_name;
+		$data['contacts_label']       = $contact_labels->name;
 		// A contact with no login can trade their bearer link for a password.
 		$data['can_upgrade']          = $actor->is_contact()
 			&& $actor->contact_id()

@@ -1,17 +1,17 @@
-.disciples {
+.contacts {
     position: relative;
     display: block;
 }
 
 /* Matches .churches__heading, so both tabs put the add button in the same place. */
-.disciples__heading {
+.contacts__heading {
     display: flex;
     gap: 1rem;
     align-items: center;
     justify-content: space-between;
 }
 
-.disciples__heading h3 {
+.contacts__heading h3 {
     color: var(--dt-tile-header-color, #3f729b);
     font-size: 1.5rem;
     text-transform: var(--dt-tile-header-text-transform, capitalize);
@@ -19,27 +19,27 @@
     margin: 0;
 }
 
-.disciples .help-text {
+.contacts .help-text {
     display: block;
     /* Clears the round add button sitting at the end of the heading row. */
     margin: 0.6rem 0 0.25rem;
 }
 
-.disciples__empty {
+.contacts__empty {
     color: var(--gray-0);
 }
 
-dt-button.disciples__add {
+dt-button.contacts__add {
     --dt-button-font-size: 1.7rem;
     --dt-button-height: 30px;
     --dt-button-width: 30px;
 }
 
-dt-button.disciples__add dt-icon {
+dt-button.contacts__add dt-icon {
     display: flex;
 }
 
-.disciple-form__actions,
+.contact-form__actions,
 .upgrade__actions {
     display: flex;
     gap: 0.5rem;
@@ -98,32 +98,32 @@ dt-tile.app__upgrade dt-button {
 }
 
 /* The cards. Mirrors .churches__groups so both tabs stack the same way. */
-.disciples__list {
+.contacts__list {
     display: block;
     margin-top: 0.5rem;
 }
 
-.disciple {
+.contact {
     position: relative;
     display: block;
 }
 
 /* Slotted into the card heading, beside the name. */
-.disciple__login {
+.contact__login {
     display: inline-flex;
     align-items: center;
     color: var(--gray-0, #666);
     font-size: 1.1rem;
 }
 
-.disciple__badges {
+.contact__badges {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
     margin: 0 0 0.5rem;
 }
 
-.disciple__badge {
+.contact__badge {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
@@ -138,13 +138,13 @@ dt-tile.app__upgrade dt-button {
 }
 
 /* Direct relationships read stronger than the ones that come via a church. */
-.disciple__badge--coaching,
-.disciple__badge--assigned {
+.contact__badge--coaching,
+.contact__badge--assigned {
     background: var(--primary-color-light-1, #c2e0ff);
 }
 
 /* Field icons arrive as images; a customised field may give a font icon instead. */
-.disciple__badge-icon {
+.contact__badge-icon {
     flex: none;
     width: 16px;
     height: 16px;
@@ -154,20 +154,20 @@ dt-tile.app__upgrade dt-button {
 }
 
 /* The churches a badge came from, named rather than hidden behind a tooltip. */
-.disciple__churches {
+.contact__churches {
     list-style: none;
     margin: 0 0 0.75rem;
     padding: 0;
 }
 
-.disciple__church {
+.contact__church {
     font-size: 0.8125rem;
     line-height: 1.45;
     color: var(--gray-0, #666);
     text-align: start;
 }
 
-.disciple__actions {
+.contact__actions {
     display: flex;
     justify-content: flex-start;
 }
