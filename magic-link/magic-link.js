@@ -11,6 +11,9 @@ import "./js/church-counts";
 import "./js/ajax-field";
 import "./js/groups-tree";
 import "./js/churches"
+import "./js/disciple-tile";
+import "./js/disciples";
+import "./js/copy-link";
 import "./js/submit-button"
 
 import "@shoelace-style/shoelace/dist/themes/light.css";

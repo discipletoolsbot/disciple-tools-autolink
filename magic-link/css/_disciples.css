@@ -3,71 +3,30 @@
     display: block;
 }
 
-.disciples__heading h3 {
-    color: var(--dt-tile-header-color, #3f729b);
-    font-size: 1.5rem;
-    text-transform: var(--dt-tile-header-text-transform, capitalize);
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-}
-
-.disciples__empty {
-    color: var(--gray-0);
-}
-
-.disciples__list {
-    list-style: none;
-    margin: 1rem 0 0;
-    padding: 0;
-}
-
-.disciple {
-    display: block;
-    padding: 0.75rem 0;
-    border-top: 1px solid var(--dt-form-border-color, #e4e4e4);
-}
-
-.disciple:first-child {
-    border-top: 0;
-}
-
-.disciple__name {
-    display: block;
-    font-weight: 700;
-}
-
-.disciple__relationships {
-    display: block;
-    color: var(--gray-0);
-    font-size: 0.85rem;
-    margin-bottom: 0.4rem;
-}
-
-.disciple__link-label {
-    display: block;
-    color: var(--gray-0);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    margin-bottom: 0.2rem;
-}
-
-.disciple__has-login {
-    display: inline-block;
-    color: var(--gray-0);
-    font-size: 0.8rem;
-    font-style: italic;
-}
-
-.disciples__heading-row {
+/* Matches .churches__heading, so both tabs put the add button in the same place. */
+.disciples__heading {
     display: flex;
     gap: 1rem;
     align-items: center;
     justify-content: space-between;
 }
 
-.disciples__heading-row h3 {
+.disciples__heading h3 {
+    color: var(--dt-tile-header-color, #3f729b);
+    font-size: 1.5rem;
+    text-transform: var(--dt-tile-header-text-transform, capitalize);
+    font-weight: 700;
     margin: 0;
+}
+
+.disciples .help-text {
+    display: block;
+    /* Clears the round add button sitting at the end of the heading row. */
+    margin: 0.6rem 0 0.25rem;
+}
+
+.disciples__empty {
+    color: var(--gray-0);
 }
 
 dt-button.disciples__add {
@@ -129,6 +88,86 @@ dt-button.disciples__add dt-icon {
     margin-bottom: 0.25rem;
 }
 
+dt-tile.app__upgrade .help-text {
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
 dt-tile.app__upgrade dt-button {
-    margin-top: 0.75rem;
+    display: inline-block;
+}
+
+/* The cards. Mirrors .churches__groups so both tabs stack the same way. */
+.disciples__list {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.disciple {
+    position: relative;
+    display: block;
+}
+
+/* Slotted into the card heading, beside the name. */
+.disciple__login {
+    display: inline-flex;
+    align-items: center;
+    color: var(--gray-0, #666);
+    font-size: 1.1rem;
+}
+
+.disciple__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 0.5rem;
+}
+
+.disciple__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.5;
+    white-space: nowrap;
+    background: var(--primary-color-light-0, #ecf5fc);
+    color: var(--primary-color, #2c5364);
+}
+
+/* Direct relationships read stronger than the ones that come via a church. */
+.disciple__badge--coaching,
+.disciple__badge--assigned {
+    background: var(--primary-color-light-1, #c2e0ff);
+}
+
+/* Field icons arrive as images; a customised field may give a font icon instead. */
+.disciple__badge-icon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    font-size: 0.95rem;
+    display: flex;
+}
+
+/* The churches a badge came from, named rather than hidden behind a tooltip. */
+.disciple__churches {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+}
+
+.disciple__church {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--gray-0, #666);
+    text-align: start;
+}
+
+.disciple__actions {
+    display: flex;
+    justify-content: flex-start;
 }

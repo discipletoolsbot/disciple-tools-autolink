@@ -339,11 +339,20 @@ class Disciple_Tools_Autolink_Actor {
 	}
 
 	/**
-	 * The people around this actor: those they coach, and those assigned to them.
+	 * The people around this actor.
 	 *
-	 * The same two handles as their churches. A user carries people through
-	 * `assigned_to`, a contact through `coached_by`, so reading either means the
-	 * list does not empty out when someone takes a login - or fill up only then.
+	 * Four ways to belong on the list, matched as alternatives in one query: the
+	 * actor coaches them, they are assigned to the actor, or they lead or belong
+	 * to one of the actor's churches. The first two are the same two handles their
+	 * churches use - a user carries people through `assigned_to`, a contact
+	 * through `coached_by` - so the list does not empty out when someone takes a
+	 * login, or fill up only then.
+	 *
+	 * The last two are matched from the contact side (`group_leader`, `groups`)
+	 * rather than by walking the actor's churches, so each record comes back
+	 * carrying its own full set of church connections. That is what lets the card
+	 * say where someone leads or belongs even when the actor has no part in that
+	 * church.
 	 *
 	 * This is a reading list, deliberately wider than coached_contacts(), which
 	 * stays the narrower set that decides what may be written.
@@ -364,6 +373,13 @@ class Disciple_Tools_Autolink_Actor {
 
 		if ( $this->contact_id ) {
 			$filter['coached_by'] = [ $this->contact_id ];
+		}
+
+		$group_ids = array_map( 'intval', wp_list_pluck( $this->own_groups(), 'ID' ) );
+
+		if ( $group_ids ) {
+			$filter['group_leader'] = $group_ids;
+			$filter['groups']       = $group_ids;
 		}
 
 		$this->disciples_cache = self::run_query( 'contacts', $filter, [ 'limit' => 1000 ] )['posts'];

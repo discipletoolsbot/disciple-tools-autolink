@@ -25,12 +25,17 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 			'add'          => __( 'Add disciple', 'disciple-tools-autolink' ),
 			'link_label'   => __( 'Their link', 'disciple-tools-autolink' ),
 			'link_help'    => __( 'Send this to them. They can use the app without a Disciple.Tools login.', 'disciple-tools-autolink' ),
-			'has_login'    => __( 'Has a Disciple.Tools login', 'disciple-tools-autolink' ),
+			// One label whichever kind of link it is. What differs is where the
+			// link goes, which is our problem rather than theirs.
+			'has_login'       => __( 'Has a Disciple.Tools login', 'disciple-tools-autolink' ),
+			'copy_link'       => __( 'Copy link', 'disciple-tools-autolink' ),
+			'copied'          => __( 'Copied', 'disciple-tools-autolink' ),
 			/* translators: %s: plural name of the group post type, e.g. "Churches". */
 			'empty'        => sprintf( __( 'No disciples yet. People you coach, and the leaders and members of your %s, will appear here.', 'disciple-tools-autolink' ), strtolower( $churches_label ) ),
 		];
 
-		$add_disciple_link = $this->functions->get_app_link() . '?action=add-disciple';
+		$add_disciple_link  = $this->functions->get_app_link() . '?action=add-disciple';
+		$relationship_icons = $this->relationship_icons();
 
 		include __DIR__ . '/../templates/disciples.php';
 	}
@@ -124,9 +129,15 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 	/**
 	 * Gather the disciples, deduplicated, with how each one is connected.
 	 *
-	 * Two sources: the contacts this person coaches, and the leaders and members
-	 * of the churches they hold. Someone can be both, so the relationships are
-	 * collected per person rather than listing them twice.
+	 * Everyone arrives from one query - see Actor::disciple_contacts() - and every
+	 * connection is then read off their own record. Reading the church
+	 * relationships from the person rather than from the actor's churches is what
+	 * makes the card complete: it can say that someone leads a church the actor
+	 * has no part in, which walking the actor's own churches could never show.
+	 *
+	 * Someone can be connected several ways at once, so connections are collected
+	 * per person and grouped by kind - one "Member" badge naming three churches
+	 * rather than three rows.
 	 *
 	 * @return array
 	 */
@@ -135,30 +146,21 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 		$contact_id = $actor->contact_id();
 		$disciples  = [];
 
-		// One query matching either handle - see Actor::disciple_contacts(). Which
-		// one each person matched on is read back off the record rather than being
-		// inferred from which query returned them.
 		foreach ( $actor->disciple_contacts() as $contact ) {
-			$name = $contact['title'] ?? $contact['name'] ?? '';
+			$id = (int) $contact['ID'];
 
-			$this->add_disciple( $disciples, $contact['ID'], $name );
+			$this->add_disciple( $disciples, $id, $contact['title'] ?? $contact['name'] ?? '' );
 
-			foreach ( $this->contact_relationships( $contact, $actor ) as $relationship ) {
-				$this->add_disciple( $disciples, $contact['ID'], $name, $relationship );
-			}
-		}
-
-		foreach ( $actor->own_groups() as $group ) {
-			$group_name = $group['post_title'] ?? $group['name'] ?? '';
-
-			foreach ( $group['leaders'] ?? [] as $leader ) {
-				/* translators: %s: the name of a church or group. */
-				$this->add_disciple( $disciples, $leader['ID'], $leader['post_title'] ?? '', sprintf( __( 'Leads %s', 'disciple-tools-autolink' ), $group_name ) );
+			foreach ( $this->contact_relationships( $contact, $actor ) as $type ) {
+				$this->add_relationship( $disciples, $id, $type );
 			}
 
-			foreach ( $group['members'] ?? [] as $member ) {
-				/* translators: %s: the name of a church or group. */
-				$this->add_disciple( $disciples, $member['ID'], $member['post_title'] ?? '', sprintf( __( 'Member of %s', 'disciple-tools-autolink' ), $group_name ) );
+			foreach ( $contact['group_leader'] ?? [] as $church ) {
+				$this->add_relationship( $disciples, $id, 'leader', $church['ID'], $church['post_title'] ?? '' );
+			}
+
+			foreach ( $contact['groups'] ?? [] as $church ) {
+				$this->add_relationship( $disciples, $id, 'member', $church['ID'], $church['post_title'] ?? '' );
 			}
 		}
 
@@ -166,12 +168,18 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 		// member; they are not their own disciple.
 		unset( $disciples[ $contact_id ] );
 
+		$general_link = $this->functions->get_link_url();
+
 		foreach ( $disciples as $id => $disciple ) {
-			$disciples[ $id ]['has_login'] = Disciple_Tools_Autolink_Actor::contact_has_login( $id );
-			// Someone with their own Disciple.Tools login signs in there - handing
-			// their coach a magic key into that account would hand over whatever
-			// the account can reach.
-			$disciples[ $id ]['link']      = Disciple_Tools_Autolink_Actor::offer_contact_app_link( $id );
+			$has_login = Disciple_Tools_Autolink_Actor::contact_has_login( $id );
+
+			$disciples[ $id ]['has_login']     = $has_login;
+			// Someone with their own Disciple.Tools login signs in rather than
+			// following a key - handing their coach a magic key into that account
+			// would hand over whatever the account can reach. They get the ordinary
+			// sign-in address instead, which is still useful to pass on.
+			$disciples[ $id ]['link']          = $has_login ? $general_link : Disciple_Tools_Autolink_Actor::contact_app_link( $id );
+			$disciples[ $id ]['relationships'] = $this->shape_relationships( $disciple['relationships'] );
 		}
 
 		uasort( $disciples, function ( $a, $b ) {
@@ -182,7 +190,7 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 	}
 
 	/**
-	 * How this person is connected to the actor.
+	 * Which kinds of connection this person has to the actor.
 	 *
 	 * @param array $contact
 	 * @param Disciple_Tools_Autolink_Actor $actor
@@ -190,33 +198,32 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 	 * @return string[]
 	 */
 	private function contact_relationships( $contact, $actor ) {
-		$relationships = [];
-		$contact_id    = $actor->contact_id();
-		$user_id       = $actor->linked_user_id();
+		$types      = [];
+		$contact_id = $actor->contact_id();
+		$user_id    = $actor->linked_user_id();
 
 		foreach ( $contact['coached_by'] ?? [] as $coach ) {
 			if ( (int) ( $coach['ID'] ?? 0 ) === $contact_id ) {
-				$relationships[] = __( 'Coaching', 'disciple-tools-autolink' );
+				$types[] = 'coaching';
 				break;
 			}
 		}
 
 		if ( $user_id && (int) ( $contact['assigned_to']['id'] ?? 0 ) === $user_id ) {
-			$relationships[] = __( 'Assigned to you', 'disciple-tools-autolink' );
+			$types[] = 'assigned';
 		}
 
-		return $relationships;
+		return $types;
 	}
 
 	/**
-	 * Record one person, merging the relationship if we have seen them already.
+	 * Record one person.
 	 *
 	 * @param array $disciples
 	 * @param int $id
 	 * @param string $name
-	 * @param string $relationship
 	 */
-	private function add_disciple( &$disciples, $id, $name, $relationship = '' ) {
+	private function add_disciple( &$disciples, $id, $name ) {
 		$id = (int) $id;
 
 		if ( ! $id ) {
@@ -234,9 +241,147 @@ class Disciple_Tools_Autolink_Disciples_Controller extends Disciple_Tools_Autoli
 		if ( ! $disciples[ $id ]['name'] && $name ) {
 			$disciples[ $id ]['name'] = $name;
 		}
+	}
 
-		if ( $relationship && ! in_array( $relationship, $disciples[ $id ]['relationships'], true ) ) {
-			$disciples[ $id ]['relationships'][] = $relationship;
+	/**
+	 * Note one kind of connection, keeping the churches it came from.
+	 *
+	 * Churches are keyed by id rather than collected as a plain list, so that the
+	 * leader and member sets can be compared without two churches that happen to
+	 * share a name being treated as one.
+	 *
+	 * @param array $disciples
+	 * @param int $id
+	 * @param string $type
+	 * @param int $church_id where the connection is through a church
+	 * @param string $church_name
+	 */
+	private function add_relationship( &$disciples, $id, $type, $church_id = 0, $church_name = '' ) {
+		$id = (int) $id;
+
+		if ( ! isset( $disciples[ $id ] ) ) {
+			return;
 		}
+
+		if ( ! isset( $disciples[ $id ]['relationships'][ $type ] ) ) {
+			$disciples[ $id ]['relationships'][ $type ] = [];
+		}
+
+		if ( $church_id ) {
+			$disciples[ $id ]['relationships'][ $type ][ (int) $church_id ] = $church_name;
+		}
+	}
+
+	/**
+	 * Turn the collected connections into badges, plus the lines underneath them.
+	 *
+	 * The badge says what kind of connection it is; the line below names the
+	 * churches it came from. The names are on the card rather than in a tooltip -
+	 * there is no hover on a phone, so anything only reachable that way is not
+	 * there at all.
+	 *
+	 * Ordered deliberately: the direct relationships first, then the ones that
+	 * reach this person through a church.
+	 *
+	 * @param array $relationships type => list of church names
+	 *
+	 * @return array
+	 */
+	private function shape_relationships( $relationships ) {
+		$labels = [
+			'coaching' => __( 'Coaching', 'disciple-tools-autolink' ),
+			'assigned' => __( 'Assigned', 'disciple-tools-autolink' ),
+			'leader'   => __( 'Leader', 'disciple-tools-autolink' ),
+			'member'   => __( 'Member', 'disciple-tools-autolink' ),
+		];
+
+		$with_churches = [
+			/* translators: %s: a list of church names. */
+			'leader' => __( 'Leads %s', 'disciple-tools-autolink' ),
+			/* translators: %s: a list of church names. */
+			'member' => __( 'Member of %s', 'disciple-tools-autolink' ),
+		];
+
+		// Leading a church means being a member of it too, and DT records both, so
+		// an unfiltered card says the same thing twice. The leader line is the one
+		// that carries information, so a church someone leads drops out of their
+		// member list - and if that empties it, the member badge goes with it.
+		if ( ! empty( $relationships['leader'] ) && ! empty( $relationships['member'] ) ) {
+			$relationships['member'] = array_diff_key( $relationships['member'], $relationships['leader'] );
+		}
+
+		$badges = [];
+
+		foreach ( array_keys( $labels ) as $type ) {
+			if ( ! isset( $relationships[ $type ] ) ) {
+				continue;
+			}
+
+			$churches = $relationships[ $type ];
+			$detail   = '';
+
+			if ( isset( $with_churches[ $type ] ) ) {
+				if ( empty( $churches ) ) {
+					continue;
+				}
+
+				$detail = sprintf( $with_churches[ $type ], implode( ', ', $churches ) );
+			}
+
+			$badges[] = [
+				'type'   => $type,
+				'label'  => $labels[ $type ],
+				'detail' => $detail,
+			];
+		}
+
+		return $badges;
+	}
+
+	/**
+	 * The icon for each kind of connection, taken from the Disciple.Tools field it
+	 * stands for rather than picked by us, so that customising the field's icon
+	 * customises this too.
+	 *
+	 * The two direct relationships read from contact fields. The two that reach a
+	 * person through a church read from the church count fields instead - the same
+	 * marks the Group Health tab already uses for leaders and members, so one
+	 * symbol means one thing across both tabs. That is a deliberate trade: an
+	 * admin who restyles the *contact* "Leader of Group" icon will not see it
+	 * here. Point this filter at the contact fields to swap that back.
+	 *
+	 * There is no field behind "has a login" - corresponds_to_user is hidden and
+	 * carries no icon - so that one mark stays ours, in the component.
+	 *
+	 * @return array
+	 */
+	private function relationship_icons() {
+		$sources = apply_filters( 'dt_autolink_disciple_relationship_icons', [
+			'coaching' => [ 'contacts', 'coaching' ],      // "Is Coaching"
+			'assigned' => [ 'contacts', 'assigned_to' ],   // "Assigned"
+			'leader'   => [ 'groups', 'leader_count' ],    // as per the Group Health row
+			'member'   => [ 'groups', 'member_count' ],    // as per the Group Health row
+		] );
+
+		$settings = [];
+		$icons    = [];
+
+		foreach ( $sources as $type => $source ) {
+			list( $post_type, $field_key ) = $source;
+
+			if ( ! isset( $settings[ $post_type ] ) ) {
+				$settings[ $post_type ] = DT_Posts::get_post_field_settings( $post_type );
+			}
+
+			$field = $settings[ $post_type ][ $field_key ] ?? [];
+
+			$icons[ $type ] = [
+				'icon'      => $field['icon'] ?? '',
+				'font_icon' => $field['font-icon'] ?? '',
+				'name'      => $field['name'] ?? '',
+			];
+		}
+
+		return $icons;
 	}
 }

@@ -6,7 +6,7 @@
 
 	<?php if ( $coach_name ): ?>
         <strong class="coached_by">
-			<?php echo esc_html( $coached_by_label ); ?><?php echo esc_html( $coach_name ); ?>
+			<?php echo esc_html( $coached_by_label ); ?> <?php echo esc_html( $coach_name ); ?>
         </strong>
 	<?php endif; ?>
 
