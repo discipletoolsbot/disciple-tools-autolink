@@ -11,7 +11,7 @@ class Disciple_Tools_Autolink_Admin_General_Controller extends Disciple_Tools_Au
 	 * @return void
 	 */
 	public function show( $params = [] ): void {
-		$default_training_videos = $this->settings->defaults()['disciple_tools_autolink_training_videos'];
+		$default_training_videos = $this->settings->default_for( 'disciple_tools_autolink_training_videos' );
 		$old                     = [
 			'disciple_tools_autolink_allow_parent_group_selection' => $this->settings->get_option( 'disciple_tools_autolink_allow_parent_group_selection' ),
 			'disciple_tools_autolink_training_videos'              => $this->settings->get_option( 'disciple_tools_autolink_training_videos' ),
