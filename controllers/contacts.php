@@ -17,7 +17,8 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 		extract( $data );
 
 		$action    = 'contacts';
-		$contacts = $this->gather_contacts();
+		$contacts   = $this->gather_contacts();
+		$milestones = $this->milestones();
 
 		$translations = [
 			// Whatever this site calls contacts - some rename them to "Disciples".
@@ -31,6 +32,10 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 			'has_login' => __( 'Has a Disciple.Tools login', 'disciple-tools-autolink' ),
 			'copy_link' => __( 'Copy link', 'disciple-tools-autolink' ),
 			'copied'    => __( 'Copied', 'disciple-tools-autolink' ),
+			// Names the milestone row. What each mark means is carried by a check
+			// or a cross rather than by words - see renderMilestone() - so that it
+			// needs no translation and cannot lag behind one.
+			'milestones' => $milestones['label'],
 			/* translators: 1: lowercased plural name of the contact post type. 2: lowercased plural name of the group post type. */
 			'empty'     => sprintf(
 				__( 'No %1$s yet. People you coach, and the leaders and members of your %2$s, will appear here.', 'disciple-tools-autolink' ),
@@ -155,7 +160,7 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 		foreach ( $actor->related_contacts() as $contact ) {
 			$id = (int) $contact['ID'];
 
-			$this->add_contact( $contacts, $id, $contact['title'] ?? $contact['name'] ?? '' );
+			$this->add_contact( $contacts, $id, $contact['title'] ?? $contact['name'] ?? '', $contact['milestones'] ?? [] );
 
 			foreach ( $this->contact_relationships( $contact, $actor ) as $type ) {
 				$this->add_relationship( $contacts, $id, $type );
@@ -228,8 +233,9 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 	 * @param array $contacts
 	 * @param int $id
 	 * @param string $name
+	 * @param array $milestones the faith milestones they have reached
 	 */
-	private function add_contact( &$contacts, $id, $name ) {
+	private function add_contact( &$contacts, $id, $name, $milestones = [] ) {
 		$id = (int) $id;
 
 		if ( ! $id ) {
@@ -240,6 +246,7 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 			$contacts[ $id ] = [
 				'id'            => $id,
 				'name'          => $name,
+				'milestones'    => array_map( 'strval', array_values( (array) $milestones ) ),
 				'relationships' => [],
 			];
 		}
@@ -381,13 +388,102 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 
 			$field = $settings[ $post_type ][ $field_key ] ?? [];
 
-			$icons[ $type ] = [
-				'icon'      => $field['icon'] ?? '',
-				'font_icon' => $field['font-icon'] ?? '',
-				'name'      => $field['name'] ?? '',
-			];
+			$icons[ $type ] = array_merge( self::field_icon( $field ), [
+				'name' => $field['name'] ?? '',
+			] );
 		}
 
 		return $icons;
+	}
+
+	/**
+	 * The faith milestones, in the order the field declares them, each with the
+	 * icon that option carries.
+	 *
+	 * Every milestone, not only the ones reached: the row is a progress strip, and
+	 * a milestone shown dim says something that a missing icon cannot. Which ones a
+	 * given person has reached travels with them - see gather_contacts().
+	 *
+	 * An admin who hides the field, or deletes one of its options, has said they do
+	 * not use it; both drop out here.
+	 *
+	 * @return array{label: string, options: array}
+	 */
+	private function milestones() {
+		$field = DT_Posts::get_post_field_settings( 'contacts' )['milestones'] ?? [];
+
+		if ( empty( $field ) || ! empty( $field['hidden'] ) ) {
+			return [ 'label' => '', 'options' => [] ];
+		}
+
+		$options = [];
+
+		foreach ( $field['default'] ?? [] as $key => $option ) {
+			if ( ! empty( $option['deleted'] ) ) {
+				continue;
+			}
+
+			$options[] = array_merge( [
+				'key'   => $key,
+				'label' => $option['label'] ?? $key,
+			], self::field_icon( $option ) );
+		}
+
+		return [
+			'label'   => $field['name'] ?? '',
+			'options' => $options,
+		];
+	}
+
+	/**
+	 * The icon to draw for a field, or for one of its options.
+	 *
+	 * Disciple.Tools keeps these two ways, and the admin screen picks between them
+	 * by what was typed: anything starting with "mdi" is stored as `font-icon`, and
+	 * everything else as `icon`, an image address. Both shapes reach us, so both
+	 * have to come out the other side.
+	 *
+	 * @param array $source a field's settings, or one option's
+	 *
+	 * @return array{icon: string, font_icon: string}
+	 */
+	private static function field_icon( $source ) {
+		return [
+			'icon'      => $source['icon'] ?? '',
+			'font_icon' => self::icon_name( $source['font-icon'] ?? '' ),
+		];
+	}
+
+	/**
+	 * A Material Design Icons class written the way <dt-icon> names icons.
+	 *
+	 * Disciple.Tools stores font icons as the stylesheet class - "mdi mdi-hand-heart"
+	 * - while the app draws them through <dt-icon>, which names the same set
+	 * "mdi:hand-heart". Translating here rather than in the component means one
+	 * shape arrives in the browser however the icon was stored, and the component
+	 * never has to know Disciple.Tools wrote it.
+	 *
+	 * A value already written that way is left alone. A set name with no icon after
+	 * it ("mdi") names nothing, and comes back empty so the caller can fall back.
+	 *
+	 * @param string $font_icon
+	 *
+	 * @return string
+	 */
+	private static function icon_name( $font_icon ) {
+		$font_icon = trim( (string) $font_icon );
+
+		if ( ! $font_icon || strpos( $font_icon, ':' ) !== false ) {
+			return $font_icon;
+		}
+
+		$classes = preg_split( '/\s+/', $font_icon );
+		$name    = (string) array_pop( $classes );
+
+		if ( strpos( $name, 'mdi-' ) !== 0 ) {
+			return '';
+		}
+
+		return 'mdi:' . substr( $name, 4 );
 	}
 }

@@ -23,6 +23,23 @@
     display: block;
     /* Clears the round add button sitting at the end of the heading row. */
     margin: 0.6rem 0 0.25rem;
+    /* Reads from the same edge as the heading it explains. */
+    text-align: start;
+}
+
+/*
+ * The add form. Shaped like the create-group form rather than like the list it
+ * came from: a centred title and nothing else above it, so the page is the one
+ * thing it is asking for.
+ */
+.contact-form {
+    /* "Add a disciple" is a sentence, and capitalize would title-case it. */
+    --dt-tile-header-text-transform: none;
+}
+
+.contact-form .help-text {
+    display: block;
+    margin-bottom: 0.75rem;
 }
 
 .contacts__empty {
@@ -165,6 +182,102 @@ dt-tile.app__upgrade dt-button {
     line-height: 1.45;
     color: var(--gray-0, #666);
     text-align: start;
+}
+
+/*
+ * Faith milestones. Every milestone the field defines is on the card; reaching
+ * one lights it, and the rest sit dim behind it, so the row reads as progress
+ * rather than as a list of achievements.
+ *
+ * Icons arrive either as images or as font icons, so the dimming has to work on
+ * both: opacity alone would leave a colour image still reading as coloured, and
+ * grayscale alone would leave a dark glyph still reading as present.
+ */
+.contact__milestones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+}
+
+.contact__milestone {
+    display: inline-flex;
+}
+
+/*
+ * A button where the browser can open the label, a span where it cannot.
+ * The dimming lives here rather than on the list item so that it never reaches
+ * the label, which is a sibling.
+ */
+.contact__milestone-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+}
+
+button.contact__milestone-mark {
+    cursor: pointer;
+}
+
+.contact__milestone-mark:focus-visible {
+    outline: 2px solid var(--primary-color, #3f729b);
+    outline-offset: 2px;
+}
+
+.contact__milestone-mark--on {
+    background: var(--primary-color-light-1, #c2e0ff);
+}
+
+.contact__milestone-mark--off {
+    background: var(--dt-form-background-color, #f6f6f6);
+    opacity: 0.35;
+    filter: grayscale(1);
+}
+
+/*
+ * The label, shown on touch. Placed from JS - see placeTip() - because CSS
+ * anchor positioning is not yet carried widely enough to rest on.
+ */
+.contact__milestone-tip {
+    position: fixed;
+    /* The user agent centres a popover with inset:0 and margin:auto. */
+    inset: auto;
+    margin: 0;
+    max-width: min(16rem, calc(100vw - 2rem));
+    padding: 0.35rem 0.6rem;
+    border: 0;
+    border-radius: 4px;
+    background: var(--dt-tile-header-color, #3f729b);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.4;
+    /* Transparent until placed, so the frame it spends at the user agent's
+       default position in the middle of the screen is never seen. */
+    opacity: 0;
+    transition: opacity 120ms ease;
+}
+
+.contact__milestone-tip.is-placed {
+    opacity: 1;
+}
+
+.contact__milestone-icon {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    font-size: 1.15rem;
+    display: flex;
 }
 
 .contact__actions {

@@ -22,6 +22,7 @@
                     contacts='<?php echo esc_attr( wp_json_encode( $contacts ) ); ?>'
                     translations='<?php echo esc_attr( wp_json_encode( $translations ) ); ?>'
                     relationshipIcons='<?php echo esc_attr( wp_json_encode( $relationship_icons ) ); ?>'
+                    milestoneOptions='<?php echo esc_attr( wp_json_encode( $milestones['options'] ) ); ?>'
             ></app-contacts>
         </div>
     </dt-tile>

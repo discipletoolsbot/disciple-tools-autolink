@@ -1,14 +1,9 @@
 <?php include 'parts/app-header.php'; ?>
-<?php include 'parts/app-greeting.php'; ?>
-<?php include 'parts/church-view-tabs.php'; ?>
 
 <div class="container">
-    <dt-tile class="contacts">
+    <dt-tile class="contact-form" title="<?php echo esc_attr( $translations['heading'] ); ?>">
         <div class="section__inner">
-            <div class="contacts__heading">
-                <h3><?php echo esc_html( $translations['heading'] ); ?></h3>
-                <span class="help-text cloak"><?php echo esc_html( $translations['help_text'] ); ?></span>
-            </div>
+            <span class="help-text cloak"><?php echo esc_html( $translations['help_text'] ); ?></span>
 
 			<?php if ( $error ) : ?>
                 <dt-alert context="alert" dismissable><?php echo esc_html( $error ); ?></dt-alert>

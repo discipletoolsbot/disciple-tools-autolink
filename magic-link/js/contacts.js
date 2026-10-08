@@ -17,6 +17,136 @@ const FALLBACK_ICONS = {
 };
 
 /**
+ * Whether a milestone has been reached, said without words.
+ *
+ * The alternative was a translated "reached" / "not reached", which would have
+ * meant two more strings to carry and a spell on every site where the
+ * translation had not caught up yet. A check and a cross say it in any language.
+ */
+const REACHED = "\u2713"; // CHECK MARK
+const NOT_REACHED = "\u2715"; // MULTIPLICATION X - better covered than U+2717
+
+/**
+ * Whether this browser has the popover API.
+ *
+ * Around 94% do (2026-10). Where it is missing the milestone marks stay plain, keeping
+ * their `title`, which is what they had before - a worse deal on a touch screen,
+ * but not a broken one.
+ */
+const SUPPORTS_POPOVER =
+  typeof HTMLElement !== "undefined" &&
+  Object.prototype.hasOwnProperty.call(HTMLElement.prototype, "popover");
+
+/** The milestone label currently showing, if any. */
+let openTip = null;
+
+function hideOpenTip() {
+  // hidePopover() throws on a popover that is already closed, and `toggle` is
+  // queued rather than synchronous, so there is a moment where our reference
+  // outlives the open state. Ask the element instead of trusting the variable.
+  if (openTip && openTip.matches(":popover-open")) {
+    openTip.hidePopover();
+  }
+}
+
+/**
+ * Put the label beside the mark that opened it.
+ *
+ * CSS anchor positioning would do this declaratively, but it is only partly
+ * implemented in Chrome and arrived in Firefox 147, so it is not a safe thing to
+ * rest on yet - hence the arithmetic. The popover is in the top layer, so these
+ * are viewport coordinates and no ancestor can clip it.
+ *
+ * It is placed on `toggle` rather than `beforetoggle` because the element has no
+ * dimensions to measure until it is actually showing; it starts transparent and
+ * fades in once placed, so nobody sees the frame where it sits in the middle of
+ * the screen where the user agent puts it by default.
+ */
+function placeTip(event) {
+  const tip = event.target;
+
+  if (event.newState !== "open") {
+    if (openTip === tip) {
+      openTip = null;
+    }
+    tip.classList.remove("is-placed");
+    return;
+  }
+
+  openTip = tip;
+
+  const mark = tip.previousElementSibling;
+
+  if (!mark) {
+    return;
+  }
+
+  const anchor = mark.getBoundingClientRect();
+  const box = tip.getBoundingClientRect();
+  const gap = 8;
+
+  // Centred on the mark, then pulled back inside the viewport - the first and
+  // last milestone in the row sit close enough to the edge to overhang it.
+  const left = Math.max(
+    gap,
+    Math.min(
+      anchor.left + anchor.width / 2 - box.width / 2,
+      window.innerWidth - box.width - gap
+    )
+  );
+
+  // Above by preference, below when the card is near the top of the screen.
+  const above = anchor.top - box.height - gap;
+  const top = above < gap ? anchor.bottom + gap : above;
+
+  tip.style.left = `${left}px`;
+  tip.style.top = `${top}px`;
+  tip.classList.add("is-placed");
+
+  // Nothing re-anchors it as the page moves, and a label stranded away from its
+  // icon reads as a bug, so the first scroll puts it away.
+  window.addEventListener("scroll", hideOpenTip, {
+    once: true,
+    passive: true,
+    capture: true,
+  });
+}
+
+if (SUPPORTS_POPOVER) {
+  /**
+   * Touch anywhere to put the label away - including on the label itself.
+   *
+   * A popover with no explicit type light-dismisses on an outside click of its
+   * own accord, but two gaps make that not enough. It does not count a touch on
+   * the popover itself, which is the first place a thumb goes; and iOS Safari
+   * between 17.0 and 18.2 - shipping the API, and the single most likely browser
+   * to meet this - does not dismiss on an outside touch at all. So dismissal is
+   * handled here rather than left to the platform.
+   *
+   * The one touch left alone is the mark that opened it: the browser closes a
+   * popover when its own invoker is pressed again, and closing it here first
+   * would turn that second press into a re-open.
+   */
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (!openTip) {
+        return;
+      }
+
+      const invoker = event.target.closest?.("[popovertarget]");
+
+      if (invoker && invoker.getAttribute("popovertarget") === openTip.id) {
+        return;
+      }
+
+      hideOpenTip();
+    },
+    true
+  );
+}
+
+/**
  * @class Contacts
  *
  * The people around this leader, as cards matching the churches tab.
@@ -31,6 +161,7 @@ export class Contacts extends DtBase {
       contacts: { type: Array },
       translations: { type: Object },
       relationshipIcons: { type: Object },
+      milestoneOptions: { type: Array },
     };
   }
 
@@ -39,6 +170,7 @@ export class Contacts extends DtBase {
     this.contacts = [];
     this.translations = {};
     this.relationshipIcons = {};
+    this.milestoneOptions = [];
   }
 
   createRenderRoot() {
@@ -67,7 +199,7 @@ export class Contacts extends DtBase {
         key="contact-${contact.id}"
       >
         ${this.renderLoginMark(contact)} ${this.renderConnections(contact)}
-        ${this.renderActions(contact)}
+        ${this.renderMilestones(contact)} ${this.renderActions(contact)}
       </contact-tile>
     `;
   }
@@ -162,6 +294,122 @@ export class Contacts extends DtBase {
       <dt-icon
         class="contact__badge-icon"
         icon="${field.font_icon || FALLBACK_ICONS[type] || "mdi:account"}"
+      ></dt-icon>
+    `;
+  }
+
+  /**
+   * How far along this person is: every milestone the field defines, the ones
+   * they have reached lit and the rest dimmed.
+   *
+   * The unreached ones stay on the card deliberately. A row that only showed what
+   * had been reached would read the same whether someone had passed one milestone
+   * out of two or one out of nine; keeping the whole row makes the gap the thing
+   * you see. This is the reading view - setting them comes later.
+   */
+  renderMilestones(contact) {
+    const { milestoneOptions, translations } = this;
+
+    if (!milestoneOptions || !milestoneOptions.length) {
+      return null;
+    }
+
+    const reached = contact.milestones || [];
+
+    return html`
+      <ul
+        class="contact__milestones"
+        aria-label="${translations.milestones || ""}"
+      >
+        ${milestoneOptions.map((milestone) =>
+          this.renderMilestone(
+            contact,
+            milestone,
+            reached.includes(milestone.key)
+          )
+        )}
+      </ul>
+    `;
+  }
+
+  /**
+   * One milestone, and the label that says which one it is.
+   *
+   * The row is icons alone, which on a desktop a `title` explains and on a phone
+   * explains nothing - there is no hover to tell you that the third circle means
+   * "States Belief". So the mark is a button that opens its own label, and the
+   * label is a popover: it draws in the top layer, so it is not clipped by the
+   * card, and the browser keeps only one open at a time, so touching a second
+   * mark replaces the first label rather than stacking on it.
+   *
+   * `title` stays on the mark for the pointer users who were already served by
+   * it, and is the whole story on a browser without popovers.
+   */
+  renderMilestone(contact, milestone, isReached) {
+    const label = `${milestone.label} ${isReached ? REACHED : NOT_REACHED}`;
+    const mark = `contact__milestone-mark contact__milestone-mark--${
+      isReached ? "on" : "off"
+    }`;
+
+    if (!SUPPORTS_POPOVER) {
+      return html`
+        <li class="contact__milestone">
+          <span class="${mark}" title="${label}" aria-label="${label}">
+            ${this.renderMilestoneIcon(milestone)}
+          </span>
+        </li>
+      `;
+    }
+
+    const tipId = `milestone-${contact.id}-${milestone.key}`;
+
+    return html`
+      <li class="contact__milestone">
+        <button
+          type="button"
+          class="${mark}"
+          popovertarget="${tipId}"
+          title="${label}"
+          aria-label="${label}"
+        >
+          ${this.renderMilestoneIcon(milestone)}
+        </button>
+        <div
+          id="${tipId}"
+          popover
+          class="contact__milestone-tip"
+          @toggle=${placeTip}
+        >
+          ${label}
+        </div>
+      </li>
+    `;
+  }
+
+  /**
+   * A milestone's own icon, drawn whichever way Disciple.Tools holds it: an image
+   * address, or a named font icon. The controller has already put a font icon
+   * into the name <dt-icon> expects, so there is nothing to parse here.
+   *
+   * @param {{icon: string, font_icon: string, label: string}} milestone
+   */
+  renderMilestoneIcon(milestone) {
+    if (milestone.icon) {
+      return html`
+        <img
+          class="contact__milestone-icon"
+          src="${milestone.icon}"
+          alt=""
+          width="20"
+          height="20"
+        />
+      `;
+    }
+
+    return html`
+      <dt-icon
+        class="contact__milestone-icon"
+        icon="${milestone.font_icon || "mdi:check-decagram"}"
       ></dt-icon>
     `;
   }
