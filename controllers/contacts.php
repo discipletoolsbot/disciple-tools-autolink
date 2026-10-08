@@ -6,6 +6,7 @@
  */
 class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolink_Controller {
 	const NONCE = 'dt_autolink_contact';
+	const EDIT_NONCE = 'dt_autolink_contact_edit';
 
 
 	/**
@@ -32,6 +33,10 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 			'has_login' => __( 'Has a Disciple.Tools login', 'disciple-tools-autolink' ),
 			'copy_link' => __( 'Copy link', 'disciple-tools-autolink' ),
 			'copied'    => __( 'Copied', 'disciple-tools-autolink' ),
+			/* translators: %s: singular name of the contact post type, e.g. "Contact". */
+			'edit'      => sprintf( __( 'Edit %s', 'disciple-tools-autolink' ), $contact_label ),
+			/* translators: %s: singular name of the contact post type, e.g. "Contact". */
+			'view'      => sprintf( __( 'View %s', 'disciple-tools-autolink' ), $contact_label ),
 			// Names the milestone row. What each mark means is carried by a check
 			// or a cross rather than by words - see renderMilestone() - so that it
 			// needs no translation and cannot lag behind one.
@@ -109,12 +114,20 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 		}
 
 		$fields = [
-			'name'       => $name,
-			'coached_by' => [
+			'name'           => $name,
+			'coached_by'     => [
 				'values' => [
 					[ 'value' => $actor->contact_id() ],
 				],
 			],
+			// Said out loud rather than left to Disciple.Tools, which picks the
+			// status from whether anyone is signed in: "Active" for a user, "New
+			// Contact" for nobody - see dt_post_create_fields() in the contacts
+			// module. A contact link signs nobody in, so the same act of adding
+			// someone you coach was landing in two different states depending on
+			// which link you held. Nothing created here is an unattended sign-up;
+			// a leader added this person on purpose.
+			'overall_status' => 'active',
 		];
 
 		$assigned_to = $actor->assigned_to_for_new_records();
@@ -135,6 +148,246 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 		Disciple_Tools_Autolink_Actor::offer_contact_app_link( $contact['ID'] );
 
 		wp_redirect( $this->functions->get_app_link() . '?action=contacts' );
+	}
+
+	/**
+	 * Show the form for editing one person.
+	 *
+	 * Name and faith milestones only. The card shows a good deal more than that -
+	 * who they lead, who coaches them - but those are relationships held on other
+	 * records, and editing them from here would mean reaching into churches this
+	 * person may have no business touching.
+	 */
+	public function edit( $params = [] ) {
+		// `post`, not `id`: the magic link reads `id` out of the query string for
+		// its own routing, and a link carrying one is rejected as invalid before
+		// it ever reaches us. The group edit screen names it the same way.
+		$contact_id = (int) sanitize_key( wp_unslash( $_GET['post'] ?? '' ) );
+		$actor      = $this->actor();
+
+		if ( ! $contact_id || ! $actor->can_edit_contact( $contact_id ) ) {
+			$this->functions->redirect_to_app();
+
+			return;
+		}
+
+		$contact = DT_Posts::get_post( 'contacts', $contact_id, true, false );
+
+		if ( is_wp_error( $contact ) ) {
+			$this->functions->redirect_to_app();
+
+			return;
+		}
+
+		$this->form( [
+			'contact' => $contact,
+			// On the way back from a failed save these carry what was typed, so
+			// nobody has to do it twice.
+			'name'    => $params['name'] ?? ( $contact['title'] ?? '' ),
+			'reached' => $params['reached'] ?? array_map( 'strval', array_values( (array) ( $contact['milestones'] ?? [] ) ) ),
+			'error'   => $params['error'] ?? '',
+		] );
+	}
+
+	/**
+	 * Frame this person's own Disciple.Tools record.
+	 *
+	 * Reading the record means reading the Disciple.Tools page, which needs a
+	 * login - so this is for user actors only, and the menu does not offer it to
+	 * anyone else. Mirrors the group view screen.
+	 */
+	public function view( $params = [] ) {
+		$contact_id = (int) sanitize_key( wp_unslash( $_GET['post'] ?? '' ) );
+		$actor      = $this->actor();
+		$back_link  = $this->functions->get_app_link();
+		$back_label = __( 'Back to AutoLink', 'disciple-tools-autolink' );
+
+		if ( $actor->is_contact() || ! $contact_id || ! $actor->can_edit_contact( $contact_id ) ) {
+			$this->functions->redirect_to_app();
+
+			return;
+		}
+
+		$contact = DT_Posts::get_post( 'contacts', $contact_id, true, false );
+
+		if ( is_wp_error( $contact ) ) {
+			$this->functions->redirect_to_app();
+
+			return;
+		}
+
+		$src = get_the_permalink( $contact['ID'] );
+
+		include __DIR__ . '/../templates/frame.php';
+	}
+
+	/**
+	 * Save an edit.
+	 */
+	public function update( $params = [] ) {
+		$contact_id   = (int) sanitize_key( wp_unslash( $_GET['post'] ?? '' ) );
+		$actor        = $this->actor();
+		$nonce        = sanitize_key( wp_unslash( $_POST['_wpnonce'] ?? '' ) );
+		$verify_nonce = $nonce && wp_verify_nonce( $nonce, self::EDIT_NONCE );
+		$name         = sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) );
+		$submitted    = isset( $_POST['milestones'] )
+			? array_map( 'sanitize_key', (array) wp_unslash( $_POST['milestones'] ) )
+			: null;
+		$milestones   = $this->posted_milestones( $submitted );
+
+		// Checked before the nonce, because a failed nonce renders the form again
+		// and there is no form to render for a record they cannot open.
+		if ( ! $contact_id || ! $actor->can_edit_contact( $contact_id ) ) {
+			$this->functions->redirect_to_app();
+
+			return;
+		}
+
+		$reached = $milestones === null ? null : $this->reached_from( $milestones );
+
+		if ( ! $verify_nonce ) {
+			$this->edit( [
+				'error'   => __( 'Unable to verify request. Please try again.', 'disciple-tools-autolink' ),
+				'name'    => $name,
+				'reached' => $reached,
+			] );
+
+			return;
+		}
+
+		if ( ! $name ) {
+			$this->edit( [
+				'error'   => __( 'Please enter a name.', 'disciple-tools-autolink' ),
+				'name'    => $name,
+				'reached' => $reached,
+			] );
+
+			return;
+		}
+
+		$fields = [ 'name' => $name ];
+
+		if ( $milestones !== null ) {
+			$fields['milestones'] = $milestones;
+		}
+
+		$updated = DT_Posts::update_post( 'contacts', $contact_id, $fields, true, false );
+
+		if ( is_wp_error( $updated ) ) {
+			$this->edit( [
+				'error'   => $updated->get_error_message(),
+				'name'    => $name,
+				'reached' => $reached,
+			] );
+
+			return;
+		}
+
+		wp_redirect( $this->functions->get_app_link() . '?action=contacts' );
+	}
+
+	/**
+	 * Render the edit form.
+	 *
+	 * @param array $params
+	 */
+	private function form( $params ) {
+		$data = $this->global_data();
+		// phpcs:ignore
+		extract( $data );
+
+		$action      = 'contacts';
+		$contact     = $params['contact'];
+		$contact_id  = (int) $contact['ID'];
+		$name        = $params['name'];
+		$reached     = $params['reached'];
+		$error       = $params['error'];
+		$nonce       = self::EDIT_NONCE;
+		$form_action = $this->functions->get_app_link() . '?action=edit-contact&post=' . $contact_id;
+		$cancel_url  = $this->functions->get_app_link() . '?action=contacts';
+		$milestones  = $this->milestones();
+
+		// dt-multi-select-button-group names its options `id`.
+		$milestone_options = array_map( function ( $milestone ) {
+			return [
+				'id'    => $milestone['key'],
+				'label' => $milestone['label'],
+				'icon'  => $milestone['icon'],
+			];
+		}, $milestones['options'] );
+
+		$translations = [
+			/* translators: %s: singular name of the contact post type, e.g. "Contact". */
+			'heading'      => sprintf( __( 'Edit %s', 'disciple-tools-autolink' ), strtolower( $contact_label ) ),
+			'name_label'   => __( 'Name', 'disciple-tools-autolink' ),
+			'milestones'   => $milestones['label'],
+			'submit_label' => __( 'Save', 'disciple-tools-autolink' ),
+			'cancel_label' => __( 'Cancel', 'disciple-tools-autolink' ),
+		];
+
+		include __DIR__ . '/../templates/contact-edit-form.php';
+	}
+
+	/**
+	 * The milestone changes that were submitted, shaped for DT_Posts.
+	 *
+	 * dt-multi-select-button-group posts the whole set it is holding, marking a
+	 * milestone that was switched off with a leading "-", which is the same shape
+	 * DT_Posts wants - so this is mostly a matter of checking that each key is one
+	 * we actually offered, rather than one someone appended to the request.
+	 *
+	 * @param string[]|null $submitted what the form sent, unslashed and sanitised
+	 *
+	 * @return array|null null when the field was not part of the form at all,
+	 *                    which is not the same as "every milestone was cleared".
+	 */
+	private function posted_milestones( $submitted ) {
+		if ( $submitted === null ) {
+			return null;
+		}
+
+		$known  = wp_list_pluck( $this->milestones()['options'], 'key' );
+		$values = [];
+
+		foreach ( $submitted as $entry ) {
+			$delete = strpos( $entry, '-' ) === 0;
+			$key    = $delete ? substr( $entry, 1 ) : $entry;
+
+			if ( ! in_array( $key, $known, true ) ) {
+				continue;
+			}
+
+			$value = [ 'value' => $key ];
+
+			if ( $delete ) {
+				$value['delete'] = true;
+			}
+
+			$values[] = $value;
+		}
+
+		return [ 'values' => $values ];
+	}
+
+	/**
+	 * The milestones that would be set, were the submitted changes to be saved.
+	 *
+	 * Used to redraw the form after a failed save still showing what was chosen.
+	 *
+	 * @param array $milestones as posted_milestones() returns them
+	 *
+	 * @return string[]
+	 */
+	private function reached_from( $milestones ) {
+		$reached = [];
+
+		foreach ( $milestones['values'] as $value ) {
+			if ( empty( $value['delete'] ) ) {
+				$reached[] = $value['value'];
+			}
+		}
+
+		return $reached;
 	}
 
 	/**
@@ -180,16 +433,23 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 		unset( $contacts[ $contact_id ] );
 
 		$general_link = $this->functions->get_link_url();
+		$edit_link    = $this->functions->get_app_link() . '?action=edit-contact&post=';
+		// Only a user can open the record itself - see view(). An absent link is
+		// what tells the card not to offer it.
+		$view_link    = $actor->is_contact() ? '' : $this->functions->get_app_link() . '?action=view-contact&post=';
 
 		foreach ( $contacts as $id => $contact_row ) {
 			$has_login = Disciple_Tools_Autolink_Actor::contact_has_login( $id );
 
 			$contacts[ $id ]['has_login']     = $has_login;
+			$contacts[ $id ]['can_edit']      = $actor->can_edit_contact( $id );
 			// Someone with their own Disciple.Tools login signs in rather than
 			// following a key - handing their coach a magic key into that account
 			// would hand over whatever the account can reach. They get the ordinary
 			// sign-in address instead, which is still useful to pass on.
 			$contacts[ $id ]['link']          = $has_login ? $general_link : Disciple_Tools_Autolink_Actor::contact_app_link( $id );
+			$contacts[ $id ]['edit_link']     = $contacts[ $id ]['can_edit'] ? $edit_link . $id : '';
+			$contacts[ $id ]['view_link']     = ( $view_link && $contacts[ $id ]['can_edit'] ) ? $view_link . $id : '';
 			$contacts[ $id ]['relationships'] = $this->shape_relationships( $contact_row['relationships'] );
 		}
 

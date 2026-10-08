@@ -5,7 +5,7 @@ import "./js/collapse";
 import "./js/church";
 import "./js/church-tile";
 import "./js/lazyReveal";
-import "./js/churchMenu";
+import "./js/card-menu";
 import "./js/church-health-field";
 import "./js/church-counts";
 import "./js/ajax-field";

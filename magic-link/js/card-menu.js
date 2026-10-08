@@ -3,7 +3,7 @@ import {css, html, nothing} from "lit";
 import {classMap} from "lit/directives/class-map.js";
 import {AppCollapse} from "./collapse";
 
-export class AppChurchMenu extends AppCollapse {
+export class AppCardMenu extends AppCollapse {
     constructor() {
         super();
         this.openIcon = "mdi:cog-outline";
@@ -37,7 +37,7 @@ export class AppChurchMenu extends AppCollapse {
             z-index: 3
           }
 
-          .church__menu {
+          .card__menu {
             position: absolute;
             top: 34px;
             inset-inline-end: 8px;
@@ -66,7 +66,7 @@ export class AppChurchMenu extends AppCollapse {
     render() {
         return html`
             <div class="menu__wrapper">
-                <div class="church__menu">${this.renderContent()}</div>
+                <div class="card__menu">${this.renderContent()}</div>
                 ${this.renderIcon()} ${this.renderOverlay()}
             </div>
         `;
@@ -91,4 +91,4 @@ export class AppChurchMenu extends AppCollapse {
     }
 }
 
-window.customElements.define("app-church-menu", AppChurchMenu);
+window.customElements.define("app-card-menu", AppCardMenu);

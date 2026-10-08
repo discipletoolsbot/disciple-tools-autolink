@@ -9,7 +9,7 @@
                 <dt-alert context="alert" dismissable><?php echo esc_html( $error ); ?></dt-alert>
 			<?php endif; ?>
 
-            <form method="post" action="<?php echo esc_url( $form_action ); ?>">
+            <form class="app-form" method="post" action="<?php echo esc_url( $form_action ); ?>">
                 <input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( $nonce ) ); ?>"/>
 
                 <dt-text name="name"
@@ -18,7 +18,7 @@
                          required></dt-text>
 
                 <div class="contact-form__actions">
-                    <dt-button type="submit" context="success"><?php echo esc_html( $translations['submit_label'] ); ?></dt-button>
+                    <submit-button type="submit" context="success"><?php echo esc_html( $translations['submit_label'] ); ?></submit-button>
                     <dt-button href="<?php echo esc_url( $cancel_url ); ?>" context="inactive"><?php echo esc_html( $translations['cancel_label'] ); ?></dt-button>
                 </div>
             </form>

@@ -30,6 +30,14 @@ class Disciple_Tools_Autolink_Actor {
 	private $contact_id;
 	private $contact_cache = null;
 	private $coached_cache = null;
+
+	/**
+	 * Marks the activity log with the contact who made a change.
+	 *
+	 * @see sign_activity()
+	 * @see name_activity()
+	 */
+	const ACTIVITY_PREFIX = 'autolink_contact_';
 	private $allowed_groups_cache = null;
 	private $own_groups_cache = null;
 	private $related_contacts_cache = null;
@@ -308,8 +316,13 @@ class Disciple_Tools_Autolink_Actor {
 	 * @return string|null an `assigned_to` value, or null to leave it to DT
 	 */
 	public function assigned_to_for_new_records() {
+		// A user is a real person Disciple.Tools can hold responsible, so what they
+		// create is theirs. Disciple.Tools does not assume this on create - it
+		// leaves assigned_to empty - so it is said here.
 		if ( ! $this->is_contact() ) {
-			return null;
+			$user_id = $this->user_id();
+
+			return $user_id ? 'user-' . $user_id : null;
 		}
 
 		$base_user_id = dt_get_base_user( true );
@@ -477,10 +490,26 @@ class Disciple_Tools_Autolink_Actor {
 	public function can_edit_contact( $contact_id ) {
 		$contact_id = (int) $contact_id;
 
+		if ( ! $contact_id ) {
+			return false;
+		}
+
 		if ( $contact_id === $this->contact_id ) {
 			return true;
 		}
 
+		// A user brings Disciple.Tools' own permissions with them, so ask it
+		// rather than keeping a second, narrower answer here. It covers being
+		// assigned the record, having it shared, and whatever an administrator has
+		// granted the role - and it answers "no" for records they cannot reach,
+		// which the list does not filter on its own.
+		if ( ! $this->is_contact() ) {
+			return DT_Posts::can_update( 'contacts', $contact_id );
+		}
+
+		// A contact has no Disciple.Tools user for those permissions to hang off,
+		// so in contact mode the only other people they can edit are the ones they
+		// are coaching.
 		foreach ( $this->coached_contacts() as $coached ) {
 			if ( (int) $coached['ID'] === $contact_id ) {
 				return true;
@@ -643,5 +672,77 @@ class Disciple_Tools_Autolink_Actor {
 		}
 
 		return get_post_meta( $this->contact_id, $name, true );
+	}
+
+	/**
+	 * Stamp this request as the work of one contact, for the activity log.
+	 *
+	 * Disciple.Tools writes the first capability the acting user holds into the
+	 * log's user_caps column, and renders a bare "magic_link" as "Magic Link
+	 * Submission" - true, but it never says who, so every change made through
+	 * every contact link reads the same. Putting the contact first is what lets
+	 * the log name a person; name_activity() reads it back out.
+	 *
+	 * The magic_link capability stays on behind it, for everything that tests for
+	 * it. Neither is a real role, so this only changes what the log records, not
+	 * what the request is allowed to do.
+	 *
+	 * @param int $contact_id
+	 *
+	 * @return void
+	 */
+	public static function sign_activity( $contact_id ) {
+		$user = wp_get_current_user();
+
+		if ( ! $user || ! $contact_id ) {
+			return;
+		}
+
+		$user->caps = [ self::ACTIVITY_PREFIX . (int) $contact_id => true ];
+		$user->add_cap( 'magic_link' );
+	}
+
+	/**
+	 * Name the contact behind an activity log entry.
+	 *
+	 * Filters `dt_format_post_activity`, so it reads on the record's own
+	 * Disciple.Tools page rather than only inside this app.
+	 *
+	 * Entries written before this existed carry a plain `magic_link` and are left
+	 * alone - there is nothing recorded in them to recover a name from.
+	 *
+	 * @param array $activity
+	 * @param object $row the raw activity row
+	 *
+	 * @return array
+	 */
+	public static function name_activity( $activity, $row ) {
+		$caps = $row->user_caps ?? '';
+
+		if ( strpos( $caps, self::ACTIVITY_PREFIX ) !== 0 ) {
+			return $activity;
+		}
+
+		$contact_id = (int) substr( $caps, strlen( self::ACTIVITY_PREFIX ) );
+		$name       = $contact_id ? get_the_title( $contact_id ) : '';
+
+		$activity['name'] = $name
+			/* translators: %s: the name of the contact who made the change. */
+			? sprintf( __( '%s (via Autolink)', 'disciple-tools-autolink' ), $name )
+			: __( 'Autolink', 'disciple-tools-autolink' );
+
+		// Disciple.Tools labels anything created with nobody signed in as the work
+		// of a site link - see hooks_new_post() - which is not what happened. The
+		// phrase it writes is a bare literal, never translated, so matching it is
+		// safe in any locale; and only rows this app signed are touched, so real
+		// site link activity is left alone.
+		if ( strpos( (string) ( $activity['object_note'] ?? '' ), 'Created with site link: ' ) === 0 ) {
+			$activity['object_note'] = $name
+				/* translators: %s: the name of the contact who created the record. */
+				? sprintf( __( 'Created through Autolink by %s', 'disciple-tools-autolink' ), $name )
+				: __( 'Created through Autolink', 'disciple-tools-autolink' );
+		}
+
+		return $activity;
 	}
 }

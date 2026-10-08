@@ -83,7 +83,11 @@ class Disciple_Tools_Autolink_Magic_Functions {
 			'jquery',
 			'lodash',
 			'web-components',
-		], filemtime( plugin_dir_path( __FILE__ ) . 'magic-link.js' ), true );
+			// Versioned by the built bundle, not by the entry source file. Editing
+			// any other module rebuilds dist/ without touching magic-link.js, so
+			// keying off the source left browsers holding a stale bundle - new
+			// markup from PHP against old behaviour from JavaScript.
+		], filemtime( $plugin_path . '/dist/magic-link.js' ), true );
 
 		wp_enqueue_script( 'lodash' );
 

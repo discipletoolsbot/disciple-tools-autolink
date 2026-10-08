@@ -144,6 +144,12 @@ trait Disciple_Tools_Autolink_App_Routes {
 				case 'add-contact':
 					$this->contacts_controller->create();
 					break;
+				case 'edit-contact':
+					$this->contacts_controller->edit();
+					break;
+				case 'view-contact':
+					$this->contacts_controller->view();
+					break;
 				case 'upgrade':
 					$this->upgrade_controller->show();
 					break;
@@ -187,6 +193,9 @@ trait Disciple_Tools_Autolink_App_Routes {
 					break;
 				case 'add-contact':
 					$this->contacts_controller->store();
+					break;
+				case 'edit-contact':
+					$this->contacts_controller->update();
 					break;
 				case 'upgrade':
 					$this->upgrade_controller->process();

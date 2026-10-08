@@ -135,7 +135,7 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 
 		wp_set_current_user( 0 );
 		$current_user = wp_get_current_user();
-		$current_user->add_cap( 'magic_link' );
+		Disciple_Tools_Autolink_Actor::sign_activity( $contact_id );
 		$current_user->display_name = $actor->display_name();
 	}
 
@@ -160,7 +160,7 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 		if ( ! is_user_logged_in() ) {
 			wp_set_current_user( 0 );
 			$current_user = wp_get_current_user();
-			$current_user->add_cap( 'magic_link' );
+			Disciple_Tools_Autolink_Actor::sign_activity( (int) ( $parts['post_id'] ?? 0 ) );
 			$current_user->display_name = $actor->display_name();
 		}
 

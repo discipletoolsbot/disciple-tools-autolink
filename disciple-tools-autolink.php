@@ -105,6 +105,11 @@ class Disciple_Tools_Autolink {
 			require_once 'admin/admin-menu-and-tabs.php'; // adds starter admin page and section for plugin
 		}
 
+		// Registered for every request, not just this app's own pages: the point is
+		// that the activity log reads as a person on the record's Disciple.Tools
+		// page too.
+		add_filter( 'dt_format_post_activity', [ 'Disciple_Tools_Autolink_Actor', 'name_activity' ], 10, 2 );
+
 		add_filter( 'desktop_navbar_menu_options', [ $this, 'menu_options' ], 999, 1 );
 		add_filter( 'off_canvas_menu_options', [ $this, 'menu_options' ] );
 

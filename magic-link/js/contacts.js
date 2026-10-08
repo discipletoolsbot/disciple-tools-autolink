@@ -198,8 +198,9 @@ export class Contacts extends DtBase {
         title="${contact.name}"
         key="contact-${contact.id}"
       >
-        ${this.renderLoginMark(contact)} ${this.renderConnections(contact)}
-        ${this.renderMilestones(contact)} ${this.renderActions(contact)}
+        ${this.renderLoginMark(contact)} ${this.renderMenu(contact)}
+        ${this.renderConnections(contact)} ${this.renderMilestones(contact)}
+        ${this.renderActions(contact)}
       </contact-tile>
     `;
   }
@@ -437,6 +438,41 @@ export class Contacts extends DtBase {
           copiedLabel="${translations.copied}"
         ></app-copy-link>
       </div>
+    `;
+  }
+
+  /**
+   * The cog in the corner, holding what can be done to this person.
+   *
+   * Same component the churches list uses, so one gesture opens the menu on
+   * either tab. View is only there for someone signed in: it frames the record's
+   * own Disciple.Tools page, which a magic link cannot open - so the controller
+   * hands over no link at all rather than one that leads to a sign-in screen.
+   */
+  renderMenu(contact) {
+    const { translations } = this;
+
+    if (!contact.edit_link && !contact.view_link) {
+      return null;
+    }
+
+    return html`
+      <app-card-menu>
+        ${contact.view_link
+          ? html`
+              <dt-button context="primary" href="${contact.view_link}">
+                ${translations.view}
+              </dt-button>
+            `
+          : null}
+        ${contact.edit_link
+          ? html`
+              <dt-button context="primary" href="${contact.edit_link}">
+                ${translations.edit}
+              </dt-button>
+            `
+          : null}
+      </app-card-menu>
     `;
   }
 }
