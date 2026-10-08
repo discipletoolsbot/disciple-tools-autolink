@@ -31,7 +31,7 @@ export class AppChurchMenu extends AppCollapse {
             justify-content: center;
             position: absolute;
             top: 6px;
-            right: 8px;
+            inset-inline-end: 8px;
             z-index: 0;
             color: var(--primary-color);
             z-index: 3
@@ -40,7 +40,7 @@ export class AppChurchMenu extends AppCollapse {
           .church__menu {
             position: absolute;
             top: 34px;
-            right: 8px;
+            inset-inline-end: 8px;
             z-index: 1;
             min-width: 200px;
             display: flex;
