@@ -86,6 +86,23 @@ what a submission can attach. Post to the form's own `action` URL with the
 | 26 | POST `autolink/v1/contact` `action=contact_link`, logged out, with forged parts: `meta_key: overall_status`, `public_key: active`, `post_id` = the first post that pair finds in `postmeta`. Repeat as GET `action=groups` | 401 for both - only the link's own `autolink_contact_magic_key` counts as a key. Nothing is minted |
 | 27 | Log in as Viewer and open Contact C's record. Then log in as admin and open it again | Viewer: no Autolink Contact App row on the Apps tile, and Contact C still has no `autolink_contact_magic_key`. Admin: the Contact App row is shown and a key with an expiry is minted |
 
+### Language choice and GenMap reach
+
+Snapshot Contact A's `languages` and `dt_autolink_locale` first and restore them
+afterwards. **Deep church** is a church that is not Contact A's or the admin's
+own, nor in their coachees' churches, but that the admin can update through DT
+(any church does for an administrator). **Limited user** is a `multiplier` who
+cannot view the deep church; give them an app key for the test and remove it
+afterwards.
+
+| # | Flow | Expected |
+|---|------|----------|
+| 28 | Set Contact A's `languages` to `ar` with no `dt_autolink_locale`, open their link logged out | Page renders in Arabic (`<html lang="ar" dir="rtl">`) - the record's languages are the fallback |
+| 29 | Set `languages` to `en`, `ar`. On Contact A's link, pick French in the menu's language select | One POST `switch_language` → 200, page reloads in French and stays French on a further reload. `languages` is still exactly `en`, `ar`; `dt_autolink_locale` is `fr_FR` |
+| 30 | On the admin's user link, POST `genmap_create_node` with `parent_id` = the deep church, and `genmap_update_node` on it with only an invalid `group_status` | 200 with a new church; 400 "Nothing to save" (past the permission check, nothing written) |
+| 31 | Same as 30 on Contact A's link | 403 for both |
+| 32 | Same as 30 on the limited user's own user link, signed in as them | 403 for both |
+
 ### Upgrade keeps the people you coach
 
 | # | Flow | Expected |
