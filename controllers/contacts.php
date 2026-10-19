@@ -306,7 +306,10 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 	public function link( WP_REST_Request $request, $params, $actor ) {
 		$contact_id = (int) ( $params['contact_id'] ?? 0 );
 
-		if ( ! $contact_id || ! $actor->can_edit_contact( $contact_id ) ) {
+		// Never your own. Copying extends a live link, so a holder who could issue
+		// their own would keep it alive forever and expiry would limit nothing.
+		// Renewal comes from the person who handed it over.
+		if ( ! $contact_id || $contact_id === $actor->contact_id() || ! $actor->can_edit_contact( $contact_id ) ) {
 			return new WP_Error( __METHOD__, __( 'You cannot share a link for this person.', 'disciple-tools-autolink' ), [ 'status' => 403 ] );
 		}
 
