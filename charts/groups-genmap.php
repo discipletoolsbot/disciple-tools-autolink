@@ -109,7 +109,6 @@ class Disciple_Tools_Autolink_Genmap extends DT_Genmapper_Metrics_Chart_Base {
 					'parent_label'       => __( 'Parent', 'disciple-tools-autolink' ),
 					'save_changes_label' => __( 'Save Changes', 'disciple-tools-autolink' ),
 					'cancel_label'       => __( 'Cancel', 'disciple-tools-autolink' ),
-					'open_label'         => __( 'Open Record', 'disciple-tools-autolink' ),
 					'rebase_label'       => __( 'Center on this Node', 'disciple-tools-autolink' ),
 					'ok_label'           => __( 'OK', 'disciple-tools-autolink' ),
 					'edit_record'        => __( 'Edit Record', 'disciple-tools-autolink' ),

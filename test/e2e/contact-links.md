@@ -73,9 +73,7 @@ what a submission can attach. Post to the form's own `action` URL with the
 | 22 | Same as 21 on the admin's user link | POST `autolink/v1/app` → 200; node drawn; no reload |
 | 23 | POST `autolink/v1/contact` `genmap_create_node` with `parent_id` = the outside church, and `genmap_update_node` with `group_id` = the outside church | 403 for both; outside church unchanged. `genmap_update_node` on Church A with only an invalid `group_status` → 400 "Nothing to save" |
 
-GenMap's edit dialog has no Save button, only Cancel, Open Record and Center on
-this Node. So `genmap_update_node` cannot be reached from the UI and is only
-tested over HTTP in flow 23.
+| 25 | On Contact A's link, click the node from flow 21 to open its dialog, change the name, untick active, press Save Changes | One POST `genmap_update_node` → 200; the dialog closes and the node shows the new name; the church is saved `inactive`; no reload or alert |
 
 ### Upgrade keeps the people you coach
 
