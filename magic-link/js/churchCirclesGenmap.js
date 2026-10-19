@@ -113,22 +113,53 @@
         get_groups(node.data.id);
     });
 
+    /*
+     * Writes go through the magic link's own endpoint, for the same reason
+     * get_groups() uses fetch(): the theme's dt-posts API needs a login, so on a
+     * contact link it answered 401 and the theme's ajaxComplete handler reloaded
+     * the page. The server checks each write against the link's holder.
+     */
+    function post_to_app(body) {
+        return fetch(window.app.rest_base + window.magic.rest_namespace, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-WP-Nonce": window.app.nonce,
+            },
+            body: JSON.stringify({
+                ...body,
+                parts: window.magic.parts,
+            }),
+        }).then(async (response) => {
+            const result = await response.json().catch(() => null);
+
+            if (!response.ok || !result) {
+                throw result || {status: response.status};
+            }
+
+            return result;
+        });
+    }
+
     chartDiv.on("add-node-requested", function (e, parent) {
         let loading_spinner = $(".loading-spinner");
         loading_spinner.addClass("active");
-        let fields = {
-            title: "New",
-            parent_groups: {values: [{value: parent.data.id}]},
-            group_type: "group",
-        };
-        window.API.create_post("groups", fields).then((newGroup) => {
-            let newNodeData = {};
-            newNodeData["id"] = newGroup["ID"];
-            newNodeData["parentId"] = parent.data.id;
-            newNodeData["name"] = fields.title;
-            genmapper.createNode(newNodeData);
-            loading_spinner.removeClass("active");
-        });
+        post_to_app({
+            action: "genmap_create_node",
+            parent_id: parent.data.id,
+        })
+            .then((newGroup) => {
+                let newNodeData = {};
+                newNodeData["id"] = newGroup["ID"];
+                newNodeData["parentId"] = parent.data.id;
+                newNodeData["name"] = newGroup["title"];
+                genmapper.createNode(newNodeData);
+                loading_spinner.removeClass("active");
+            })
+            .catch((err) => {
+                loading_spinner.removeClass("active");
+                displayError(err);
+            });
     });
 
     chartDiv.on("node-updated", function (e, nodeID, nodeFields, groupFields) {
@@ -145,8 +176,17 @@
                 groupFields["group_type"] = value;
             }
         });
-        window.API.update_post("groups", nodeID, groupFields).then((resp) => {
-            loading_spinner.removeClass("active");
-        });
+        post_to_app({
+            action: "genmap_update_node",
+            group_id: nodeID,
+            fields: groupFields,
+        })
+            .then(() => {
+                loading_spinner.removeClass("active");
+            })
+            .catch((err) => {
+                loading_spinner.removeClass("active");
+                displayError(err);
+            });
     });
 })();

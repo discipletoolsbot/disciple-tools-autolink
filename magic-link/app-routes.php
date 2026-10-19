@@ -307,6 +307,10 @@ trait Disciple_Tools_Autolink_App_Routes {
 				return $this->language_controller->update( $request, $params, $actor );
 			case 'contact_link':
 				return $this->contacts_controller->link( $request, $params, $actor );
+			case 'genmap_create_node':
+				return $this->genmap_controller->create_node( $request, $params, $actor );
+			case 'genmap_update_node':
+				return $this->genmap_controller->update_node( $request, $params, $actor );
 			default:
 				return new WP_Error( __METHOD__, 'Invalid action', [ 'status' => 400 ] );
 		}
