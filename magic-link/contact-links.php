@@ -208,7 +208,26 @@ class Disciple_Tools_Autolink_Contact_Links {
 			self::stamp( $contact_id, $key, $fresh );
 		}
 
+		if ( $fresh ) {
+			self::forget_cached_record( $contact_id );
+		}
+
 		return DT_Magic_URL::get_link_url( self::ROOT, self::TYPE, $key );
+	}
+
+	/**
+	 * Drop the copy of a contact that DT_Posts::get_post() holds for this request.
+	 *
+	 * The cache is keyed per user and is not cleared by writing post meta. The
+	 * Apps tile reads the key out of that copy, so on a record fetched earlier in
+	 * the page - before a key was minted here - it saw no key, minted one of its
+	 * own over ours and left our expiry record pointing at a key that no longer
+	 * exists. The link then never expired.
+	 *
+	 * @param int $contact_id
+	 */
+	private static function forget_cached_record( $contact_id ) {
+		wp_cache_delete( 'post_' . get_current_user_id() . '_' . (int) $contact_id );
 	}
 
 	/**
