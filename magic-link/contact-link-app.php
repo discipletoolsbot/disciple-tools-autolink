@@ -189,9 +189,27 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 	public function begin_apps_tile( $section, $post_type ) {
 		if ( $section === 'apps' && $post_type === $this->post_type ) {
 			add_filter( 'dt_magic_url_register_types', [ $this, 'one_autolink_app' ], 1000, 1 );
-			// Left to itself the theme would mint a key that never expires.
-			Disciple_Tools_Autolink_Contact_Links::prepare_for_tile( get_the_ID() );
+
+			// The tile is drawn for anyone who can view the record, but the link
+			// is the whole app as this contact - it writes to their churches and
+			// the people they coach. Only someone who could make those edits
+			// themselves is handed it, and only for them is a key minted.
+			if ( $this->can_hand_over( get_the_ID() ) ) {
+				// Left to itself the theme would mint a key that never expires.
+				Disciple_Tools_Autolink_Contact_Links::prepare_for_tile( get_the_ID() );
+			}
 		}
+	}
+
+	/**
+	 * Whether the person viewing a contact may be given that contact's link.
+	 *
+	 * @param int $contact_id
+	 *
+	 * @return bool
+	 */
+	private function can_hand_over( $contact_id ) {
+		return $contact_id && DT_Posts::can_update( $this->post_type, (int) $contact_id );
 	}
 
 	/**
@@ -211,7 +229,8 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 	 * each carries a different key to a different route, but only one of them is
 	 * ever the right thing to hand this person:
 	 *
-	 * - no login: this contact link, which is the whole app.
+	 * - no login: this contact link, which is the whole app - and so only for
+	 *             a viewer who may edit the contact. Anyone else sees none.
 	 * - a login:  the share link. It signs them in to their own app, and anyone
 	 *             who registers through it lands under them. The contact link is
 	 *             withheld - see may_act_as() - and the user link only ever leads
@@ -229,7 +248,9 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 		$has_login = Disciple_Tools_Autolink_Actor::contact_has_login( get_the_ID() );
 
 		if ( isset( $types[ $this->root ][ $this->type ] ) ) {
-			$types[ $this->root ][ $this->type ]['show_app_tile'] = ! $has_login;
+			// Hidden rather than shown empty: the theme mints a key for any app
+			// it lists, so listing it at all would hand one over.
+			$types[ $this->root ][ $this->type ]['show_app_tile'] = ! $has_login && $this->can_hand_over( get_the_ID() );
 		}
 
 		if ( isset( $types[ $this->root ]['share'] ) ) {
