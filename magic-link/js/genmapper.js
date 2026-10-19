@@ -245,6 +245,10 @@ class GenMapper {
                 groupData[field.header] = this.editFieldElements[field.header].value;
                 if (field.header === "name") {
                     groupFields["title"] = this.editFieldElements[field.header].value;
+                    // The box draws its label from line_1, which the server fills
+                    // with the name. Without this the redraw below keeps showing
+                    // the old name until the page is reloaded.
+                    groupData["line_1"] = groupData["name"];
                 }
             } else if (field.type === "radio") {
                 field.values.forEach((value) => {

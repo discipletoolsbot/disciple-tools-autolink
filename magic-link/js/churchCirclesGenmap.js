@@ -153,6 +153,9 @@
                 newNodeData["id"] = newGroup["ID"];
                 newNodeData["parentId"] = parent.data.id;
                 newNodeData["name"] = newGroup["title"];
+                // The box's label is drawn from line_1, which the server fills
+                // with the name; left out, the new box has no label until reload.
+                newNodeData["line_1"] = newGroup["title"];
                 genmapper.createNode(newNodeData);
                 loading_spinner.removeClass("active");
             })
