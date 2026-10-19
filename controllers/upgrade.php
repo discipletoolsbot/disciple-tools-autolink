@@ -193,31 +193,52 @@ class Disciple_Tools_Autolink_Upgrade_Controller extends Disciple_Tools_Autolink
 	/**
 	 * Move the records this person built onto their new account.
 	 *
-	 * Churches created through a contact link are assigned to the site's base
-	 * user, because there was no user to assign them to. Now there is one, so the
-	 * ones they lead become theirs - leaving alone anything a real person has
-	 * already taken responsibility for.
+	 * Churches and people created through a contact link are assigned to the
+	 * site's base user, because there was no user to assign them to. Now there is
+	 * one, so the churches they lead and the people they coach become theirs -
+	 * leaving alone anything a real person has already taken responsibility for.
+	 *
+	 * The people matter as much as the churches. Once signed in, whether they can
+	 * edit someone is Disciple.Tools' own question - see
+	 * Disciple_Tools_Autolink_Actor::can_edit_contact() - and coaching someone
+	 * grants nothing there. Left with the base user, everyone they added through
+	 * their link would lose Edit and Copy link the moment they upgraded.
 	 *
 	 * @param int $user_id
 	 * @param int $contact_id
 	 * @param Disciple_Tools_Autolink_Actor $actor the pre-upgrade actor, whose
-	 *                                             church list is already loaded
+	 *                                             church and coaching lists are
+	 *                                             already loaded
 	 */
 	private function hand_over_records( $user_id, $contact_id, $actor ) {
-		$base_user_id = (int) dt_get_base_user( true );
-
 		foreach ( $actor->own_groups() as $group ) {
-			$assigned_to = get_post_meta( $group['ID'], 'assigned_to', true );
-			$assigned_id = $assigned_to ? (int) dt_get_user_id_from_assigned_to( $assigned_to ) : 0;
-
-			if ( $assigned_id && $assigned_id !== $base_user_id ) {
-				continue;
-			}
-
-			DT_Posts::update_post( 'groups', $group['ID'], [
-				'assigned_to' => 'user-' . $user_id,
-			], false, false );
+			$this->hand_over( 'groups', (int) $group['ID'], $user_id );
 		}
+
+		foreach ( $actor->coached_contacts() as $coached ) {
+			$this->hand_over( 'contacts', (int) $coached['ID'], $user_id );
+		}
+	}
+
+	/**
+	 * Assign one record to the new account, unless someone real already has it.
+	 *
+	 * @param string $post_type
+	 * @param int $post_id
+	 * @param int $user_id
+	 */
+	private function hand_over( $post_type, $post_id, $user_id ) {
+		$base_user_id = (int) dt_get_base_user( true );
+		$assigned_to  = get_post_meta( $post_id, 'assigned_to', true );
+		$assigned_id  = $assigned_to ? (int) dt_get_user_id_from_assigned_to( $assigned_to ) : 0;
+
+		if ( $assigned_id && $assigned_id !== $base_user_id ) {
+			return;
+		}
+
+		DT_Posts::update_post( $post_type, $post_id, [
+			'assigned_to' => 'user-' . $user_id,
+		], false, false );
 	}
 
 	/**
