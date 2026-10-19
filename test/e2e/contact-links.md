@@ -25,6 +25,10 @@ apply on a real request.
   new keys. Give everything you create a `ZZ E2E` prefix, and delete it
   afterwards along with its `p2p`, `dt_share` and `dt_activity_log` rows and any
   user flow 24 creates.
+- For flow 27, **Viewer** is a `ZZ E2E Viewer` user with the `multiplier` role
+  plus the `view_any_contacts` cap: they can open any contact but update only
+  their own. Use a contact with no login and no `autolink_contact_magic_key`
+  (**Contact C**), so it is visible whether one gets minted.
 
 REST calls send `parts` = `{root: autolink, type, meta_key: autolink_<type>_magic_key, public_key, post_id}`.
 The `X-WP-Nonce` comes from the page's `window.app.nonce`. GET calls also need the
@@ -74,6 +78,13 @@ what a submission can attach. Post to the form's own `action` URL with the
 | 23 | POST `autolink/v1/contact` `genmap_create_node` with `parent_id` = the outside church, and `genmap_update_node` with `group_id` = the outside church | 403 for both; outside church unchanged. `genmap_update_node` on Church A with only an invalid `group_status` → 400 "Nothing to save" |
 
 | 25 | On Contact A's link, click the node from flow 21 to open its dialog, change the name, untick active, press Save Changes | One POST `genmap_update_node` → 200; the dialog closes and the node shows the new name; the church is saved `inactive`; no reload or alert |
+
+### Key and tile hardening
+
+| # | Flow | Expected |
+|---|------|----------|
+| 26 | POST `autolink/v1/contact` `action=contact_link`, logged out, with forged parts: `meta_key: overall_status`, `public_key: active`, `post_id` = the first post that pair finds in `postmeta`. Repeat as GET `action=groups` | 401 for both - only the link's own `autolink_contact_magic_key` counts as a key. Nothing is minted |
+| 27 | Log in as Viewer and open Contact C's record. Then log in as admin and open it again | Viewer: no Autolink Contact App row on the Apps tile, and Contact C still has no `autolink_contact_magic_key`. Admin: the Contact App row is shown and a key with an expiry is minted |
 
 ### Upgrade keeps the people you coach
 
