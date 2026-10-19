@@ -68,28 +68,7 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		$submit_label     = __( 'Save', 'disciple-tools-autolink' );
 		$error            = $params['error'] ?? '';
 		$name             = sanitize_text_field( wp_unslash( $params['name'] ?? "" ) );
-		$contacts         = array_filter( [ DT_Posts::get_post( 'contacts', $contact_id, true, false ) ], function ( $contact ) {
-			return $contact && ! is_wp_error( $contact );
-		} );
-		$coaching         = dt_autolink_queries()->tree( 'coaching', [
-			'check_health' => false,
-			'id'           => $contact_id,
-		] );
-		// Ids must be integers, not numeric strings: dt-connection's remove handler
-		// parses the clicked id to a number and compares it with `===`, so a string
-		// id can never be matched and the chip's "x" silently does nothing.
-		$leader_options   = array_map( function ( $contact ) {
-			return [
-				'id'    => (int) $contact['ID'],
-				'label' => $contact['name'],
-			];
-		}, $contacts );
-		foreach ( $coaching as $coached ) {
-			$leader_options[] = [
-				'id'    => (int) $coached['id'],
-				'label' => $coached['name'],
-			];
-		}
+		$leader_options   = $this->leader_options( $contact_id );
 
 		// <dt-connection> takes { id, label } objects rather than bare ids, both for
 		// its value and its options.
@@ -155,6 +134,84 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		}
 
 		return $ids;
+	}
+
+	/**
+	 * The people the form offers as leaders: the actor and everyone in their
+	 * coaching downline.
+	 *
+	 * process() checks submissions against the same list, so the offer is also
+	 * the limit - a crafted request cannot name anyone the form would not.
+	 *
+	 * @param int $contact_id the actor's contact record
+	 *
+	 * @return array { id, label } options for <dt-connection>
+	 */
+	private function leader_options( $contact_id ) {
+		$contacts = array_filter( [ DT_Posts::get_post( 'contacts', $contact_id, true, false ) ], function ( $contact ) {
+			return $contact && ! is_wp_error( $contact );
+		} );
+		$coaching = dt_autolink_queries()->tree( 'coaching', [
+			'check_health' => false,
+			'id'           => $contact_id,
+		] );
+		// Ids must be integers, not numeric strings: dt-connection's remove handler
+		// parses the clicked id to a number and compares it with `===`, so a string
+		// id can never be matched and the chip's "x" silently does nothing.
+		$options = array_values( array_map( function ( $contact ) {
+			return [
+				'id'    => (int) $contact['ID'],
+				'label' => $contact['name'],
+			];
+		}, $contacts ) );
+		foreach ( $coaching as $coached ) {
+			$options[] = [
+				'id'    => (int) $coached['id'],
+				'label' => $coached['name'],
+			];
+		}
+
+		return $options;
+	}
+
+	/**
+	 * The churches the parent field offers for a set of leaders: the ones those
+	 * leaders belong to, and the ones their coaches belong to.
+	 *
+	 * @param int[] $leader_ids leaders already checked against this actor
+	 *
+	 * @return array group connections, each with `ID` and `post_title`
+	 */
+	private function parent_group_candidates( $leader_ids ) {
+		$leaders = [];
+
+		foreach ( $leader_ids as $leader_id ) {
+			$leader = DT_Posts::get_post( 'contacts', (int) $leader_id, false, false );
+
+			if ( $leader && ! is_wp_error( $leader ) ) {
+				$leaders[] = $leader;
+			}
+		}
+
+		$groups = [];
+
+		foreach ( $leaders as $leader ) {
+			array_push( $groups, ...$leader['groups'] ?? [] );
+		}
+
+		if ( count( $leaders ) ) {
+			$coached_by = DT_Posts::list_posts( 'contacts', [
+				'coaching' => array_values( array_map( function ( $leader ) {
+					return $leader['ID'];
+				}, $leaders ) ),
+			], false );
+
+			foreach ( is_wp_error( $coached_by ) ? [] : $coached_by['posts'] as $leader ) {
+				array_push( $groups, ...$leader['groups'] ?? [] );
+			}
+		}
+
+		return array_unique( $groups, SORT_REGULAR );
 	}
 
 	/**
@@ -258,33 +315,9 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		} );
 
 
-		$leaders = array_map( function ( $leader_id ) {
-			return DT_Posts::get_post( 'contacts', $leader_id, false, false );
-		}, $leader_ids );
+		$groups = $this->parent_group_candidates( $leader_ids );
 
-		$groups = [];
-
-		foreach ( $leaders as $leader ) {
-			array_push( $groups, ...$leader['groups'] ?? [] );
-		}
-
-		$coached_by = [ 'posts' => [] ];
-
-		if ( count( $leaders ) ) {
-			$coached_by = count( $leaders ) ? DT_Posts::list_posts( 'contacts', [
-				'coaching' => array_map( function ( $leader ) {
-					return $leader['ID'];
-				}, $leaders )
-			], false ) : $coached_by;
-		}
-
-		foreach ( $coached_by['posts'] as $leader ) {
-			array_push( $groups, ...$leader['groups'] ?? [] );
-		}
-
-		$groups = array_unique( $groups, SORT_REGULAR );
-
-		$id                           = sanitize_text_field( wp_unslash( $_GET['id'] ?? '' ) );
+		$id                          = sanitize_text_field( wp_unslash( $_GET['id'] ?? '' ) );
 		$group                        = $id ? DT_Posts::get_post( 'groups', $id, true, false ) : null;
 		$default_parent_group         = count( $groups ) ? $groups[0]['ID'] ?? null : null;
 		$allow_parent_group_selection = $this->settings->get_option( 'disciple_tools_autolink_allow_parent_group_selection' );
@@ -488,6 +521,67 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 			return;
 		}
 
+		$actor        = $this->actor();
+		$unauthorized = __( 'Unauthorized action. Please refresh the page and try again.', 'disciple-tools-autolink' );
+		$group        = null;
+
+		// form() guards the screen; this guards the write, which also arrives
+		// from store()/update() and so has to stand on its own. It runs before
+		// anything is written, so a refused edit leaves no new contacts behind.
+		if ( $id ) {
+			if ( ! $actor->can_edit_group( $id ) ) {
+				$this->form( array_merge( $get_params, [
+					'error' => $unauthorized,
+					'post'  => (int) $id,
+				] ) );
+
+				return;
+			}
+
+			$group = DT_Posts::get_post( 'groups', (int) $id, true, false );
+			$group = is_wp_error( $group ) ? null : $group;
+		}
+
+		// Leaders and the parent church are written with permission checks off, so
+		// a contact link - which has no capabilities at all - could otherwise
+		// attach any contact or church on the site. Both are held to what the form
+		// offers. Whoever already leads this church stays, so an edit never drops
+		// a co-leader the actor did not add themselves.
+		$existing_leaders = array_map( 'intval', wp_list_pluck( $group['leaders'] ?? [], 'ID' ) );
+		$allowed_leaders  = array_merge( wp_list_pluck( $this->leader_options( $contact_id ), 'id' ), $existing_leaders );
+		$leaders          = array_values( array_filter( $leaders, function ( $leader ) use ( $allowed_leaders, $actor ) {
+			// A typed name, created below as someone this actor coaches.
+			if ( ! is_numeric( $leader ) ) {
+				return true;
+			}
+
+			$leader = (int) $leader;
+
+			return in_array( $leader, $allowed_leaders, true ) || $actor->can_edit_contact( $leader );
+		} ) );
+
+		$parent_group = (int) $parent_group;
+
+		if ( $parent_group ) {
+			$existing_parent = (int) ( $group['parent_groups'][0]['ID'] ?? 0 );
+			$known_leaders   = array_filter( $leaders, 'is_numeric' );
+			$candidates      = array_map( 'intval', wp_list_pluck( $this->parent_group_candidates( $known_leaders ), 'ID' ) );
+			$allowed_parent  = $parent_group !== (int) $id && (
+				$parent_group === $existing_parent
+				|| in_array( $parent_group, $candidates, true )
+				|| $actor->can_edit_group( $parent_group )
+			);
+
+			if ( ! $allowed_parent ) {
+				$this->form( array_merge( $get_params, [
+					'error' => $unauthorized,
+					'post'  => $id,
+				] ) );
+
+				return;
+			}
+		}
+
 		foreach ( $leaders as $idx => $value ) {
 			if ( ! is_numeric( $value ) ) {
 				$title           = $value;
@@ -553,17 +647,6 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 		}
 
 		if ( $id ) {
-			// form() guards the screen; this guards the write, which also arrives
-			// from store()/update() and so has to stand on its own.
-			if ( ! $this->actor()->can_edit_group( $id ) ) {
-				$this->form( array_merge( $get_params, [
-					'error' => __( 'Unauthorized action. Please refresh the page and try again.', 'disciple-tools-autolink' ),
-					'post'  => (int) $id,
-				] ) );
-
-				return;
-			}
-
 			$group = DT_Posts::update_post( 'groups', (int) $id, $fields, false, false );
 			if ( is_wp_error( $group ) ) {
 				$this->form( array_merge( $get_params, [
