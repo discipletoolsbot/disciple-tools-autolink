@@ -71,6 +71,18 @@ abstract class Disciple_Tools_Autolink_Controller {
 		$data['upgrade_url']          = $this->functions->get_app_link() . '?action=upgrade';
 		$data['upgrade_label']        = __( 'Secure your access', 'disciple-tools-autolink' );
 		$data['upgrade_help_text']    = __( 'Create a username and password so you are not relying on this link.', 'disciple-tools-autolink' );
+		// When the link a contact is using runs out. It is their only way in, and
+		// it stops without warning, so it is said up front - with what to do
+		// about it in the same place.
+		$link_expires                 = $actor->is_contact() ? Disciple_Tools_Autolink_Contact_Links::expires_at( $actor->contact_id() ) : null;
+		$data['link_expires_soon']    = Disciple_Tools_Autolink_Contact_Links::expires_soon( $link_expires );
+		$data['link_expiry_text']     = $link_expires
+			/* translators: %s: the date and time a magic link stops working. */
+			? sprintf( __( 'This link works until %s.', 'disciple-tools-autolink' ), Disciple_Tools_Autolink_Contact_Links::format_expiry( $link_expires ) )
+			: '';
+		$data['link_renew_text']      = $data['can_upgrade']
+			? __( 'Ask your coach to renew it, or create a login so you are not relying on a link.', 'disciple-tools-autolink' )
+			: __( 'Ask your coach to renew it.', 'disciple-tools-autolink' );
 		$data['training-label']       = __( 'Training', 'disciple-tools-autolink' );
 		$data['training-link']        = $this->functions->get_training_url();
 		$data['show_training']        = $this->settings->training_enabled();

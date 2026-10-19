@@ -10,18 +10,6 @@
         </strong>
 	<?php endif; ?>
 
-	<?php if ( ! empty( $can_upgrade ) && ( $action ?? '' ) !== 'upgrade' ): ?>
-        <dt-tile class="app__upgrade">
-            <div class="section__inner">
-                <strong class="upgrade__cta-heading"><?php echo esc_html( $upgrade_label ); ?></strong>
-                <span class="help-text cloak"><?php echo esc_html( $upgrade_help_text ); ?></span>
-                <dt-button href="<?php echo esc_url( $upgrade_url ); ?>" context="success">
-                    <?php echo esc_html( $upgrade_label ); ?>
-                </dt-button>
-            </div>
-        </dt-tile>
-	<?php endif; ?>
-
 	<?php if ( $share_link ): ?>
         <dt-tile title="<?php echo esc_attr( $link_heading ); ?>"
                  class="app__link">
@@ -30,6 +18,25 @@
                 <span class="help-text cloak">
                     <?php echo esc_html( $share_link_help_text ) ?>
                 </span>
+
+				<?php
+				// A contact's link is their only way in, so when it runs out, and
+				// how to stop depending on it, are said right beside it.
+				?>
+				<?php if ( ! empty( $link_expiry_text ) ): ?>
+                    <p class="link__expiry<?php echo ! empty( $link_expires_soon ) ? ' link__expiry--soon' : ''; ?>">
+                        <strong><?php echo esc_html( $link_expiry_text ); ?></strong>
+						<?php echo esc_html( $link_renew_text ); ?>
+                    </p>
+				<?php elseif ( ! empty( $can_upgrade ) ): ?>
+                    <p class="link__expiry"><?php echo esc_html( $upgrade_help_text ); ?></p>
+				<?php endif; ?>
+
+				<?php if ( ! empty( $can_upgrade ) && ( $action ?? '' ) !== 'upgrade' ): ?>
+                    <dt-button class="link__upgrade" href="<?php echo esc_url( $upgrade_url ); ?>" context="success">
+						<?php echo esc_html( $upgrade_label ); ?>
+                    </dt-button>
+				<?php endif; ?>
             </div>
         </dt-tile>
 	<?php endif; ?>

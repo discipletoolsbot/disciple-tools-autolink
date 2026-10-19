@@ -430,7 +430,7 @@ export class Contacts extends DtBase {
 
     // A contact link is issued on the press, not when the list is drawn, so it
     // runs for the configured validity from when it is handed over.
-    const source = contact.can_link ? () => this.issueLink(contact.id) : null;
+    const source = contact.can_link ? () => this.issueLink(contact) : null;
 
     return html`
       <div class="contact__actions">
@@ -441,17 +441,48 @@ export class Contacts extends DtBase {
           copiedLabel="${translations.copied}"
           errorLabel="${translations.copy_failed}"
         ></app-copy-link>
+        ${this.renderLinkStatus(contact)}
       </div>
     `;
   }
 
   /**
+   * What the link just copied is good for, or that the last one has lapsed.
+   *
+   * Beside the button rather than in it: the button's own confirmation goes
+   * back after a moment, and this is worth reading after that.
+   */
+  renderLinkStatus(contact) {
+    const { translations } = this;
+
+    if (contact.link_copied) {
+      if (!contact.link_expires_label) {
+        return null;
+      }
+
+      return html`<span class="contact__link-status">
+        ${translations.link_expires.replace("%s", contact.link_expires_label)}
+      </span>`;
+    }
+
+    if (contact.link_expired) {
+      return html`<span
+        class="contact__link-status contact__link-status--expired"
+      >
+        ${translations.link_expired}
+      </span>`;
+    }
+
+    return null;
+  }
+
+  /**
    * Ask the server for a contact's link, minting or extending it.
    *
-   * @param {number} contactId
+   * @param {object} contact the card's row, updated with the new expiry
    * @returns {Promise<string>}
    */
-  async issueLink(contactId) {
+  async issueLink(contact) {
     const response = await fetch(
       window.app.rest_base + window.magic.rest_namespace,
       {
@@ -463,7 +494,7 @@ export class Contacts extends DtBase {
         body: JSON.stringify({
           action: "contact_link",
           parts: window.magic.parts,
-          contact_id: contactId,
+          contact_id: contact.id,
         }),
       }
     );
@@ -472,6 +503,11 @@ export class Contacts extends DtBase {
     if (!response.ok || !body || !body.link) {
       throw new Error((body && body.message) || `HTTP ${response.status}`);
     }
+
+    contact.link_copied = true;
+    contact.link_expired = false;
+    contact.link_expires_label = body.expires_label || "";
+    this.requestUpdate();
 
     return body.link;
   }

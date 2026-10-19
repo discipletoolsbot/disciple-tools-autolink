@@ -100,17 +100,25 @@ dt-button.contacts__add dt-icon {
     font-size: 1rem;
 }
 
-.upgrade__cta-heading {
-    display: block;
-    margin-bottom: 0.25rem;
+/* A contact's own link: when it runs out, and the way off it. */
+.link__expiry {
+    margin: 0.75rem 0 0.5rem;
+    font-size: 0.875rem;
+    /* The tile sets everything bold; only the date should stand out. */
+    font-weight: normal;
 }
 
-dt-tile.app__upgrade .help-text {
-    display: block;
-    margin-bottom: 0.75rem;
+.link__expiry strong {
+    font-weight: 700;
 }
 
-dt-tile.app__upgrade dt-button {
+.link__expiry--soon {
+    padding: 0.5rem 0.75rem;
+    border-inline-start: 3px solid var(--warning-color, #ffae00);
+    background: var(--warning-background-color, #fff8e5);
+}
+
+dt-tile.app__link dt-button.link__upgrade {
     display: inline-block;
 }
 
@@ -285,4 +293,15 @@ button.contact__milestone-mark {
     flex-wrap: wrap;
     gap: 0.5rem;
     justify-content: flex-start;
+    align-items: center;
+}
+
+.contact__link-status {
+    font-size: 0.8125rem;
+    color: var(--gray-1, #5a5a5a);
+}
+
+.contact__link-status--expired {
+    color: var(--alert-color, #cc4b37);
+    font-weight: 600;
 }

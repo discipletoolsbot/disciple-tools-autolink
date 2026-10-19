@@ -34,6 +34,9 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 			'copy_link' => __( 'Copy link', 'disciple-tools-autolink' ),
 			'copied'    => __( 'Copied', 'disciple-tools-autolink' ),
 			'copy_failed' => __( 'Could not copy', 'disciple-tools-autolink' ),
+			/* translators: %s: the date and time a magic link stops working. */
+			'link_expires' => __( 'Link works until %s', 'disciple-tools-autolink' ),
+			'link_expired' => __( 'Link expired. Copy it to send a new one.', 'disciple-tools-autolink' ),
 			/* translators: %s: singular name of the contact post type, e.g. "Contact". */
 			'edit'      => sprintf( __( 'Edit %s', 'disciple-tools-autolink' ), $contact_label ),
 			/* translators: %s: singular name of the contact post type, e.g. "Contact". */
@@ -313,7 +316,13 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 			return new WP_Error( __METHOD__, __( 'This person signs in with their own login.', 'disciple-tools-autolink' ), [ 'status' => 400 ] );
 		}
 
-		return [ 'link' => $link ];
+		$expires = Disciple_Tools_Autolink_Contact_Links::expires_at( $contact_id );
+
+		return [
+			'link'          => $link,
+			'expires'       => $expires,
+			'expires_label' => Disciple_Tools_Autolink_Contact_Links::format_expiry( $expires ),
+		];
 	}
 
 	/**
@@ -483,6 +492,12 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 			// that, and a link is the whole app as that person.
 			$contacts[ $id ]['link']          = $has_login ? $general_link : '';
 			$contacts[ $id ]['can_link']      = ! $has_login && $contacts[ $id ]['can_edit'];
+			// Only whether a link already handed out has lapsed - the card says so
+			// beside the button that renews it. The date itself is shown once a
+			// link is copied, when it is the thing being sent.
+			$contacts[ $id ]['link_expired']  = $contacts[ $id ]['can_link']
+				&& get_post_meta( $id, Disciple_Tools_Autolink_Contact_Links::meta_key(), true )
+				&& Disciple_Tools_Autolink_Contact_Links::is_expired( $id );
 			$contacts[ $id ]['edit_link']     = $contacts[ $id ]['can_edit'] ? $edit_link . $id : '';
 			$contacts[ $id ]['view_link']     = ( $view_link && $contacts[ $id ]['can_edit'] ) ? $view_link . $id : '';
 			$contacts[ $id ]['relationships'] = $this->shape_relationships( $contact_row['relationships'] );

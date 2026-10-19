@@ -19,7 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A key with no expiry record does not expire. That is how the rest of
  * Disciple.Tools reads such a key, and it covers links issued before this existed
- * and links sent through bulk send.
+ * and links sent through bulk send. Copying such a key gives it the configured
+ * validity, though - see issue().
  */
 class Disciple_Tools_Autolink_Contact_Links {
 	const ROOT = 'autolink';
@@ -66,13 +67,13 @@ class Disciple_Tools_Autolink_Contact_Links {
 	}
 
 	/**
-	 * When a contact's current key stops working.
+	 * The expiry record for a contact's current key.
 	 *
 	 * @param int $contact_id
 	 *
-	 * @return int|null a timestamp, or null when the key does not expire
+	 * @return array|null null when the current key has none
 	 */
-	public static function expires_at( $contact_id ) {
+	private static function record( $contact_id ) {
 		$record = get_post_meta( (int) $contact_id, self::expiration_meta_key(), true );
 
 		if ( is_string( $record ) ) {
@@ -87,6 +88,23 @@ class Disciple_Tools_Autolink_Contact_Links {
 		// say - says nothing about the key there now.
 		$hash = $record['current_hash'] ?? '';
 		if ( $hash && $hash !== get_post_meta( (int) $contact_id, self::meta_key(), true ) ) {
+			return null;
+		}
+
+		return $record;
+	}
+
+	/**
+	 * When a contact's current key stops working.
+	 *
+	 * @param int $contact_id
+	 *
+	 * @return int|null a timestamp, or null when the key does not expire
+	 */
+	public static function expires_at( $contact_id ) {
+		$record = self::record( $contact_id );
+
+		if ( $record === null ) {
 			return null;
 		}
 
@@ -110,6 +128,35 @@ class Disciple_Tools_Autolink_Contact_Links {
 	}
 
 	/**
+	 * An expiry, as the site writes dates and times.
+	 *
+	 * Formatted here rather than in the browser so that the app's own link and
+	 * the contacts list say it the same way.
+	 *
+	 * @param int|null $timestamp
+	 *
+	 * @return string empty for a link that does not expire
+	 */
+	public static function format_expiry( $timestamp ) {
+		if ( ! $timestamp ) {
+			return '';
+		}
+
+		return wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $timestamp );
+	}
+
+	/**
+	 * Whether an expiry is close enough to warn about.
+	 *
+	 * @param int|null $timestamp
+	 *
+	 * @return bool
+	 */
+	public static function expires_soon( $timestamp ) {
+		return $timestamp && ( (int) $timestamp - time() ) < 2 * DAY_IN_SECONDS;
+	}
+
+	/**
 	 * Whether a contact's current key has run out.
 	 *
 	 * @param int $contact_id
@@ -129,6 +176,10 @@ class Disciple_Tools_Autolink_Contact_Links {
 	 * - no key, or an expired one: a new key, valid from now.
 	 * - a live key:                the same key, extended - never shortened, so an
 	 *                              admin's longer expiry set on the tile stands.
+	 * - a key with no record:      the same key, given the validity from now.
+	 *                              Copying is a deliberate hand over, and a
+	 *                              link that never expires is a choice an admin
+	 *                              makes explicitly, not a leftover.
 	 *
 	 * Contacts with a login of their own are never given one - see
 	 * Disciple_Tools_Autolink_Actor::may_act_as().
@@ -185,9 +236,10 @@ class Disciple_Tools_Autolink_Contact_Links {
 			$now     = time();
 			$expires = strtotime( '+' . $validity['amount'] . ' ' . $validity['unit'], $now );
 
-			// A live key that does not expire, or outlasts the new validity, keeps
-			// what it has.
-			if ( ! $fresh && ( $current === null || $current >= $expires ) ) {
+			// A live key keeps what it has when that is longer: an expiry past
+			// the new one, or a "never" an admin chose on the Apps tile. A key
+			// with no record at all gets the validity.
+			if ( ! $fresh && self::record( $contact_id ) !== null && ( $current === null || $current >= $expires ) ) {
 				return;
 			}
 
