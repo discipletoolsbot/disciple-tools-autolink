@@ -14,11 +14,22 @@ apply on a real request.
 - **Contact B:** a contact with `corresponds_to_user` set that holds an
   `autolink_contact_magic_key` (e.g. one minted before links were refused for
   logged in contacts).
+- For flows 17-24, Contact A also needs to lead at least one church
+  (**Church A**), coach at least one person, and share one church with a person
+  they coach (both listed as its leaders). **Outside contact** and **outside
+  church** are a contact and a church that have nothing to do with Contact A: not
+  in their coaching downline, not in their churches, and not in their coaches'
+  churches.
 - Snapshot `autolink_contact_magic_key` and `autolink_contact_magic_key_expiration`
-  on every contact you touch and restore them afterwards.
+  on every contact you touch and restore them afterwards. Flows 14 and 24 mint
+  new keys. Give everything you create a `ZZ E2E` prefix, and delete it
+  afterwards along with its `p2p`, `dt_share` and `dt_activity_log` rows and any
+  user flow 24 creates.
 
 REST calls send `parts` = `{root: autolink, type, meta_key: autolink_<type>_magic_key, public_key, post_id}`.
-The `X-WP-Nonce` comes from the page's `window.app.nonce`.
+The `X-WP-Nonce` comes from the page's `window.app.nonce`. GET calls also need the
+page's nonce as `_wpnonce`, the way `churches.js` sends it. Without it a
+logged-out GET comes back 401.
 
 ## Flows
 
@@ -29,7 +40,7 @@ The `X-WP-Nonce` comes from the page's `window.app.nonce`.
 | 3 | Same as 2, logged in as that user, with nonce | 200 |
 | 4 | Same as 2, logged in as a *different* user | 403 |
 | 5 | Open Contact A's link logged out, `?action=contacts` | 200; My Link tile says "This link works until ..."; "Secure your access" button in the same tile; no separate upgrade tile |
-| 6 | GET `autolink/v1/contact` `action=groups` with Contact A's parts, logged out | 200 |
+| 6 | GET `autolink/v1/contact` `action=groups` with Contact A's parts and the page's `_wpnonce`, logged out | 200 |
 | 7 | POST `autolink/v1/contact` `action=contact_link`, `contact_id` = Contact A's own id | 403 - a link cannot renew itself |
 | 8 | As admin, POST `autolink/v1/app` `action=contact_link` for Contact A | 200 with `link`, `expires`, `expires_label`; same key as before; expiry about one validity from now |
 | 9 | Open Contact B's link | 302 to `/autolink` - contacts with a login sign in |
@@ -40,3 +51,34 @@ The `X-WP-Nonce` comes from the page's `window.app.nonce`.
 | 14 | Press Copy link on that card | Clipboard holds a new `autolink/contact/<key>`; status reads "Link works until ..." and stays after the button resets |
 | 15 | Contact record in DT, Apps tile | One Autolink row: Contact App (no login) or Share Link (has login), with distinct titles |
 | 16 | Autolink admin settings, save without a nonce | Nothing saved |
+
+### Church form scoping
+
+The church form saves with permission checks off, so the controller has to limit
+what a submission can attach. Post to the form's own `action` URL with the
+`_wpnonce` from `?action=create-group`. Leaders go as `leaders[<n>][id]`.
+
+| # | Flow | Expected |
+|---|------|----------|
+| 17 | On Contact A's link, submit create-group with leader = Contact A and `parent_group` = the outside church | Form re-renders with "Unauthorized action"; no church created |
+| 18 | Same, with leaders = Contact A + the outside contact and no parent | Redirects home; the new church's only leader is Contact A |
+| 19 | Fill in a name in the real form UI, keep the parent it offers, press Save | Church created, leader = Contact A, parent = the offered church |
+
+### Tree and GenMap
+
+| # | Flow | Expected |
+|---|------|----------|
+| 20 | On Contact A's link, `?action=tree`, find the church shared with a coachee in `<app-groups-tree>`'s `tree` | In the main tree, not `unassignedTree`; `assigned: true`, `coaching: false` (so it can be dragged) |
+| 21 | On Contact A's link, `?action=genmap`, click "+" on Church A | One POST `autolink/v1/contact` `action=genmap_create_node` → 200; a "New" node is drawn under Church A; no reload, alert or stuck spinner. The new church has Contact A as leader and is assigned to the base user |
+| 22 | Same as 21 on the admin's user link | POST `autolink/v1/app` → 200; node drawn; no reload |
+| 23 | POST `autolink/v1/contact` `genmap_create_node` with `parent_id` = the outside church, and `genmap_update_node` with `group_id` = the outside church | 403 for both; outside church unchanged. `genmap_update_node` on Church A with only an invalid `group_status` → 400 "Nothing to save" |
+
+GenMap's edit dialog has no Save button, only Cancel, Open Record and Center on
+this Node. So `genmap_update_node` cannot be reached from the UI and is only
+tested over HTTP in flow 23.
+
+### Upgrade keeps the people you coach
+
+| # | Flow | Expected |
+|---|------|----------|
+| 24 | On Contact A's link add `ZZ E2E Coachee`, then copy their link through `contact_link`. On the coachee's link add `ZZ E2E Grandchild`, create a church, then complete "Secure your access" | Lands in the new user's `autolink/app/<key>` signed in. In the Contacts tab the grandchild has `can_edit` and `can_link` true, and `contact_link` for them → 200. The grandchild and the church are assigned to the new user. The coachee's old contact link shows the theme's "Invalid Link" page |
