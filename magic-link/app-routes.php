@@ -272,6 +272,11 @@ trait Disciple_Tools_Autolink_App_Routes {
 	 * on its own - see Disciple_Tools_Autolink_Actor::may_act_as() for what each
 	 * link additionally requires.
 	 *
+	 * The meta key is pinned to this link's own. The theme looks the submitted
+	 * public key up under whichever meta key the request names, and then only
+	 * compares that key with itself - so without this, any postmeta pair would
+	 * "verify" as a key and the caller could act as whatever record it found.
+	 *
 	 * @param WP_REST_Request $request
 	 *
 	 * @return bool
@@ -280,7 +285,15 @@ trait Disciple_Tools_Autolink_App_Routes {
 		$magic = new DT_Magic_URL( $this->root );
 		$parts = $magic->verify_rest_endpoint_permissions_on_post( $request, true );
 
-		return ! empty( $parts ) && Disciple_Tools_Autolink_Actor::may_act_as( $parts );
+		if ( empty( $parts ) ) {
+			return false;
+		}
+
+		if ( ( $parts['meta_key'] ?? '' ) !== DT_Magic_URL::get_public_key_meta_key( $this->root, $this->type ) ) {
+			return false;
+		}
+
+		return Disciple_Tools_Autolink_Actor::may_act_as( $parts );
 	}
 
 	public function endpoint_post( WP_REST_Request $request ) {
