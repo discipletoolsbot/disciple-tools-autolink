@@ -639,11 +639,13 @@ class Disciple_Tools_Autolink_Actor {
 	 * Persist a language choice.
 	 *
 	 * In contact mode there is no user to carry a locale, so it goes on the
-	 * contact record. DT_Magic_Url_Base::fetch_incoming_contact_lang() reads the
-	 * `languages` field to pick a locale for the page, so the choice is written
-	 * there - replacing any other language the record already resolves to, since
-	 * that read takes the first match and would otherwise shadow the choice.
-	 * `dt_autolink_locale` keeps an unambiguous copy for our own reads.
+	 * contact record as `dt_autolink_locale`. The contact link reads it back
+	 * before anything else when picking the page's language - see
+	 * Disciple_Tools_Autolink_Magic_Contact_Link_App::fetch_incoming_contact_lang().
+	 *
+	 * It is deliberately kept out of the `languages` field. That field records
+	 * the languages a person speaks, as language codes, not the WP locale they
+	 * read this app in.
 	 *
 	 * @param string $locale
 	 *
@@ -658,20 +660,6 @@ class Disciple_Tools_Autolink_Actor {
 			return new WP_Error( __METHOD__, __( 'No record to save the language to.', 'disciple-tools-autolink' ) );
 		}
 
-		$known = [];
-		foreach ( dt_get_available_languages() as $language ) {
-			if ( ! empty( $language['language'] ) ) {
-				$known[] = $language['language'];
-			}
-		}
-
-		foreach ( get_post_meta( $this->contact_id, 'languages', false ) as $existing ) {
-			if ( in_array( $existing, $known, true ) || strpos( (string) $existing, '_' ) !== false ) {
-				delete_post_meta( $this->contact_id, 'languages', $existing );
-			}
-		}
-
-		add_post_meta( $this->contact_id, 'languages', $locale );
 		update_post_meta( $this->contact_id, 'dt_autolink_locale', $locale );
 
 		return true;

@@ -181,6 +181,29 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 	}
 
 	/**
+	 * The locale to serve a contact the page in.
+	 *
+	 * The language they chose in the app comes first. Only when they have not
+	 * chosen one does the theme fall back to the spoken languages on the record.
+	 *
+	 * @see Disciple_Tools_Autolink_Actor::set_locale()
+	 *
+	 * @param array $parts
+	 *
+	 * @return string
+	 */
+	public function fetch_incoming_contact_lang( $parts = [] ): string {
+		$contact_id = (int) ( $parts['post_id'] ?? 0 );
+		$locale     = $contact_id ? (string) get_post_meta( $contact_id, 'dt_autolink_locale', true ) : '';
+
+		if ( $locale && in_array( $locale, wp_list_pluck( dt_get_available_languages(), 'language' ), true ) ) {
+			return $locale;
+		}
+
+		return parent::fetch_incoming_contact_lang( $parts );
+	}
+
+	/**
 	 * Start reshaping the magic link registry for the Apps tile.
 	 *
 	 * @param string $section
