@@ -33,7 +33,7 @@ class Disciple_Tools_Autolink_Genmap_Controller extends Disciple_Tools_Autolink_
 	public function create_node( WP_REST_Request $request, $params, $actor ) {
 		$parent_id = (int) ( $params['parent_id'] ?? 0 );
 
-		if ( ! $parent_id || ! $actor->can_edit_group( $parent_id ) ) {
+		if ( ! $parent_id || ! $this->can_add_under( $actor, $parent_id ) ) {
 			return new WP_Error( __METHOD__, __( 'You cannot add a church here.', 'disciple-tools-autolink' ), [ 'status' => 403 ] );
 		}
 
@@ -90,7 +90,7 @@ class Disciple_Tools_Autolink_Genmap_Controller extends Disciple_Tools_Autolink_
 	public function update_node( WP_REST_Request $request, $params, $actor ) {
 		$group_id = (int) ( $params['group_id'] ?? 0 );
 
-		if ( ! $group_id || ! $actor->can_edit_group( $group_id ) ) {
+		if ( ! $group_id || ! $this->can_edit_node( $actor, $group_id ) ) {
 			return new WP_Error( __METHOD__, __( 'You cannot edit this church.', 'disciple-tools-autolink' ), [ 'status' => 403 ] );
 		}
 
@@ -123,5 +123,47 @@ class Disciple_Tools_Autolink_Genmap_Controller extends Disciple_Tools_Autolink_
 		do_action( 'dt_autolink_group_updated', $group );
 
 		return [ 'ID' => $group['ID'] ];
+	}
+
+	/**
+	 * Whether the actor may add a church under a node on the map.
+	 *
+	 * The map draws every generation below the actor's churches, deeper than
+	 * can_edit_group() reaches. A user brings Disciple.Tools' own permissions
+	 * with them, and before this went through the magic link those were all the
+	 * "+" button asked for - so a user keeps them. A contact has no such
+	 * permissions and stays scoped to their own and their coachees' churches.
+	 *
+	 * @param Disciple_Tools_Autolink_Actor $actor
+	 * @param int $parent_id
+	 *
+	 * @return bool
+	 */
+	private function can_add_under( $actor, $parent_id ) {
+		if ( $actor->can_edit_group( $parent_id ) ) {
+			return true;
+		}
+
+		return $actor->is_user()
+			&& DT_Posts::can_create( 'groups' )
+			&& DT_Posts::can_view( 'groups', (int) $parent_id );
+	}
+
+	/**
+	 * Whether the actor may save the edit dialog for a node on the map.
+	 *
+	 * @see can_add_under() for why a user is not held to can_edit_group().
+	 *
+	 * @param Disciple_Tools_Autolink_Actor $actor
+	 * @param int $group_id
+	 *
+	 * @return bool
+	 */
+	private function can_edit_node( $actor, $group_id ) {
+		if ( $actor->can_edit_group( $group_id ) ) {
+			return true;
+		}
+
+		return $actor->is_user() && DT_Posts::can_update( 'groups', (int) $group_id );
 	}
 }
