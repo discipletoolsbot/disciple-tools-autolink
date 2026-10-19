@@ -21,8 +21,10 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 	use Disciple_Tools_Autolink_App_Routes;
 
 	private static $_instance = null;
-	public $page_title = 'Autolink';
-	public $page_description = 'Autolink contact app';
+	// Named for the Apps tile, where Autolink's links sit side by side. The
+	// browser tab still reads "Autolink" - see page_tab_title().
+	public $page_title = 'Autolink - Contact App';
+	public $page_description = 'The Autolink app for a contact with no login. Anyone holding this link can use the app as this contact.';
 	public $root = 'autolink';
 	public $type = 'contact';
 	public $type_name = 'Autolink App';
@@ -77,6 +79,10 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 		// Registered before the url check below, because the request this opens up
 		// is a REST call whose url never matches this link's own path.
 		add_filter( 'dt_allow_rest_access', [ $this, 'authorize_genmap_rest_url' ], 10, 1 );
+		// Narrow the Apps tile to one Autolink link per contact. The theme renders
+		// the tile at priority 110, so the registry is reshaped just around it.
+		add_action( 'dt_details_additional_section', [ $this, 'begin_apps_tile' ], 109, 2 );
+		add_action( 'dt_details_additional_section', [ $this, 'end_apps_tile' ], 111, 2 );
 
 		/**
 		 * tests if other URL
@@ -93,6 +99,13 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 		 */
 		if ( ! $this->check_parts_match() ) {
 			return;
+		}
+
+		// A contact with a login of their own signs in. Their key - from an old
+		// tile, a bulk send, or one minted before the login existed - would
+		// otherwise reach everything their account is assigned.
+		if ( Disciple_Tools_Autolink_Actor::contact_has_login( $this->parts['post_id'] ) ) {
+			$this->functions->redirect_to_link();
 		}
 
 		$this->become_contact();
@@ -165,6 +178,70 @@ class Disciple_Tools_Autolink_Magic_Contact_Link_App extends DT_Magic_Url_Base {
 		}
 
 		return $actor;
+	}
+
+	/**
+	 * Start reshaping the magic link registry for the Apps tile.
+	 *
+	 * @param string $section
+	 * @param string $post_type
+	 */
+	public function begin_apps_tile( $section, $post_type ) {
+		if ( $section === 'apps' && $post_type === $this->post_type ) {
+			add_filter( 'dt_magic_url_register_types', [ $this, 'one_autolink_app' ], 1000, 1 );
+			// Left to itself the theme would mint a key that never expires.
+			Disciple_Tools_Autolink_Contact_Links::prepare_for_tile( get_the_ID() );
+		}
+	}
+
+	/**
+	 * Put the registry back once the tile is drawn, so nothing else - REST key
+	 * checks, bulk send - ever sees the narrowed version.
+	 */
+	public function end_apps_tile() {
+		remove_filter( 'dt_magic_url_register_types', [ $this, 'one_autolink_app' ], 1000 );
+	}
+
+	/**
+	 * One Autolink row on a contact's Apps tile, not three.
+	 *
+	 * Autolink registers three links, and a contact record could show all of
+	 * them: the share link, this contact link, and - for administrators, on a
+	 * contact with a login - the user link. They cannot become one URL, since
+	 * each carries a different key to a different route, but only one of them is
+	 * ever the right thing to hand this person:
+	 *
+	 * - no login: this contact link, which is the whole app.
+	 * - a login:  the share link. It signs them in to their own app, and anyone
+	 *             who registers through it lands under them. The contact link is
+	 *             withheld - see may_act_as() - and the user link only ever leads
+	 *             to the same sign in.
+	 *
+	 * @param array $types
+	 *
+	 * @return array
+	 */
+	public function one_autolink_app( $types ) {
+		if ( empty( $types[ $this->root ] ) ) {
+			return $types;
+		}
+
+		$has_login = Disciple_Tools_Autolink_Actor::contact_has_login( get_the_ID() );
+
+		if ( isset( $types[ $this->root ][ $this->type ] ) ) {
+			$types[ $this->root ][ $this->type ]['show_app_tile'] = ! $has_login;
+		}
+
+		if ( isset( $types[ $this->root ]['share'] ) ) {
+			$types[ $this->root ]['share']['show_app_tile'] = $has_login;
+		}
+
+		// The theme lists user links on a user's contact for administrators
+		// regardless of show_app_tile, so the only way to leave it off is to leave
+		// it out.
+		unset( $types[ $this->root ]['app'] );
+
+		return $types;
 	}
 
 	/**

@@ -507,10 +507,9 @@ class Disciple_Tools_Autolink_Group_Controller extends Disciple_Tools_Autolink_C
 
 				$contact         = DT_Posts::create_post( 'contacts', $new_contact_fields, true, false );
 				$leaders[ $idx ] = $contact['ID'];
+				// Their link is issued when the coach copies it from the contacts
+				// list, not here, so it runs from when it is handed over.
 				wp_publish_post( $contact['ID'] );
-				// Mint the new leader's own Autolink link straight away, so the
-				// coach can hand it over without anyone needing a DT login.
-				Disciple_Tools_Autolink_Actor::contact_app_link( $contact['ID'] );
 			}
 		}
 

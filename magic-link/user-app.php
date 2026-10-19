@@ -17,8 +17,11 @@ class Disciple_Tools_Autolink_Magic_User_App extends DT_Magic_Url_Base {
 	use Disciple_Tools_Autolink_App_Routes;
 
 	private static $_instance = null;
-	public $page_title = 'Autolink';
-	public $page_description = 'Autolink user app';
+	// Named for the Apps tile and the user's own app list, where Autolink's
+	// links sit side by side. The browser tab still reads "Autolink" - see
+	// page_tab_title().
+	public $page_title = 'Autolink - User App';
+	public $page_description = 'The Autolink app for someone with a Disciple.Tools login. Opening it asks them to sign in.';
 	public $root = "autolink";
 	public $type = 'app';
 	public $post_type = 'user';

@@ -111,6 +111,19 @@ trait Disciple_Tools_Autolink_App_Routes {
 	}
 
 	/**
+	 * The browser tab title.
+	 *
+	 * page_title tells Autolink's links apart where they are listed together, so
+	 * it names which link this is. The person using the app only needs to know
+	 * which app they are in.
+	 *
+	 * @return string
+	 */
+	public function page_tab_title() {
+		return 'Autolink';
+	}
+
+	/**
 	 * Map routes to controllers
 	 */
 	public function routes() {
@@ -234,11 +247,7 @@ trait Disciple_Tools_Autolink_App_Routes {
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'endpoint_get' ],
-					'permission_callback' => function ( WP_REST_Request $request ) {
-						$magic = new DT_Magic_URL( $this->root );
-
-						return $magic->verify_rest_endpoint_permissions_on_post( $request );
-					},
+					'permission_callback' => [ $this, 'rest_permission' ],
 				],
 			]
 		);
@@ -249,14 +258,29 @@ trait Disciple_Tools_Autolink_App_Routes {
 				[
 					'methods'             => 'POST',
 					'callback'            => [ $this, 'endpoint_post' ],
-					'permission_callback' => function ( WP_REST_Request $request ) {
-						$magic = new DT_Magic_URL( $this->root );
-
-						return $magic->verify_rest_endpoint_permissions_on_post( $request );
-					},
+					'permission_callback' => [ $this, 'rest_permission' ],
 				],
 			]
 		);
+	}
+
+	/**
+	 * Gate the REST endpoints.
+	 *
+	 * The theme opens this namespace to visitors with no session, so the key
+	 * check below is all that stands in front of it. A valid key is not enough
+	 * on its own - see Disciple_Tools_Autolink_Actor::may_act_as() for what each
+	 * link additionally requires.
+	 *
+	 * @param WP_REST_Request $request
+	 *
+	 * @return bool
+	 */
+	public function rest_permission( WP_REST_Request $request ) {
+		$magic = new DT_Magic_URL( $this->root );
+		$parts = $magic->verify_rest_endpoint_permissions_on_post( $request, true );
+
+		return ! empty( $parts ) && Disciple_Tools_Autolink_Actor::may_act_as( $parts );
 	}
 
 	public function endpoint_post( WP_REST_Request $request ) {
@@ -281,6 +305,8 @@ trait Disciple_Tools_Autolink_App_Routes {
 				return $this->field_controller->update( $request, $params, $actor );
 			case 'switch_language':
 				return $this->language_controller->update( $request, $params, $actor );
+			case 'contact_link':
+				return $this->contacts_controller->link( $request, $params, $actor );
 			default:
 				return new WP_Error( __METHOD__, 'Invalid action', [ 'status' => 400 ] );
 		}

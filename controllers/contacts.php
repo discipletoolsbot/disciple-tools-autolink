@@ -33,6 +33,7 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 			'has_login' => __( 'Has a Disciple.Tools login', 'disciple-tools-autolink' ),
 			'copy_link' => __( 'Copy link', 'disciple-tools-autolink' ),
 			'copied'    => __( 'Copied', 'disciple-tools-autolink' ),
+			'copy_failed' => __( 'Could not copy', 'disciple-tools-autolink' ),
 			/* translators: %s: singular name of the contact post type, e.g. "Contact". */
 			'edit'      => sprintf( __( 'Edit %s', 'disciple-tools-autolink' ), $contact_label ),
 			/* translators: %s: singular name of the contact post type, e.g. "Contact". */
@@ -143,9 +144,9 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 			return;
 		}
 
+		// No link is minted here. One is issued, with an expiry, when someone
+		// presses Copy link - see link().
 		wp_publish_post( $contact['ID'] );
-		// Mint their link now, so it is waiting on the list they land back on.
-		Disciple_Tools_Autolink_Actor::offer_contact_app_link( $contact['ID'] );
 
 		wp_redirect( $this->functions->get_app_link() . '?action=contacts' );
 	}
@@ -284,6 +285,35 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 		}
 
 		wp_redirect( $this->functions->get_app_link() . '?action=contacts' );
+	}
+
+	/**
+	 * Issue a contact's link, for the Copy link button.
+	 *
+	 * Links are minted here rather than when the list is drawn, so each one runs
+	 * from the moment it is handed over and lasts the validity set in the
+	 * Autolink settings.
+	 *
+	 * @param WP_REST_Request $request
+	 * @param array $params
+	 * @param Disciple_Tools_Autolink_Actor $actor
+	 *
+	 * @return array|WP_Error
+	 */
+	public function link( WP_REST_Request $request, $params, $actor ) {
+		$contact_id = (int) ( $params['contact_id'] ?? 0 );
+
+		if ( ! $contact_id || ! $actor->can_edit_contact( $contact_id ) ) {
+			return new WP_Error( __METHOD__, __( 'You cannot share a link for this person.', 'disciple-tools-autolink' ), [ 'status' => 403 ] );
+		}
+
+		$link = Disciple_Tools_Autolink_Contact_Links::issue( $contact_id );
+
+		if ( ! $link ) {
+			return new WP_Error( __METHOD__, __( 'This person signs in with their own login.', 'disciple-tools-autolink' ), [ 'status' => 400 ] );
+		}
+
+		return [ 'link' => $link ];
 	}
 
 	/**
@@ -447,7 +477,12 @@ class Disciple_Tools_Autolink_Contacts_Controller extends Disciple_Tools_Autolin
 			// following a key - handing their coach a magic key into that account
 			// would hand over whatever the account can reach. They get the ordinary
 			// sign-in address instead, which is still useful to pass on.
-			$contacts[ $id ]['link']          = $has_login ? $general_link : Disciple_Tools_Autolink_Actor::contact_app_link( $id );
+			//
+			// Everyone else's link is a key that is issued only when Copy link is
+			// pressed, and only to someone who may edit them: the list is wider than
+			// that, and a link is the whole app as that person.
+			$contacts[ $id ]['link']          = $has_login ? $general_link : '';
+			$contacts[ $id ]['can_link']      = ! $has_login && $contacts[ $id ]['can_edit'];
 			$contacts[ $id ]['edit_link']     = $contacts[ $id ]['can_edit'] ? $edit_link . $id : '';
 			$contacts[ $id ]['view_link']     = ( $view_link && $contacts[ $id ]['can_edit'] ) ? $view_link . $id : '';
 			$contacts[ $id ]['relationships'] = $this->shape_relationships( $contact_row['relationships'] );

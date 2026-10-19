@@ -129,9 +129,15 @@ class Disciple_Tools_Autolink_Genmap extends DT_Genmapper_Metrics_Chart_Base {
 	 * This route is registered with `__return_true`, so it has always relied on
 	 * the caller's own session to decide what they get back - which returns
 	 * nothing at all for a visitor on a contact link. When the request carries
-	 * magic link parts, they are verified against the stored key the same way
-	 * the app's own endpoints verify theirs, and the actor comes from that.
-	 * Otherwise the logged in user stands, exactly as before.
+	 * magic link parts, the key in them is checked against the record it claims
+	 * and the actor comes from that. Otherwise the logged in user stands, exactly
+	 * as before.
+	 *
+	 * The key is looked up directly rather than through
+	 * DT_Magic_URL::verify_rest_endpoint_permissions_on_post(), which reads the
+	 * link's type out of the request path - and this route's path is
+	 * `dt/v1/autolink/...`, not the link's own `autolink/v1/<type>`, so it never
+	 * matched.
 	 *
 	 * @param WP_REST_Request $request
 	 */
@@ -142,17 +148,48 @@ class Disciple_Tools_Autolink_Genmap extends DT_Genmapper_Metrics_Chart_Base {
 			return;
 		}
 
-		$magic = new DT_Magic_URL( 'autolink' );
-		$parts = $magic->verify_rest_endpoint_permissions_on_post( $request, true );
+		$parts      = dt_recursive_sanitize_array( $params['parts'] );
+		$type       = $parts['type'] ?? '';
+		$public_key = $parts['public_key'] ?? '';
+		$post_id    = (int) ( $parts['post_id'] ?? 0 );
 
-		if ( empty( $parts ) || empty( $parts['post_id'] ) ) {
+		if ( ! in_array( $type, [ 'app', 'contact' ], true ) || ! $public_key || ! $post_id ) {
 			return;
 		}
 
-		if ( ( $parts['post_type'] ?? '' ) === 'user' ) {
-			Disciple_Tools_Autolink_Actor::set_user( (int) $parts['post_id'] );
+		$magic    = new DT_Magic_URL( 'autolink' );
+		$meta_key = DT_Magic_URL::get_public_key_meta_key( 'autolink', $type );
+		$owner_id = $type === 'app'
+			? $magic->get_user_id( $meta_key, $public_key )
+			: $magic->get_post_id( $meta_key, $public_key );
+
+		if ( (int) $owner_id !== $post_id ) {
+			return;
+		}
+
+		if ( ! Disciple_Tools_Autolink_Actor::may_act_as( [ 'type' => $type, 'post_id' => $post_id ] ) ) {
+			return;
+		}
+
+		// Honour link expiry the way the app's own endpoints do.
+		if ( class_exists( 'Disciple_Tools_Bulk_Magic_Link_Sender_API' ) ) {
+			$link_args = [
+				'meta_key'    => $meta_key,
+				'public_key'  => $public_key,
+				'post_id'     => $post_id,
+				'post_type'   => $type === 'app' ? 'user' : 'contacts',
+				'instance_id' => null,
+			];
+
+			if ( Disciple_Tools_Bulk_Magic_Link_Sender_API::evaluate_magic_link_continue( true, $link_args ) === false ) {
+				return;
+			}
+		}
+
+		if ( $type === 'app' ) {
+			Disciple_Tools_Autolink_Actor::set_user( $post_id );
 		} else {
-			Disciple_Tools_Autolink_Actor::set_contact( (int) $parts['post_id'] );
+			Disciple_Tools_Autolink_Actor::set_contact( $post_id );
 		}
 	}
 

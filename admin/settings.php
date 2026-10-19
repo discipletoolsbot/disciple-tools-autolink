@@ -35,6 +35,10 @@ class Disciple_Tools_Autolink_Settings {
 			'disciple_tools_autolink_show_in_menu'                 => true,
 			'disciple_tools_autolink_show_survey'                  => true,
 			'disciple_tools_autolink_show_training'                => true,
+			// How long a contact link lasts from when it is copied. See
+			// Disciple_Tools_Autolink_Contact_Links.
+			'disciple_tools_autolink_contact_link_validity_amount' => 1,
+			'disciple_tools_autolink_contact_link_validity_unit'   => 'weeks',
 			'disciple_tools_autolink_training_videos'              => function () {
 				return json_encode( $this->localized_training_videos() );
 			}

@@ -72,6 +72,7 @@ class Disciple_Tools_Autolink {
 
 	private function __construct() {
 		require_once __DIR__ . '/magic-link/actor.php';
+		require_once __DIR__ . '/magic-link/contact-links.php';
 		require_once __DIR__ . '/magic-link/functions.php';
 		require_once __DIR__ . '/queries.php';
 		require_once __DIR__ . '/controllers/controller.php';
@@ -92,6 +93,10 @@ class Disciple_Tools_Autolink {
 		require_once __DIR__ . '/charts/groups-tree.php';
 		require_once __DIR__ . '/admin/settings.php';
 
+
+		// Before the magic links below are built: the theme asks this filter from
+		// inside their constructors.
+		add_filter( 'dt_magic_link_continue', [ 'Disciple_Tools_Autolink_Contact_Links', 'magic_link_continue' ], 20, 2 );
 
 		require_once __DIR__ . '/magic-link/app-routes.php';
 		require_once __DIR__ . '/magic-link/contact-app.php';

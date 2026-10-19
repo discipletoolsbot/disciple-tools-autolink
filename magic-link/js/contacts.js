@@ -248,9 +248,7 @@ export class Contacts extends DtBase {
       <div class="contact__badges">
         ${connections.map(
           (connection) => html`
-            <span
-              class="contact__badge contact__badge--${connection.type}"
-            >
+            <span class="contact__badge contact__badge--${connection.type}">
               ${this.renderConnectionIcon(connection.type)}
               <span>${connection.label}</span>
             </span>
@@ -426,19 +424,56 @@ export class Contacts extends DtBase {
   renderActions(contact) {
     const { translations } = this;
 
-    if (!contact.link) {
+    if (!contact.link && !contact.can_link) {
       return null;
     }
+
+    // A contact link is issued on the press, not when the list is drawn, so it
+    // runs for the configured validity from when it is handed over.
+    const source = contact.can_link ? () => this.issueLink(contact.id) : null;
 
     return html`
       <div class="contact__actions">
         <app-copy-link
-          value="${contact.link}"
+          value="${contact.link || ""}"
+          .source=${source}
           label="${translations.copy_link}"
           copiedLabel="${translations.copied}"
+          errorLabel="${translations.copy_failed}"
         ></app-copy-link>
       </div>
     `;
+  }
+
+  /**
+   * Ask the server for a contact's link, minting or extending it.
+   *
+   * @param {number} contactId
+   * @returns {Promise<string>}
+   */
+  async issueLink(contactId) {
+    const response = await fetch(
+      window.app.rest_base + window.magic.rest_namespace,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-WP-Nonce": window.app.nonce,
+        },
+        body: JSON.stringify({
+          action: "contact_link",
+          parts: window.magic.parts,
+          contact_id: contactId,
+        }),
+      }
+    );
+    const body = await response.json().catch(() => null);
+
+    if (!response.ok || !body || !body.link) {
+      throw new Error((body && body.message) || `HTTP ${response.status}`);
+    }
+
+    return body.link;
   }
 
   /**

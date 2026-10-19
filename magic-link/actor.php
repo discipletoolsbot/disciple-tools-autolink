@@ -535,21 +535,25 @@ class Disciple_Tools_Autolink_Actor {
 	}
 
 	/**
-	 * A contact's own app link, minting the key the first time it is asked for.
+	 * A contact's existing app link.
 	 *
-	 * This is how the tree grows without WP users: a coach creates a leader, the
-	 * leader gets a link, and that link is a whole Autolink app of their own.
+	 * This never mints one. A key is a bearer credential, so it is only issued
+	 * when someone asks to hand it over - see
+	 * Disciple_Tools_Autolink_Contact_Links::issue(). In contact mode the actor's
+	 * own key exists by definition: it is how they got here.
 	 *
 	 * @param int $contact_id
 	 *
-	 * @return string
+	 * @return string empty when the contact has no key
 	 */
 	public static function contact_app_link( $contact_id ) {
-		if ( ! $contact_id ) {
+		$key = $contact_id ? get_post_meta( (int) $contact_id, Disciple_Tools_Autolink_Contact_Links::meta_key(), true ) : '';
+
+		if ( ! $key ) {
 			return '';
 		}
 
-		return DT_Magic_URL::get_link_url_for_post( 'contacts', (int) $contact_id, 'autolink', 'contact' );
+		return DT_Magic_URL::get_link_url( 'autolink', 'contact', $key );
 	}
 
 	/**
@@ -564,25 +568,43 @@ class Disciple_Tools_Autolink_Actor {
 	}
 
 	/**
-	 * A contact's app link, but only when it is ours to hand out.
+	 * Whether the holder of a verified key may act through it.
 	 *
-	 * contact_app_link() mints a key on demand, and a key is all it takes to act
-	 * as that record. For a contact with no login that is the point - it is how
-	 * they reach the app at all. For a contact that does have a Disciple.Tools
-	 * account it is not: their link resolves through `assigned_to` to everything
-	 * that account is assigned, so showing it to a coach would hand over access to
-	 * another user's records without their password. They sign in instead.
+	 * Verifying the key only proves which record a link belongs to. What that is
+	 * worth depends on the link:
 	 *
-	 * @param int $contact_id
+	 * - `app`:     the user link is an address, not a credential. The page has
+	 *              always sent anyone not signed in to the login screen, so its
+	 *              REST calls ask the same - the session must be the user the key
+	 *              names.
+	 * - `contact`: the key is the credential, but only for a contact without a
+	 *              login, and only until it expires. One with a login resolves
+	 *              through `assigned_to` to everything their account holds, so
+	 *              they sign in instead.
 	 *
-	 * @return string empty when the contact has a login of their own
+	 * Any other type - the share link above all, which is handed out on purpose -
+	 * acts as nobody.
+	 *
+	 * @param array $parts verified magic link parts: `type` and `post_id`
+	 *
+	 * @return bool
 	 */
-	public static function offer_contact_app_link( $contact_id ) {
-		if ( self::contact_has_login( $contact_id ) ) {
-			return '';
+	public static function may_act_as( $parts ) {
+		$post_id = (int) ( $parts['post_id'] ?? 0 );
+
+		if ( ! $post_id ) {
+			return false;
 		}
 
-		return self::contact_app_link( $contact_id );
+		switch ( $parts['type'] ?? '' ) {
+			case 'app':
+				return is_user_logged_in() && get_current_user_id() === $post_id;
+			case 'contact':
+				return ! self::contact_has_login( $post_id )
+					&& ! Disciple_Tools_Autolink_Contact_Links::is_expired( $post_id );
+			default:
+				return false;
+		}
 	}
 
 	/**
