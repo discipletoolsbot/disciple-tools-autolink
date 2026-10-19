@@ -129,7 +129,16 @@ class Disciple_Tools_Autolink_Groups_Tree {
 			] )['posts'];
 
 			foreach ( $coached_groups as $coached_group ) {
-				$allowed_group_ids[]                      = (int) $coached_group['ID'];
+				// A church this actor and someone they coach both lead is the
+				// actor's own - the usual case, since adding a new leader on the
+				// church form makes them someone the actor coaches. Left to run on,
+				// this would refile it as a coaching church: not draggable, and
+				// under "Unassigned" when it has no parent.
+				if ( ! empty( $meta['assigned'][ $coached_group['ID'] ] ) ) {
+					continue;
+				}
+
+				$allowed_group_ids[]                    = (int) $coached_group['ID'];
 				$groups[]                                 = $coached_group;
 				$meta['leading'][ $coached_group['ID'] ]  = array_filter( $coached_group['leaders'], function ( $leader ) use ( $contact ) {
 					return $leader['ID'] == $contact['ID'];
