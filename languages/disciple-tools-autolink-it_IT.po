@@ -5,9 +5,9 @@ msgstr ""
 "Project-Id-Version: Disciple.Tools - Autolink 1.0.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/disciple-tools-"
 "autolink\n"
-"POT-Creation-Date: 2026-11-09T12:03:22+00:00\n"
-"PO-Revision-Date: 2024-10-15 14:59+0000\n"
-"Last-Translator: Kyle Koval <kyle.koval@gmail.com>\n"
+"POT-Creation-Date: 2026-11-09T12:07:27+00:00\n"
+"PO-Revision-Date: 2026-11-17 12:06+0000\n"
+"Last-Translator: Kyle Koval <translator@disciple.tools>\n"
 "Language-Team: Italian <https://translate.disciple.tools/projects/disciple-"
 "tools/disciple-tools-autolink/it_IT/>\n"
 "Language: it_IT\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 2026.11.2\n"
 "X-Domain: disciple-tools-autolink\n"
 
 #. Author URI of the plugin
@@ -66,27 +66,27 @@ msgstr "Apri Record"
 
 #: charts/groups-genmap.php:119
 msgid "The map could not be loaded. Please try again."
-msgstr ""
+msgstr "Non è stato possibile caricare la mappa. Riprova."
 
 #: controllers/admin-general.php:35
 msgid "Hours"
-msgstr ""
+msgstr "Ore"
 
 #: controllers/admin-general.php:36
 msgid "Days"
-msgstr ""
+msgstr "Giorni"
 
 #: controllers/admin-general.php:37
 msgid "Weeks"
-msgstr ""
+msgstr "Settimane"
 
 #: controllers/admin-general.php:38
 msgid "Months"
-msgstr ""
+msgstr "Mesi"
 
 #: controllers/admin-general.php:39
 msgid "Never expires"
-msgstr ""
+msgstr "Non scade mai"
 
 #: controllers/admin-training.php:21
 msgid "Training videos could not be loaded. Resetting to default content."
@@ -138,13 +138,11 @@ msgstr "I video per la formazione non sono validi."
 
 #: controllers/admin.php:10
 msgid "General"
-msgstr ""
+msgstr "Generale"
 
 #: controllers/admin.php:20
-#, fuzzy
-#| msgid "Autolink Home"
 msgid "Autolink Settings"
-msgstr "Autolink Home"
+msgstr "Impostazioni Autolink"
 
 #. translators: %s: plural name of the group post type, e.g. "Churches".
 #: controllers/app.php:34 controllers/controller.php:44
@@ -167,17 +165,15 @@ msgstr "Visualizza %s"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/app.php:39
-#, fuzzy, php-format
-#| msgid "Delete"
+#, php-format
 msgid "Delete %s"
-msgstr "Cancellare %s"
+msgstr "Cancella %s"
 
 #. translators: %s: lowercased singular name of the group post type, e.g. "church".
 #: controllers/app.php:41
-#, fuzzy, php-format
-#| msgid "Are you sure you want to delete this "
+#, php-format
 msgid "Are you sure you want to delete this %s?"
-msgstr "Sei sicuro di voler eliminarlo "
+msgstr "Sei sicuro di voler cancellare %s?"
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #. translators: %s: singular name of the contact post type, e.g. "Contact".
@@ -197,42 +193,40 @@ msgstr "Ancora"
 msgid ""
 "The people you coach or are assigned, and the leaders and members of your %s."
 msgstr ""
+"Le persone per cui fai il coach o che ti sono state assegnate, e i leader e "
+"i membri del tuo %s."
 
 #. translators: %s: singular name of the contact post type, e.g. "Contact".
 #: controllers/contacts.php:30
 #, php-format
 msgid "Add %s"
-msgstr ""
+msgstr "Aggiungi %s"
 
 #: controllers/contacts.php:33
-#, fuzzy
-#| msgid "Disciple.Tools - Autolink"
 msgid "Has a Disciple.Tools login"
-msgstr "Disciple.Tools - Autolink"
+msgstr "Ha un login di Disciple.Tools"
 
 #: controllers/contacts.php:34
 msgid "Copy link"
-msgstr ""
+msgstr "Copia link"
 
 #: controllers/contacts.php:35
 msgid "Copied"
-msgstr ""
+msgstr "Copiato"
 
 #: controllers/contacts.php:36
-#, fuzzy
-#| msgid "Could not fetch groups"
 msgid "Could not copy"
-msgstr "Impossibile recuperare i gruppi"
+msgstr "Non è stato possibile copiarlo"
 
 #. translators: %s: the date and time a magic link stops working.
 #: controllers/contacts.php:38
 #, php-format
 msgid "Link works until %s"
-msgstr ""
+msgstr "Il link scade %s"
 
 #: controllers/contacts.php:39
 msgid "Link expired. Copy it to send a new one."
-msgstr ""
+msgstr "Link scaduto. Copialo per mandare uno nuovo."
 
 #: controllers/contacts.php:50
 #, php-format
@@ -240,35 +234,39 @@ msgid ""
 "No %1$s yet. People you coach, and the leaders and members of your %2$s, "
 "will appear here."
 msgstr ""
+"Ancora nessun %1$s. Le persone per cui fai il coach, e i leader e i membri "
+"del tuo %2$s appariranno qua."
 
 #. translators: %s: singular name of the contact post type, e.g. "Contact".
 #: controllers/contacts.php:78
 #, php-format
 msgid "Add a %s"
-msgstr ""
+msgstr "Aggiungi un %s"
 
 #: controllers/contacts.php:79
 msgid ""
 "They will be added to the people you coach, and get their own link into this "
 "app."
 msgstr ""
+"Saranno aggiunti alle persone per cui fai il coach e riceveranno un link a "
+"questa applicazione."
 
 #: controllers/contacts.php:80 controllers/contacts.php:364
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: controllers/contacts.php:103 controllers/contacts.php:254
 #: controllers/upgrade.php:95
 msgid "Unable to verify request. Please try again."
-msgstr ""
+msgstr "Non è stato possibile verificare la richiesta. Riprova."
 
 #: controllers/contacts.php:109 controllers/contacts.php:264
 msgid "Please enter a name."
-msgstr ""
+msgstr "Inserisci un nome."
 
 #: controllers/contacts.php:115
 msgid "Your record could not be found."
-msgstr ""
+msgstr "Non è stato possibile trovare il tuo record."
 
 #: controllers/contacts.php:207 controllers/group.php:417
 msgid "Back to AutoLink"
@@ -276,11 +274,11 @@ msgstr "Torna a AutoLink"
 
 #: controllers/contacts.php:313
 msgid "You cannot share a link for this person."
-msgstr ""
+msgstr "Non puoi condividere un link con questa persona."
 
 #: controllers/contacts.php:319
 msgid "This person signs in with their own login."
-msgstr ""
+msgstr "Questa persona accede con le proprie credenziali."
 
 #: controllers/contacts.php:366 controllers/group.php:68
 msgid "Save"
@@ -288,33 +286,31 @@ msgstr "Salva"
 
 #: controllers/contacts.php:618
 msgid "Coaching"
-msgstr ""
+msgstr "Tutoraggio"
 
 #: controllers/contacts.php:619
-#, fuzzy
-#| msgid "Unassigned %s"
 msgid "Assigned"
-msgstr "Non Assegnato %s"
+msgstr "Assegnato"
 
 #: controllers/contacts.php:620
 msgid "Leader"
-msgstr ""
+msgstr "Leader"
 
 #: controllers/contacts.php:621
 msgid "Member"
-msgstr ""
+msgstr "Membro"
 
 #. translators: %s: a list of church names.
 #: controllers/contacts.php:626
 #, php-format
 msgid "Leads %s"
-msgstr ""
+msgstr "Conduce %s"
 
 #. translators: %s: a list of church names.
 #: controllers/contacts.php:628
 #, php-format
 msgid "Member of %s"
-msgstr ""
+msgstr "Membro di %s"
 
 #: controllers/controller.php:35 magic-link/functions.php:127
 #: magic-link/functions.php:442
@@ -333,7 +329,7 @@ msgstr "Il mio link"
 
 #: controllers/controller.php:41
 msgid "This is your own link. Save it so you can get back to this app."
-msgstr ""
+msgstr "Questo è il tuo link. Salvalo per poter tornare all'applicazione."
 
 #: controllers/controller.php:42 magic-link/functions.php:447
 msgid "Copy this link and share it with people you are coaching."
@@ -355,27 +351,29 @@ msgstr "Mappa Generazionale"
 
 #: controllers/controller.php:72 controllers/upgrade.php:44
 msgid "Secure your access"
-msgstr ""
+msgstr "Proteggi il tuo accesso"
 
 #: controllers/controller.php:73
 msgid "Create a username and password so you are not relying on this link."
-msgstr ""
+msgstr "Crea un username e password per non dover dipendere da questo link."
 
 #. translators: %s: the date and time a magic link stops working.
 #: controllers/controller.php:81
 #, php-format
 msgid "This link works until %s."
-msgstr ""
+msgstr "Questo link scade %s."
 
 #: controllers/controller.php:84
 msgid ""
 "Ask your coach to renew it, or create a login so you are not relying on a "
 "link."
 msgstr ""
+"Chiedi al tuo coach di rinnovare il link o crea un tuo login per non dover "
+"dipendere da un link."
 
 #: controllers/controller.php:85
 msgid "Ask your coach to renew it."
-msgstr ""
+msgstr "Chiedi al tuo coach di rinnovare il link."
 
 #: controllers/controller.php:86 magic-link/functions.php:124
 msgid "Training"
@@ -383,19 +381,19 @@ msgstr "Formazione"
 
 #: controllers/genmap.php:37
 msgid "You cannot add a church here."
-msgstr ""
+msgstr "Non è possibile aggiungere una chiesa qua."
 
 #: controllers/genmap.php:41
 msgid "New"
-msgstr ""
+msgstr "Nuovo"
 
 #: controllers/genmap.php:94
 msgid "You cannot edit this church."
-msgstr ""
+msgstr "Non è possibile modificare questa chiesa."
 
 #: controllers/genmap.php:114
 msgid "Nothing to save."
-msgstr ""
+msgstr "Niente da salvare."
 
 #. translators: %s: singular name of the group post type, e.g. "Church".
 #: controllers/group.php:58
@@ -430,11 +428,11 @@ msgstr "Impossibile recuperare i gruppi"
 
 #: controllers/language.php:21
 msgid "No language was given."
-msgstr ""
+msgstr "Nessuna lingua è stata indicata."
 
 #: controllers/language.php:27
 msgid "That language is not available."
-msgstr ""
+msgstr "Quella lingua non è disponibile."
 
 #: controllers/login.php:38 controllers/register.php:56
 msgid "An unexpected error has occurred."
@@ -488,7 +486,7 @@ msgstr "Numero di Generazione"
 #: controllers/tree.php:38
 #, php-format
 msgid "No %s found."
-msgstr "No %s found."
+msgstr "Nessun %s trovato."
 
 #: controllers/upgrade.php:45
 msgid ""
@@ -496,10 +494,16 @@ msgid ""
 "stop working. Choose a username and password to keep long-term access of "
 "your own."
 msgstr ""
+"Attualmente chiunque con il tuo link può accedere come te a questa "
+"applicazione, e un link può sempre smettere di funzionare. Scegli un "
+"username e password per avere un accesso unico e indeterminato "
+"all'applicazione."
 
 #: controllers/upgrade.php:46
 msgid "Your churches and the people you coach stay exactly as they are."
 msgstr ""
+"Le tue chiese e le persone per cui fai il coach rimangono esattamente come "
+"sono."
 
 #: controllers/upgrade.php:47 templates/register.php:32
 msgid "Username"
@@ -514,36 +518,32 @@ msgid "Password"
 msgstr "Password"
 
 #: controllers/upgrade.php:50
-#, fuzzy
-#| msgid "Confirm Password"
 msgid "Confirm password"
 msgstr "Conferma Password"
 
 #: controllers/upgrade.php:51
-#, fuzzy
-#| msgid "Create Account"
 msgid "Create my login"
-msgstr "Crea Profilo"
+msgstr "Crea il mio login"
 
 #: controllers/upgrade.php:52
 msgid "Not now"
-msgstr ""
+msgstr "Non in questo momento"
 
 #: controllers/upgrade.php:53
 msgid "Once you have a login, your old link will stop working."
-msgstr ""
+msgstr "Appena avrai un login, il tuo vecchio link smetterà di funzionare."
 
 #: controllers/upgrade.php:101
 msgid "Please fill out all fields."
-msgstr ""
+msgstr "Compila ogni campo."
 
 #: controllers/upgrade.php:107
 msgid "Passwords do not match."
-msgstr ""
+msgstr "I password non combaciano."
 
 #: controllers/upgrade.php:113
 msgid "Please enter a valid email address."
-msgstr ""
+msgstr "Inserisci un indirizzo email valido."
 
 #: disciple-tools-autolink.php:197 magic-link/actor.php:743
 msgid "Autolink"
@@ -551,30 +551,27 @@ msgstr "Autolink"
 
 #: magic-link/actor.php:661
 msgid "No record to save the language to."
-msgstr ""
+msgstr "Nessun record a cui aggiungere la lingua."
 
 #. translators: %s: the name of the contact who made the change.
 #: magic-link/actor.php:742
-#, fuzzy, php-format
-#| msgid "Autolink"
+#, php-format
 msgid "%s (via Autolink)"
-msgstr "Autolink"
+msgstr "%s ( via Autolink)"
 
 #. translators: %s: the name of the contact who created the record.
 #: magic-link/actor.php:753
 #, php-format
 msgid "Created through Autolink by %s"
-msgstr ""
+msgstr "Creato via Autolink da %s"
 
 #: magic-link/actor.php:754
-#, fuzzy
-#| msgid "Back to AutoLink"
 msgid "Created through Autolink"
-msgstr "Torna a AutoLink"
+msgstr "Creato via AutoLink"
 
 #: magic-link/contact-links.php:248
 msgid "Never"
-msgstr ""
+msgstr "Mai"
 
 #: magic-link/functions.php:119
 msgid "Add Magic"
@@ -602,17 +599,15 @@ msgstr "Attiva Menu"
 
 #: magic-link/functions.php:126
 msgid "Language"
-msgstr ""
+msgstr "Lingua"
 
 #: magic-link/functions.php:130
-#, fuzzy
-#| msgid "%s assigned to those you coach"
 msgid "Links for those you coach"
-msgstr "%s assegnato a coloro che segui come coach"
+msgstr "I link per coloro che segui come coach"
 
 #: magic-link/functions.php:133
 msgid "Close"
-msgstr ""
+msgstr "Chiudi"
 
 #: magic-link/functions.php:420
 msgid "How many leaders are you coaching?"
